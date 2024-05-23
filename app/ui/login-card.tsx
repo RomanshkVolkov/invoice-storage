@@ -1,4 +1,3 @@
-import { Button, Input } from '@nextui-org/react';
 import { LockClosedIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Form from './login-form';

@@ -55,7 +55,7 @@ export default function Form() {
           <ArrowLongRightIcon width={28} className="absolute right-6" />
         }
       >
-        <span>Acceder</span>
+        Acceder
       </Button>
     </form>
   );
