@@ -1,9 +1,9 @@
-import LoginForm from '../ui/login-form';
+import LoginCard from '../ui/login-card';
 
 export default function Login() {
   return (
     <main className="flex h-screen items-center justify-center">
-      <LoginForm />
+      <LoginCard />
     </main>
   );
 }
