@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 import { authConfig } from './auth.config';
 import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
+import bcrypt from 'bcrypt';
 import { User } from './app/lib/types';
 import { executeStoredProcedure } from './app/lib/database/stored-procedures';
 
@@ -38,6 +39,17 @@ export const { auth, signIn, signOut } = NextAuth({
         const { email, password } = parsedCredentials.data;
         const user = await getUser(email);
         if (!user) return null;
+
+        const paswordsMatch = await bcrypt.compare(password, user.password);
+
+        if (!paswordsMatch) {
+          console.log('Passwords do not match');
+          return null;
+        }
+
+        const userWithStringId = { ...user, id: user.id.toString() };
+
+        return userWithStringId;
       },
     }),
   ],
