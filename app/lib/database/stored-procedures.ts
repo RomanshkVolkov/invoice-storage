@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export const executeStoredProcedure = async (
+export const executeStoredProcedure = async <T>(
   procedure: string,
   params: any
 ) => {
@@ -18,7 +18,7 @@ export const executeStoredProcedure = async (
 
   const schema = process.env.DB_SCHEMA || 'invoice_storage';
   const query = `EXEC ${schema}.${procedure} ${serializedParams}`;
-  const result = await prisma.$queryRawUnsafe(query);
+  const result = await prisma.$queryRawUnsafe<T[]>(query);
 
   return result;
 };
