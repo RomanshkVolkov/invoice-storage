@@ -6,7 +6,7 @@ export async function login(email: string, password: string) {
     where: {
       email,
     },
-    include: { userTypes: true },
+    include: { userTypes: true, providers: true },
   });
   return excludeFields(user, ['userTypeID']);
 }

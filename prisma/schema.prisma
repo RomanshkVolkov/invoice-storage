@@ -9,45 +9,46 @@ datasource db {
 }
 
 model companies {
-  id  Int        @id(map: "companies_pk") @default(autoincrement()) @map("company_id")
-  rfc         String     @unique(map: "companies_company_rfc_uindex") @db.NVarChar(12) @map("company_rfc")
-  name        String     @db.NVarChar(500)
-  prefix      String?    @db.NVarChar(5)
-  invoices    invoices[]
+  id       Int        @id(map: "companies_pk") @default(autoincrement()) @map("company_id")
+  rfc      String     @unique(map: "companies_company_rfc_uindex") @map("company_rfc") @db.NVarChar(12)
+  name     String     @db.NVarChar(500)
+  prefix   String?    @db.NVarChar(5)
+  invoices invoices[]
 }
 
 model invoices {
-  id          String    @id(map: "invoices_pk") @db.NVarChar(36) @map("uuid")
-  providerID  Int @map("provider_id")
-  companyID   Int @map("company_id")
-  xml         String    @db.NVarChar(200) @map("xml_path")
-  pdf         String    @db.NVarChar(200) @map("pdf_path")
-  companies   companies @relation(fields: [companyID], references: [id], onUpdate: NoAction, map: "invoices_companies_company_id_fk")
-  providers   providers @relation(fields: [providerID], references: [id], onUpdate: NoAction, map: "invoices_providers_provider_id_fk")
+  id         String    @id(map: "invoices_pk") @map("uuid") @db.NVarChar(36)
+  providerID Int       @map("provider_id")
+  companyID  Int       @map("company_id")
+  xml        String    @map("xml_path") @db.NVarChar(200)
+  pdf        String    @map("pdf_path") @db.NVarChar(200)
+  companies  companies @relation(fields: [companyID], references: [id], onUpdate: NoAction, map: "invoices_companies_company_id_fk")
+  providers  providers @relation(fields: [providerID], references: [id], onUpdate: NoAction, map: "invoices_providers_provider_id_fk")
 }
 
 model providers {
-  id           Int        @id(map: "providers_pk") @default(autoincrement()) @map("provider_id")
-  rfc          String     @db.NVarChar(12) @map("provider_rfc")
-  name         String     @db.NVarChar(500)
-  zipcode      Int?
-  userID       Int @map("user_id")
-  invoices     invoices[]
-  users        users      @relation(fields: [userID], references: [id], onUpdate: NoAction, map: "providers_users_user_id_fk")
+  id       Int        @id(map: "providers_pk") @default(autoincrement()) @map("provider_id")
+  rfc      String     @map("provider_rfc") @db.NVarChar(12)
+  name     String     @db.NVarChar(500)
+  zipcode  Int?
+  userID   Int        @unique @map("user_id")
+  invoices invoices[]
+  user     users      @relation(fields: [userID], references: [id], onUpdate: NoAction, map: "providers_users_user_id_fk")
 }
 
 model userTypes {
-  id           Int     @id(map: "user_types_pk") @default(autoincrement()) @map("user_type_id")
-  name         String  @db.NVarChar(50)
-  users        users[]
+  id    Int     @id(map: "user_types_pk") @default(autoincrement()) @map("user_type_id")
+  name  String  @db.NVarChar(50)
+  users users[]
+
   @@map("user_types")
 }
 
 model users {
-  id           Int         @id(map: "users_pk") @default(autoincrement()) @map("user_id")
-  email        String      @db.NVarChar(500)
-  password     String      @db.NVarChar(300)
-  userTypeID   Int @map("user_type_id")
-  providers    providers[]
-  userTypes   userTypes  @relation(fields: [userTypeID], references: [id], onUpdate: NoAction, map: "FK__users__user_type__17CF3C3F")
+  id         Int        @id(map: "users_pk") @default(autoincrement()) @map("user_id")
+  email      String     @db.NVarChar(500)
+  password   String     @db.NVarChar(300)
+  userTypeID Int        @map("user_type_id")
+  userTypes  userTypes  @relation(fields: [userTypeID], references: [id], onUpdate: NoAction, map: "FK__users__user_type__17CF3C3F")
+  providers  providers?
 }
