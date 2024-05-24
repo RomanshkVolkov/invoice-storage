@@ -3,9 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "generate": "npx prisma generate --allow-no-models",
-    "loadenv": "op run --env-file='.env' --",
-    "dev": "pnpm run loadenv && pnpm run generate & next dev",
+    "generate": "npx prisma generate",
+    "dev": "op run --env-file='./.env' -- pnpm run generate && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

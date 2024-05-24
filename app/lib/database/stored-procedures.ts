@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/app/lib/database/prisma';
 import { serializedDB } from '../serializers/parser';
-
-const prisma = new PrismaClient();
 
 export const executeStoredProcedure = async <T>(
   procedure: string,
@@ -9,10 +7,8 @@ export const executeStoredProcedure = async <T>(
 ) => {
   const serializedParams = Object.keys(params)
     .map((key) => {
-      const param = params[key];
-      if (typeof param === 'string') {
-        return `@${key} = '${param}'`;
-      }
+      const value = params[key];
+      const param = typeof value === 'string' ? `'${value}'` : value;
       return `@${key} = ${param}`;
     })
     .join(', ');
@@ -20,8 +16,11 @@ export const executeStoredProcedure = async <T>(
   const schema = process.env.DB_SCHEMA || 'invoice_storage';
   const query = `EXEC ${schema}.${procedure} ${serializedParams}`;
   const result = await prisma.$queryRawUnsafe<T[]>(query);
+
   if (result.length === 1) {
     return serializedDB(result);
   }
   return result;
 };
+
+export const db = prisma;

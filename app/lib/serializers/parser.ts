@@ -13,10 +13,12 @@ function recursiveParse<T = any[] | any>(item: T): T {
     return Object.keys(item).reduce((acc, key) => {
       const typedKey = key as keyof typeof item;
       acc[key] = recursiveParse(item[typedKey]); // Procesa cada valor del objeto.
+
       return acc;
     }, {} as any) as T;
   } else if (typeof item === 'string') {
     const parsedItem = tryParseJson(item);
+
     if (parsedItem !== item) {
       return recursiveParse(parsedItem); // Procesa el elemento parseado si era una cadena JSON.
     }
