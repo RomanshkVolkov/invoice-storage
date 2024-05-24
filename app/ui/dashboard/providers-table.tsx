@@ -15,7 +15,7 @@ interface Provider {
   id: number;
   rfc: string;
   name: string;
-  zipcode: string;
+  zipcode: number | null;
   [key: string]: any;
 }
 
@@ -53,7 +53,7 @@ export default function ProvidersTable({
   }, []);
 
   return (
-    <Table isStriped>
+    <Table isStriped aria-labelledby="providers-table">
       <TableHeader columns={columns}>
         {(column) => (
           <TableColumn
