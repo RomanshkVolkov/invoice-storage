@@ -10,7 +10,7 @@ export default function LoginCard() {
 
         <div>
           <div className="mb-6 flex items-center">
-            <LockClosedIcon width={30} className="mr-2 text-primary-400" />
+            <LockClosedIcon width={30} className="mr-2 text-primary-500" />
             <h2 className="text-2xl">Ingresa tus credenciales</h2>
           </div>
           <Form />
