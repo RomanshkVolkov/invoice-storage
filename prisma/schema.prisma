@@ -22,8 +22,8 @@ model invoices {
   companyID  Int       @map("company_id")
   xml        String    @map("xml_path") @db.NVarChar(200)
   pdf        String    @map("pdf_path") @db.NVarChar(200)
-  companies  companies @relation(fields: [companyID], references: [id], onUpdate: NoAction, map: "invoices_companies_company_id_fk")
-  providers  providers @relation(fields: [providerID], references: [id], onUpdate: NoAction, map: "invoices_providers_provider_id_fk")
+  company    companies @relation(fields: [companyID], references: [id], onUpdate: NoAction, map: "invoices_companies_company_id_fk")
+  provider   providers @relation(fields: [providerID], references: [id], onUpdate: NoAction, map: "invoices_providers_provider_id_fk")
 }
 
 model providers {
@@ -49,6 +49,6 @@ model users {
   email      String     @db.NVarChar(500)
   password   String     @db.NVarChar(300)
   userTypeID Int        @map("user_type_id")
-  userTypes  userTypes  @relation(fields: [userTypeID], references: [id], onUpdate: NoAction, map: "FK__users__user_type__17CF3C3F")
-  providers  providers?
+  type       userTypes  @relation(fields: [userTypeID], references: [id], onUpdate: NoAction, map: "FK__users__user_type__17CF3C3F")
+  provider   providers?
 }

@@ -1,5 +1,4 @@
 import prisma from '@/app/lib/database/prisma';
-import { excludeFields } from '../serializers/prisma';
 
 export async function login(email: string, password: string) {
   const user = await prisma.users.findFirst({
@@ -7,8 +6,8 @@ export async function login(email: string, password: string) {
       id: true,
       email: true,
       password: true,
-      userTypes: true,
-      providers: {
+      type: true,
+      provider: {
         select: {
           id: true,
           name: true,
