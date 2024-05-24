@@ -3,10 +3,34 @@ import { excludeFields } from '../serializers/prisma';
 
 export async function login(email: string, password: string) {
   const user = await prisma.users.findFirst({
+    select: {
+      id: true,
+      email: true,
+      password: true,
+      userTypes: true,
+      providers: {
+        select: {
+          id: true,
+          name: true,
+          rfc: true,
+        },
+      },
+    },
     where: {
       email,
     },
-    include: { userTypes: true, providers: true },
   });
-  return excludeFields(user, ['userTypeID']);
+  return user;
+}
+
+export async function createUser(user: any, provider?: any) {
+  await prisma.$transaction(async (context) => {
+    await context.users.create({
+      data: user,
+    });
+    if (!provider) return;
+    await context.providers.create({
+      data: provider,
+    });
+  });
 }
