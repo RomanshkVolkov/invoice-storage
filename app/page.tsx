@@ -1,4 +1,4 @@
-import { login } from './lib/database/auth';
+import { login } from './lib/database/user';
 import { executeStoredProcedure } from './lib/database/stored-procedures';
 
 export default async function Home() {

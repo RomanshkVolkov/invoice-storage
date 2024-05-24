@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "generate": "npx prisma generate",
-    "dev": "op run --env-file='./.env' -- pnpm run generate && next dev",
+    "generate": "npx prisma generate && next dev",
+    "dev": "op run --env-file='./.env' -- pnpm generate",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
