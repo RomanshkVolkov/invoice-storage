@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Providers } from './providers';
 import { inter, quicksand } from './fonts';
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -16,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} ${quicksand.variable} antialiased`}>
+        <Toaster />
         <Providers>{children}</Providers>
       </body>
     </html>

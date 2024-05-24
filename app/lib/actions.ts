@@ -1,3 +1,5 @@
+'use server';
+
 import { AuthError } from 'next-auth';
 import { signIn } from '@/auth';
 
@@ -11,9 +13,9 @@ export async function authenticate(
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
-          return 'Invalid credentials.';
+          return 'Credenciales incorrectas.';
         default:
-          return 'Something went wrong.';
+          return 'Ha ocurrido un error. Por favor, intenta de nuevo.';
       }
     }
     throw error;
