@@ -3,17 +3,27 @@ import { authConfig } from './auth.config';
 import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
-import { User } from './app/lib/types';
-import { executeStoredProcedure } from './app/lib/database/stored-procedures';
+import { login } from './app/lib/database/user';
 
-async function getUser(email: string): Promise<User | null> {
+declare module 'next-auth' {
+  interface User {
+    type: {
+      id: number;
+      name: string;
+    };
+    provider: {
+      id: number;
+      name: string;
+      rfc: string;
+    } | null;
+    givenName?: string | null;
+    preferLanguage?: string | null;
+  }
+}
+
+async function getUser(email: string) {
   try {
-    const data = await executeStoredProcedure<User>('sp_web_login', {
-      email: 'root@dwit.com',
-    });
-
-    const user = data[0];
-
+    const user = await login(email);
     if (!user) return null;
     return user;
   } catch (error) {
@@ -53,4 +63,30 @@ export const { auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    async session({ session, token }) {
+      session.user = {
+        ...session.user,
+        id: token.id as unknown as string,
+        email: token.email ?? '',
+        type: token.type as unknown as { id: number; name: string },
+        provider: token.provider as unknown as {
+          id: number;
+          name: string;
+          rfc: string;
+        } | null,
+      };
+
+      return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+        token.type = user.type;
+        token.provider = user.provider;
+      }
+      return token;
+    },
+  },
 });

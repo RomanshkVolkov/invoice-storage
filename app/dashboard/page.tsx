@@ -1,6 +1,8 @@
-import { login } from './lib/database/user';
+import { auth } from '@/auth';
 
 export default async function Home() {
+  const session = await auth();
+
   return (
     <main>
       <h1>Stored Procedures</h1>

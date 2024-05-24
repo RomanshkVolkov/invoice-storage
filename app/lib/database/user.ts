@@ -1,6 +1,6 @@
 import prisma from '@/app/lib/database/prisma';
 
-export async function login(email: string, password: string) {
+export async function login(email: string) {
   const user = await prisma.users.findFirst({
     select: {
       id: true,
