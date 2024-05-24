@@ -22,6 +22,11 @@ export async function login(email: string) {
   return user;
 }
 
+export async function getUserTypes() {
+  const userTypes = await prisma.userTypes.findMany();
+  return userTypes;
+}
+
 export async function createUser(user: any, provider?: any) {
   await prisma.$transaction(async (context) => {
     await context.users.create({
