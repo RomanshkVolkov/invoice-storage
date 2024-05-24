@@ -12,7 +12,6 @@ import {
 import { authenticate } from '@/app/lib/actions';
 
 export default function Form() {
-  const { pending } = useFormStatus();
   const [errorMessage, dispatch] = useFormState(authenticate, undefined);
   const [isVisible, setIsVisible] = useState(false);
 
