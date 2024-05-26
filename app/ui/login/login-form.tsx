@@ -79,6 +79,7 @@ function LoginButton() {
       color="primary"
       className="m-auto w-full"
       size="lg"
+      variant="shadow"
       aria-disabled={pending}
       isDisabled={pending}
       isLoading={pending}

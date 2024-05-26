@@ -10,7 +10,7 @@ interface BreadCrumbProps {
 }
 export default function CustomBreadcrumbs({ items }: BreadCrumbProps) {
   return (
-    <Breadcrumbs variant="solid" color="secondary">
+    <Breadcrumbs variant="solid">
       {items.map((item, index) => (
         <BreadcrumbItem key={index} href={item.href}>
           {item.label}

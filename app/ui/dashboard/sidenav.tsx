@@ -29,6 +29,8 @@ export default function SideNav() {
           <Button
             className="relative flex w-full grow items-center justify-between gap-2 bg-primary-500 text-sm font-medium text-white transition-all md:flex-none md:justify-start"
             size="lg"
+            variant="shadow"
+            type="submit"
           >
             <div className="hidden w-full text-center md:block">
               Cerrar sesión

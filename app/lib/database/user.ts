@@ -27,6 +27,14 @@ export async function getUserTypes() {
   return userTypes;
 }
 
+export async function checkExistingUser(email: string) {
+  const user = await prisma.users.findFirst({
+    where: {
+      email,
+    },
+  });
+  return !!user;
+}
 export async function createUser(user: any, provider?: any) {
   await prisma.$transaction(async (context) => {
     await context.users.create({
