@@ -1,22 +1,11 @@
 import prisma from '@/app/lib/database/prisma';
-
-interface Provider {
-  id: number;
-  rfc: string;
-  name: string;
-  zipcode: number | null;
-}
-
-interface User {
-  id: number;
-  email: string;
-  password: string;
-  userTypeID: number;
-}
+import { Provider, User } from '../types';
 
 export async function createProvider(
-  provider: Omit<Provider, 'id'>,
-  user: Omit<User, 'id'>
+  provider: Omit<Provider, 'id' | 'user'>,
+  user: Omit<User, 'id' | 'type'> & {
+    userTypeID: number;
+  }
 ) {
   return await prisma.$transaction(async (context) => {
     const userCreated = await context.users.create({
@@ -31,6 +20,19 @@ export async function createProvider(
     });
 
     return providerCreated;
+  });
+}
+
+export async function updateProvider(provider: Omit<Provider, 'user'>) {
+  return await prisma.providers.update({
+    where: {
+      id: provider.id,
+    },
+    data: {
+      name: provider.name,
+      rfc: provider.rfc,
+      zipcode: provider.zipcode,
+    },
   });
 }
 
@@ -57,11 +59,41 @@ export async function getProviders() {
   }));
 }
 
-export async function checkExistingProvider(rfc: string) {
+export async function getProviderByID(id: number) {
+  const provider = await prisma.providers.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      rfc: true,
+      name: true,
+      zipcode: true,
+      user: {
+        select: {
+          id: true,
+          email: true,
+          type: true,
+          password: true,
+        },
+      },
+    },
+  });
+
+  if (!provider) return null;
+
+  return provider;
+}
+
+export async function checkExistingProvider(rfc: string, id?: number) {
   const provider = await prisma.providers.findFirst({
     where: {
       rfc,
+      NOT: {
+        id,
+      },
     },
   });
-  return !!provider;
+
+  return provider;
 }

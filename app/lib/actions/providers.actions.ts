@@ -1,44 +1,21 @@
 'use server';
 
-import { z } from 'zod';
 import bcrypt from 'bcrypt';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { checkExistingUser } from '../database/user';
-import { checkExistingProvider } from '../database/providers';
-import { createProvider as newProvider } from '../database/providers';
-
-const FormSchema = z.object({
-  email: z.string().email({
-    message: 'Por favor, ingresa un correo válido.',
-  }),
-  password: z.string().min(6, {
-    message: 'La contraseña debe tener al menos 6 caracteres.',
-  }),
-  type: z.coerce.number({
-    message: 'Por favor, selecciona un tipo de usuario.',
-  }),
-  name: z
-    .string({
-      message: 'Nombre inválido.',
-    })
-    .min(1, {
-      message: 'Por favor, ingresa un nombre.',
-    }),
-  rfc: z.string().length(12, {
-    message: 'El RFC debe tener 12 caracteres.',
-  }),
-  zipcode: z.coerce
-    .number({
-      message: 'El código postal debe ser un número.',
-    })
-    .min(1, {
-      message: 'Por favor, ingresa un código postal.',
-    }),
-});
+import {
+  createProvider as newProvider,
+  updateProvider,
+} from '../database/providers';
+import {
+  checkExistingEmailAndRFC,
+  validateData,
+  validateUpdateData,
+} from '../services/providers.service';
+import { updateUser } from '../database/user';
 
 export async function createProvider(prevState: any, formData: FormData) {
-  const validatedData = FormSchema.safeParse(Object.fromEntries(formData));
+  const validatedData = await validateData(formData);
 
   if (!validatedData.success) {
     return {
@@ -59,34 +36,12 @@ export async function createProvider(prevState: any, formData: FormData) {
     zipcode: +validatedData.data.zipcode,
   };
 
-  try {
-    const isEmailRegistered = await checkExistingUser(user.email);
-    const isProviderRegistered = await checkExistingProvider(provider.rfc);
-    if (isEmailRegistered || isProviderRegistered) {
-      return {
-        errors: {
-          email: isEmailRegistered
-            ? ['El correo ya está registrado.']
-            : undefined,
-          name: undefined,
-          rfc: isProviderRegistered
-            ? ['El proveedor ya está registrado.']
-            : undefined,
-          zipcode: undefined,
-          type: undefined,
-          password: undefined,
-        },
-        message: 'Revisa los campos marcados en rojo.',
-      };
-    }
-  } catch (error) {
-    console.error(error);
-    return {
-      errors: {},
-      message:
-        'Ha ocurrido un error al verificar el correo, por favor, intenta de nuevo.',
-    };
-  }
+  const existingData = await checkExistingEmailAndRFC(
+    { email: user.email },
+    { rfc: provider.rfc }
+  );
+
+  if (existingData) return existingData;
 
   try {
     await newProvider(provider, user);
@@ -96,6 +51,67 @@ export async function createProvider(prevState: any, formData: FormData) {
       errors: {},
       message:
         'Ha ocurrido un error inesperado, por favor, contacta a soporte.',
+    };
+  }
+
+  revalidatePath('/dashboard/providers');
+  redirect('/dashboard/providers');
+}
+
+export async function editProvider(
+  providerID: number,
+  userID: number,
+  prevState: any,
+  formData: FormData
+) {
+  const validatedData = await validateUpdateData(formData);
+
+  if (!validatedData.success) {
+    return {
+      errors: validatedData.error.flatten().fieldErrors,
+      message: 'Revisa los campos marcados en rojo.',
+    };
+  }
+
+  const user = {
+    id: userID,
+    email: validatedData.data.email,
+    userTypeID: +validatedData.data.type,
+  };
+
+  const provider = {
+    id: providerID,
+    name: validatedData.data.name,
+    rfc: validatedData.data.rfc.toUpperCase(),
+    zipcode: +validatedData.data.zipcode,
+  };
+
+  const existingData = await checkExistingEmailAndRFC(
+    { email: user.email, id: userID },
+    { rfc: provider.rfc, id: providerID }
+  );
+
+  if (existingData) return existingData;
+
+  try {
+    await updateUser(user);
+  } catch (error) {
+    console.error(error);
+    return {
+      errors: {},
+      message:
+        'Ha ocurrido un error al editar el usuario, por favor, contacta a soporte.',
+    };
+  }
+
+  try {
+    await updateProvider(provider);
+  } catch (error) {
+    console.error(error);
+    return {
+      errors: {},
+      message:
+        'Ha ocurrido un error al editar el proveedor, por favor, contacta a soporte.',
     };
   }
 
