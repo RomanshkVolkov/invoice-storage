@@ -1,4 +1,5 @@
 import prisma from '@/app/lib/database/prisma';
+import { User } from '../types';
 
 export async function login(email: string) {
   const user = await prisma.users.findFirst({
@@ -27,10 +28,18 @@ export async function getUserTypes() {
   return userTypes;
 }
 
-export async function checkExistingUser(email: string) {
+export async function checkExistingUser(email: string, id?: number) {
   const user = await prisma.users.findFirst({
     where: {
       email,
+      NOT: {
+        id,
+      },
+      AND: {
+        provider: {
+          isDeleted: false,
+        },
+      },
     },
   });
   return !!user;
@@ -42,5 +51,19 @@ export async function createUser(user: {
 }) {
   return await prisma.users.create({
     data: user,
+  });
+}
+
+export async function updateUser(
+  user: Omit<User, 'type' | 'password'> & { userTypeID: number }
+) {
+  return await prisma.users.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      email: user.email,
+      userTypeID: user.userTypeID,
+    },
   });
 }

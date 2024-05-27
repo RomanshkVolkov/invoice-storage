@@ -1,10 +1,17 @@
 export interface User {
   id: number;
-  name: string;
+  email: string;
+  password: string;
   type: {
     id: number;
     name: string;
   };
+}
+
+export interface Provider {
+  id: number;
   rfc: string;
-  password: string;
+  name: string;
+  zipcode: number | null;
+  user: User;
 }
