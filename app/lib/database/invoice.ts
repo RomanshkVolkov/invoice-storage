@@ -17,6 +17,9 @@ export async function getInvoices() {
         },
       },
     },
+    where: {
+      isDeleted: false,
+    },
   });
 
   return invoices.map((invoice) => ({
@@ -91,4 +94,19 @@ export async function createInvoice({
       },
     });
   });
+}
+
+export async function deleteInvoiceById(id: string) {
+  const result = await prisma.invoices.update({
+    data: {
+      isDeleted: true,
+    },
+    where: {
+      id,
+    },
+  });
+  if (result.isDeleted) {
+    return result;
+  }
+  throw new Error('No se pudo eliminar la factura.');
 }

@@ -1,6 +1,7 @@
 'use client';
-import { DocumentIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
+  Button,
   Table,
   TableBody,
   TableCell,
@@ -9,7 +10,9 @@ import {
   TableRow,
   Tooltip,
 } from '@nextui-org/react';
+import Link from 'next/link';
 import { useCallback } from 'react';
+import DeleteButton from './delete-button';
 
 interface Invoice {
   id: string;
@@ -31,17 +34,32 @@ export default function InvoicesTable({
     const cellValue = invoice[columnKey];
 
     switch (columnKey) {
-      case 'files':
+      case 'pdf':
         return (
-          <div className="relative flex items-center gap-2">
-            <Tooltip content="Ver PDF">
-              <DocumentIcon className="w-6 cursor-pointer text-default-500" />
-            </Tooltip>
-            <Tooltip content="Ver XML">
-              <DocumentIcon className="w-6 cursor-pointer text-default-500" />
-            </Tooltip>
-          </div>
+          <Tooltip content="Ver PDF">
+            <Button
+              href={`/dashboard/invoices/pdf?path=${invoice.pdf}`}
+              as={Link}
+              isIconOnly
+            >
+              <EyeIcon className="w-5" />
+            </Button>
+          </Tooltip>
         );
+      case 'xml':
+        return (
+          <Tooltip content="Ver XML">
+            <Button
+              href={`/dashboard/invoices/xml?path=${invoice.xml}`}
+              as={Link}
+              isIconOnly
+            >
+              <EyeIcon className="w-5" />
+            </Button>
+          </Tooltip>
+        );
+      case 'actions':
+        return <DeleteButton id={invoice.id} />;
       default:
         return cellValue;
     }

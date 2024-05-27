@@ -7,10 +7,12 @@ import Link from 'next/link';
 export default async function page() {
   const invoices = await getInvoices();
   const columns = [
-    { key: 'uuid', label: 'UUID' },
+    { key: 'id', label: 'UUID' },
     { key: 'company', label: 'Empresa' },
     { key: 'provider', label: 'Proveedor' },
-    { key: 'files', label: 'Archivos' },
+    { key: 'pdf', label: 'PDF' },
+    { key: 'xml', label: 'XML' },
+    { key: 'actions', label: 'Acciones' },
   ];
   return (
     <main>

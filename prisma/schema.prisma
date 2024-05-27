@@ -22,6 +22,7 @@ model invoices {
   companyID  Int       @map("company_id")
   xml        String    @map("xml_path") @db.NVarChar(200)
   pdf        String    @map("pdf_path") @db.NVarChar(200)
+  isDeleted  Boolean   @default(false)
   company    companies @relation(fields: [companyID], references: [id], onUpdate: NoAction, map: "invoices_companies_company_id_fk")
   provider   providers @relation(fields: [providerID], references: [id], onUpdate: NoAction, map: "invoices_providers_provider_id_fk")
 }

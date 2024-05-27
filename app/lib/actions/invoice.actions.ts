@@ -1,6 +1,11 @@
 'use server';
+import { revalidatePath } from 'next/cache';
 import { blob } from '../blob/autentication';
-import { createInvoice, validateInvoiceData } from '../database/invoice';
+import {
+  createInvoice,
+  deleteInvoiceById,
+  validateInvoiceData,
+} from '../database/invoice';
 import { redirect } from 'next/navigation';
 
 export async function validateInvoice(prevState: any, formData: FormData) {
@@ -58,21 +63,33 @@ export async function validateInvoice(prevState: any, formData: FormData) {
     const pdfArrayBuffer = await pdf!.arrayBuffer();
 
     await azureBlobStorage.uploadBlockBlob(
-      `xml/${uuid}.pdf`,
+      `xml/${uuid}.xml`,
       arrayBuffer,
-      arrayBuffer.byteLength
+      arrayBuffer.byteLength,
+      {
+        blobHTTPHeaders: {
+          blobContentType: 'text/xml',
+        },
+      }
     );
     await azureBlobStorage.uploadBlockBlob(
       `pdf/${uuid}.pdf`,
       pdfArrayBuffer,
-      pdfArrayBuffer.byteLength
+      pdfArrayBuffer.byteLength,
+      {
+        blobHTTPHeaders: {
+          blobContentType: 'application/pdf',
+        },
+      }
     );
 
-    const newInvoice = await createInvoice({
+    await createInvoice({
       uuid,
       transmitterID: relatedData.transmitterID,
       receiverID: relatedData.receiverID,
     });
+
+    revalidatePath('/dashboard/invoices');
   } catch (error) {
     if (error instanceof Error) {
       return error.message;
@@ -80,4 +97,17 @@ export async function validateInvoice(prevState: any, formData: FormData) {
     throw error;
   }
   redirect('/dashboard/invoices');
+}
+
+export async function deleteInvoice(id: string) {
+  try {
+    setTimeout(() => {}, 5000);
+    await deleteInvoiceById(id);
+    revalidatePath('/dashboard/invoices');
+  } catch (error) {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    throw error;
+  }
 }
