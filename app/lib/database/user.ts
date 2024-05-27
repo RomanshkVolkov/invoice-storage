@@ -35,14 +35,12 @@ export async function checkExistingUser(email: string) {
   });
   return !!user;
 }
-export async function createUser(user: any, provider?: any) {
-  await prisma.$transaction(async (context) => {
-    await context.users.create({
-      data: user,
-    });
-    if (!provider) return;
-    await context.providers.create({
-      data: provider,
-    });
+export async function createUser(user: {
+  email: string;
+  password: string;
+  userTypeID: number;
+}) {
+  return await prisma.users.create({
+    data: user,
   });
 }

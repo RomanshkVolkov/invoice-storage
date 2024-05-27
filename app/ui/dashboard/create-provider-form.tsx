@@ -1,6 +1,6 @@
 'use client';
 
-import { createProvider } from '@/app/lib/actions';
+import { createProvider } from '@/app/lib/actions/providers.actions';
 import {
   CheckCircleIcon,
   IdentificationIcon,
@@ -36,96 +36,111 @@ export default function CreateProviderForm({
     errors: {} as Errors,
   };
   const [state, dispatch] = useFormState(createProvider, initialState);
-  console.log(state);
   return (
     <form
+      aria-describedby="form-error"
       className="rounded-xl border bg-white px-12 py-8 shadow"
       action={dispatch}
       noValidate
     >
-      <div className="mb-6 flex items-center">
-        <TruckIcon className="mr-2 w-8 text-primary-500" />
-        <h2 className="text-lg text-primary-500">Información del proveedor</h2>
-      </div>
-      <div className="mb-8 flex flex-wrap gap-4">
-        <div className="flex w-full gap-4">
-          <div className="w-1/2">
+      <fieldset>
+        <div className="mb-6 flex items-center">
+          <TruckIcon className="mr-2 w-8 text-primary-500" />
+          <legend className="text-lg text-primary-500">
+            Información del proveedor
+          </legend>
+        </div>
+        <div className="mb-8 flex flex-wrap gap-4">
+          <div className="flex w-full gap-4">
+            <div className="w-1/2">
+              <Input
+                id="rfc"
+                name="rfc"
+                label="RFC"
+                maxLength={12}
+                formNoValidate
+                isInvalid={hasItems(state.errors.rfc)}
+                errorMessage={state.errors.rfc?.join(', ')}
+              />
+            </div>
+            <div className="w-1/2">
+              <Input
+                id="zipcode"
+                name="zipcode"
+                label="Código postal"
+                isInvalid={hasItems(state.errors.zipcode)}
+                errorMessage={state.errors.zipcode?.join(', ')}
+              />
+            </div>
+          </div>
+          <div className="w-full">
             <Input
-              id="rfc"
-              name="rfc"
-              label="RFC"
-              maxLength={12}
-              formNoValidate
-              isInvalid={hasItems(state.errors.rfc)}
-              errorMessage={state.errors.rfc?.join(', ')}
+              id="name"
+              name="name"
+              label="Nombre"
+              isInvalid={hasItems(state.errors.name)}
+              errorMessage={state.errors.name?.join(', ')}
             />
           </div>
-          <div className="w-1/2">
-            <Input
-              id="zipcode"
-              name="zipcode"
-              label="Código postal"
-              isInvalid={hasItems(state.errors.zipcode)}
-              errorMessage={state.errors.zipcode?.join(', ')}
-            />
-          </div>
         </div>
-        <div className="w-full">
-          <Input
-            id="name"
-            name="name"
-            label="Nombre"
-            isInvalid={hasItems(state.errors.name)}
-            errorMessage={state.errors.name?.join(', ')}
-          />
-        </div>
-      </div>
-      <div className="mb-6 flex items-center">
-        <IdentificationIcon className="mr-2 w-8 text-primary-500" />
-        <h2 className="text-lg text-primary-500">Credenciales de acceso</h2>
-      </div>
-      <div className="mb-6 flex flex-wrap gap-4">
-        <div className="w-full">
-          <Input
-            id="email"
-            name="email"
-            label="Correo electrónico"
-            type="text"
-            isInvalid={hasItems(state.errors.email)}
-            errorMessage={state.errors.email?.join(', ')}
-          />
-        </div>
+      </fieldset>
 
-        <div className="flex w-full gap-4">
-          <div className="w-1/2">
+      <fieldset>
+        <div className="mb-6 flex items-center">
+          <IdentificationIcon className="mr-2 w-8 text-primary-500" />
+          <legend className="text-lg text-primary-500">
+            Credenciales de acceso
+          </legend>
+        </div>
+        <div className="mb-6 flex flex-wrap gap-4">
+          <div className="w-full">
             <Input
-              id="password"
-              name="password"
-              label="Contraseña"
-              type="password"
-              isInvalid={hasItems(state.errors.password)}
-              errorMessage={state.errors.password?.join(', ')}
+              id="email"
+              name="email"
+              label="Correo electrónico"
+              type="text"
+              isInvalid={hasItems(state.errors.email)}
+              errorMessage={state.errors.email?.join(', ')}
             />
           </div>
 
-          <div className="w-1/2">
-            <Select
-              id="type"
-              name="type"
-              label="Rol"
-              isInvalid={hasItems(state.errors.type)}
-              errorMessage={state.errors.type?.join(', ')}
-            >
-              {userTypes.map((type) => (
-                <SelectItem key={type.id} value={type.id}>
-                  {type.name}
-                </SelectItem>
-              ))}
-            </Select>
+          <div className="flex w-full gap-4">
+            <div className="w-1/2">
+              <Input
+                id="password"
+                name="password"
+                label="Contraseña"
+                type="password"
+                isInvalid={hasItems(state.errors.password)}
+                errorMessage={state.errors.password?.join(', ')}
+              />
+            </div>
+
+            <div className="w-1/2">
+              <Select
+                id="type"
+                name="type"
+                label="Rol"
+                isInvalid={hasItems(state.errors.type)}
+                errorMessage={state.errors.type?.join(', ')}
+              >
+                {userTypes.map((type) => (
+                  <SelectItem key={type.id} value={type.id}>
+                    {type.name}
+                  </SelectItem>
+                ))}
+              </Select>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="flex items-center justify-between">
+      </fieldset>
+
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        id="form-error"
+        className="flex items-center justify-between"
+      >
         {state.message && <p className="w-full text-danger">{state.message}</p>}
         <div className="w-full text-right">
           <Button

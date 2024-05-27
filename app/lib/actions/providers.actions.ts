@@ -1,36 +1,12 @@
 'use server';
 
-import { AuthError } from 'next-auth';
-import prisma from '@/app/lib/database/prisma';
-import { signIn } from '@/auth';
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import email from 'next-auth/providers/email';
-
-export async function authenticate(
-  prevState: string | undefined,
-  formData: FormData
-) {
-  try {
-    await signIn('credentials', {
-      email: formData.get('email'),
-      password: formData.get('password'),
-      redirectTo: '/dashboard',
-    });
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Credenciales incorrectas.';
-        default:
-          return 'Ha ocurrido un error. Por favor, intenta de nuevo.';
-      }
-    }
-    throw error;
-  }
-}
+import { checkExistingUser } from '../database/user';
+import { checkExistingProvider } from '../database/providers';
+import { createProvider as newProvider } from '../database/providers';
 
 const FormSchema = z.object({
   email: z.string().email({
@@ -84,16 +60,8 @@ export async function createProvider(prevState: any, formData: FormData) {
   };
 
   try {
-    const isEmailRegistered = !!(await prisma.users.findFirst({
-      where: {
-        email: user.email,
-      },
-    }));
-    const isProviderRegistered = !!(await prisma.providers.findFirst({
-      where: {
-        rfc: provider.rfc,
-      },
-    }));
+    const isEmailRegistered = await checkExistingUser(user.email);
+    const isProviderRegistered = await checkExistingProvider(provider.rfc);
     if (isEmailRegistered || isProviderRegistered) {
       return {
         errors: {
@@ -121,18 +89,7 @@ export async function createProvider(prevState: any, formData: FormData) {
   }
 
   try {
-    await prisma.$transaction(async (context) => {
-      const userCreated = await context.users.create({
-        data: user,
-      });
-
-      await context.providers.create({
-        data: {
-          ...provider,
-          userID: userCreated.id,
-        },
-      });
-    });
+    await newProvider(provider, user);
   } catch (error) {
     console.error(error);
     return {
