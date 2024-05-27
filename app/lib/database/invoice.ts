@@ -29,9 +29,11 @@ export async function getInvoices() {
 export async function validateInvoiceData({
   transmitter,
   receiver,
+  uuid,
 }: {
   transmitter: string;
   receiver: string;
+  uuid: string;
 }) {
   const isExistTransmitter = await prisma.companies.findFirst({
     where: {
@@ -50,8 +52,43 @@ export async function validateInvoiceData({
       `El RFC del emisor (${transmitter}) o receptor (${receiver}) no existe en la base de datos.`
     );
   }
+
+  const isExistInvoice = await prisma.invoices.findFirst({
+    where: {
+      id: uuid,
+    },
+  });
+
+  if (isExistInvoice) {
+    throw new Error(
+      `La factura con UUID ${uuid} ya existe en la base de datos.`
+    );
+  }
+
+  return {
+    transmitterID: isExistTransmitter.id,
+    receiverID: isExistReceiver.id,
+  };
 }
 
-export async function createInvoice() {
-  return '.l.';
+export async function createInvoice({
+  transmitterID,
+  receiverID,
+  uuid,
+}: {
+  transmitterID: number;
+  receiverID: number;
+  uuid: string;
+}) {
+  return await prisma.$transaction((ctx) => {
+    return ctx.invoices.create({
+      data: {
+        id: uuid,
+        companyID: transmitterID,
+        providerID: receiverID,
+        pdf: `/invoices/pdf/${uuid}.pdf`,
+        xml: `/invoices/xml/${uuid}.xml`,
+      },
+    });
+  });
 }

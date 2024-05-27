@@ -27,13 +27,14 @@ model invoices {
 }
 
 model providers {
-  id       Int        @id(map: "providers_pk") @default(autoincrement()) @map("provider_id")
-  rfc      String     @map("provider_rfc") @db.NVarChar(12)
-  name     String     @db.NVarChar(500)
-  zipcode  Int?
-  userID   Int        @unique @map("user_id")
-  invoices invoices[]
-  user     users      @relation(fields: [userID], references: [id], onUpdate: NoAction, map: "providers_users_user_id_fk")
+  id        Int        @id(map: "providers_pk") @default(autoincrement()) @map("provider_id")
+  rfc       String     @map("provider_rfc") @db.NVarChar(12)
+  name      String     @db.NVarChar(500)
+  zipcode   Int?
+  userID    Int        @unique @map("user_id")
+  isDeleted Boolean    @default(false)
+  invoices  invoices[]
+  user      users      @relation(fields: [userID], references: [id], onUpdate: NoAction, map: "providers_users_user_id_fk")
 }
 
 model userTypes {

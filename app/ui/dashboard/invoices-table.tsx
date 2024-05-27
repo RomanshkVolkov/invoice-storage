@@ -37,7 +37,7 @@ export default function InvoicesTable({
             <Tooltip content="Ver PDF">
               <DocumentIcon className="w-6 cursor-pointer text-default-500" />
             </Tooltip>
-            <Tooltip color="danger" content="Ver XML">
+            <Tooltip content="Ver XML">
               <DocumentIcon className="w-6 cursor-pointer text-default-500" />
             </Tooltip>
           </div>
