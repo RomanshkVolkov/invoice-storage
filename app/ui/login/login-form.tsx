@@ -9,7 +9,7 @@ import {
   ArrowLongRightIcon,
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
-import { authenticate } from '@/app/lib/actions';
+import { authenticate } from '@/app/lib/actions/auth.actions';
 
 export default function Form() {
   const [errorMessage, dispatch] = useFormState(authenticate, undefined);
@@ -79,6 +79,7 @@ function LoginButton() {
       color="primary"
       className="m-auto w-full"
       size="lg"
+      variant="shadow"
       aria-disabled={pending}
       isDisabled={pending}
       isLoading={pending}

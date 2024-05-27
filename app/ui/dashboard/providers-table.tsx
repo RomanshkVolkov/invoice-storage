@@ -8,7 +8,9 @@ import {
   TableRow,
   TableCell,
   Tooltip,
+  Button,
 } from '@nextui-org/react';
+import Link from 'next/link';
 import { useCallback } from 'react';
 
 interface Provider {
@@ -16,6 +18,7 @@ interface Provider {
   rfc: string;
   name: string;
   zipcode: number | null;
+  email: string;
   [key: string]: any;
 }
 
@@ -38,12 +41,20 @@ export default function ProvidersTable({
         return cellValue;
       case 'actions':
         return (
-          <div className="relative flex items-center gap-2">
+          <div className="relative flex items-center justify-center gap-2">
             <Tooltip content="Editar">
-              <PencilSquareIcon className="w-6 cursor-pointer text-default-500" />
+              <Button
+                href={`/dashboard/providers/${provider.id}/edit`}
+                as={Link}
+                isIconOnly
+              >
+                <PencilSquareIcon className="w-5" />
+              </Button>
             </Tooltip>
             <Tooltip color="danger" content="Eliminar">
-              <TrashIcon className="w-6 cursor-pointer text-danger" />
+              <Button color="danger" isIconOnly>
+                <TrashIcon className="w-5" />
+              </Button>
             </Tooltip>
           </div>
         );
@@ -59,6 +70,7 @@ export default function ProvidersTable({
           <TableColumn
             key={column.key}
             align={column.key === 'actions' ? 'center' : 'start'}
+            className={column.key === 'actions' ? 'text-center' : ''}
           >
             {column.label}
           </TableColumn>

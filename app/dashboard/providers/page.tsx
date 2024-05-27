@@ -9,6 +9,7 @@ const columns = [
   { key: 'rfc', label: 'RFC' },
   { key: 'name', label: 'NOMBRE' },
   { key: 'zipcode', label: 'CÓDIGO POSTAL' },
+  { key: 'email', label: 'EMAIL' },
   { key: 'actions', label: 'ACCIONES' },
 ];
 
