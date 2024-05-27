@@ -1,6 +1,7 @@
 'use server';
 import { blob } from '../blob/autentication';
-import { validateInvoiceData } from '../database/invoice';
+import { createInvoice, validateInvoiceData } from '../database/invoice';
+import { redirect } from 'next/navigation';
 
 export async function validateInvoice(prevState: any, formData: FormData) {
   try {
@@ -44,14 +45,18 @@ export async function validateInvoice(prevState: any, formData: FormData) {
       throw new Error(`El UUID no coincide con el ingresado (${uuid}).`);
     }
 
-    await validateInvoiceData({ transmitter, receiver });
+    const relatedData = await validateInvoiceData({
+      transmitter,
+      receiver,
+      uuid,
+    });
 
+    //upload files to azure blob storage
     const container = process.env!.AZURE_STORAGE_CONTAINER!;
     const azureBlobStorage = (await blob()).getContainerClient(container);
     await azureBlobStorage.createIfNotExists();
-
-    //upload files to azure blob storage
     const pdfArrayBuffer = await pdf!.arrayBuffer();
+
     await azureBlobStorage.uploadBlockBlob(
       `xml/${uuid}.pdf`,
       arrayBuffer,
@@ -63,11 +68,16 @@ export async function validateInvoice(prevState: any, formData: FormData) {
       pdfArrayBuffer.byteLength
     );
 
-    // search nodes in xml file
+    const newInvoice = await createInvoice({
+      uuid,
+      transmitterID: relatedData.transmitterID,
+      receiverID: relatedData.receiverID,
+    });
   } catch (error) {
     if (error instanceof Error) {
       return error.message;
     }
     throw error;
   }
+  redirect('/dashboard/invoices');
 }

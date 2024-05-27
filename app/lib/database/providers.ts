@@ -97,3 +97,14 @@ export async function checkExistingProvider(rfc: string, id?: number) {
 
   return provider;
 }
+
+export async function deleteProvider(id: number) {
+  return await prisma.providers.update({
+    data: {
+      isDeleted: true,
+    },
+    where: {
+      id,
+    },
+  });
+}
