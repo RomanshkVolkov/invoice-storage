@@ -1,4 +1,5 @@
 'use client';
+import { deleteProvider } from '@/app/lib/actions/providers.actions';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
   Table,
@@ -11,7 +12,9 @@ import {
   Button,
 } from '@nextui-org/react';
 import Link from 'next/link';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useFormState, useFormStatus } from 'react-dom';
+import { Toaster, toast } from 'sonner';
 
 interface Provider {
   id: number;
@@ -42,20 +45,14 @@ export default function ProvidersTable({
       case 'actions':
         return (
           <div className="relative flex items-center justify-center gap-2">
-            <Tooltip content="Editar">
-              <Button
-                href={`/dashboard/providers/${provider.id}/edit`}
-                as={Link}
-                isIconOnly
-              >
-                <PencilSquareIcon className="w-5" />
-              </Button>
-            </Tooltip>
-            <Tooltip color="danger" content="Eliminar">
-              <Button color="danger" isIconOnly>
-                <TrashIcon className="w-5" />
-              </Button>
-            </Tooltip>
+            <Button
+              href={`/dashboard/providers/${provider.id}/edit`}
+              as={Link}
+              isIconOnly
+            >
+              <PencilSquareIcon className="w-5" />
+            </Button>
+            <DeleteAction id={provider.id} />
           </div>
         );
       default:
@@ -86,5 +83,30 @@ export default function ProvidersTable({
         )}
       </TableBody>
     </Table>
+  );
+}
+
+function DeleteAction({ id }: { id: number }) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleDelete = async () => {
+    setIsLoading(true);
+    const state = await deleteProvider(id);
+    setIsLoading(false);
+    if (state?.message) {
+      toast.error(state.message);
+    }
+  };
+
+  return (
+    <Button
+      color="danger"
+      type="submit"
+      onClick={handleDelete}
+      isLoading={isLoading}
+      isIconOnly
+    >
+      <TrashIcon className="w-5" />
+    </Button>
   );
 }

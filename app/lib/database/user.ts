@@ -35,9 +35,14 @@ export async function checkExistingUser(email: string, id?: number) {
       NOT: {
         id,
       },
+      AND: {
+        provider: {
+          isDeleted: false,
+        },
+      },
     },
   });
-  return user;
+  return !!user;
 }
 export async function createUser(user: {
   email: string;

@@ -13,6 +13,8 @@ import {
   validateUpdateData,
 } from '../services/providers.service';
 import { updateUser } from '../database/user';
+import { deleteProvider as delProvider } from '../database/providers';
+import { toast } from 'sonner';
 
 export async function createProvider(prevState: any, formData: FormData) {
   const validatedData = await validateData(formData);
@@ -117,4 +119,18 @@ export async function editProvider(
 
   revalidatePath('/dashboard/providers');
   redirect('/dashboard/providers');
+}
+
+export async function deleteProvider(id: number) {
+  try {
+    await delProvider(id);
+  } catch (error) {
+    console.error(error);
+    return {
+      errors: {},
+      message:
+        'Ha ocurrido un error al eliminar el proveedor, por favor, contacta a soporte.',
+    };
+  }
+  revalidatePath('/dashboard/providers');
 }

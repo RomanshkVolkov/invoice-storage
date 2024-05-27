@@ -50,6 +50,9 @@ export async function getProviders() {
         },
       },
     },
+    where: {
+      isDeleted: false,
+    },
   });
 
   // Removes the user object from the provider object and adds the email property
@@ -95,7 +98,7 @@ export async function checkExistingProvider(rfc: string, id?: number) {
     },
   });
 
-  return provider;
+  return !!provider;
 }
 
 export async function deleteProvider(id: number) {
