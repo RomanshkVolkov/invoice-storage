@@ -36,7 +36,7 @@ export async function updateProvider(provider: Omit<Provider, 'user'>) {
   });
 }
 
-export async function getProviders() {
+export async function getProviders(userID: number) {
   const providers = await prisma.providers.findMany({
     select: {
       id: true,
@@ -52,6 +52,11 @@ export async function getProviders() {
     },
     where: {
       isDeleted: false,
+      NOT: {
+        user: {
+          id: userID,
+        },
+      },
     },
   });
 

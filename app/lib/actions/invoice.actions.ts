@@ -23,11 +23,7 @@ export async function getInvoicesByDateRange({
       startDate: isValidStartDate ? startDate : null,
       endDate: isValidEndDate ? endDate : null,
     });
-    return invoices.concat(
-      Array.from({ length: 20 })
-        .fill(invoices[0])
-        .map((_, i) => ({ ...invoices[0], id: i }))
-    );
+    return invoices;
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);

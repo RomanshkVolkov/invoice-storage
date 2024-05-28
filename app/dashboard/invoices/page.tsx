@@ -24,7 +24,7 @@ export default async function page({
   return (
     <main>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="mb-4 text-4xl">Facturas</h1>
+        <h1 className="text-4xl">Facturas</h1>
 
         <Button
           color="primary"

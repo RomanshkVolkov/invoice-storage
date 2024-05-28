@@ -3,6 +3,8 @@
 import { createProvider } from '@/app/lib/actions/providers.actions';
 import {
   CheckCircleIcon,
+  EyeIcon,
+  EyeSlashIcon,
   IdentificationIcon,
   TruckIcon,
 } from '@heroicons/react/24/outline';
@@ -10,6 +12,7 @@ import { Button, Input, Select, SelectItem } from '@nextui-org/react';
 import Link from 'next/link';
 import { useFormState, useFormStatus } from 'react-dom';
 import { hasItems } from '@/app/lib/utils';
+import { useState } from 'react';
 
 interface UserType {
   id: number;
@@ -35,6 +38,10 @@ export default function CreateProviderForm({
     errors: {} as Errors,
   };
   const [state, dispatch] = useFormState(createProvider, initialState);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const toggleVisibility = () => setIsVisible(!isVisible);
+
   return (
     <form
       aria-describedby="form-error"
@@ -127,9 +134,28 @@ export default function CreateProviderForm({
                 id="password"
                 name="password"
                 label="Contraseña"
-                type="password"
+                type={isVisible ? 'text' : 'password'}
                 isInvalid={hasItems(state.errors.password)}
                 errorMessage={state.errors.password?.join(', ')}
+                endContent={
+                  <button
+                    className="focus:outline-none"
+                    type="button"
+                    onClick={toggleVisibility}
+                  >
+                    {isVisible ? (
+                      <EyeSlashIcon
+                        className="pointer-events-none text-2xl text-default-400"
+                        width={20}
+                      />
+                    ) : (
+                      <EyeIcon
+                        className="pointer-events-none text-2xl text-default-400"
+                        width={20}
+                      />
+                    )}
+                  </button>
+                }
               />
             </div>
 
@@ -138,8 +164,27 @@ export default function CreateProviderForm({
                 id="confirmPassword"
                 name="confirmPassword"
                 label="Confirmar contraseña"
-                type="password"
+                type={isVisible ? 'text' : 'password'}
                 isInvalid={hasItems(state.errors.password)}
+                endContent={
+                  <button
+                    className="focus:outline-none"
+                    type="button"
+                    onClick={toggleVisibility}
+                  >
+                    {isVisible ? (
+                      <EyeSlashIcon
+                        className="pointer-events-none text-2xl text-default-400"
+                        width={20}
+                      />
+                    ) : (
+                      <EyeIcon
+                        className="pointer-events-none text-2xl text-default-400"
+                        width={20}
+                      />
+                    )}
+                  </button>
+                }
               />
             </div>
           </div>

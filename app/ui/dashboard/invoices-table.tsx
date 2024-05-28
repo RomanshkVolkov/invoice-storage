@@ -90,6 +90,7 @@ export default function InvoicesTable({
             return searchValue.every((value) => itemToString.includes(value));
           }) || []
         ).slice((Number(page || 1) - 1) * 10, Number(page || 1) * 10)}
+        emptyContent="No hay facturas disponibles."
       >
         {(item) => (
           <TableRow key={`${item.id}`}>

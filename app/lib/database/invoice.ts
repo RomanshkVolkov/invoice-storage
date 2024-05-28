@@ -1,3 +1,4 @@
+import { auth } from '@/auth';
 import prisma from './prisma';
 
 export async function getInvoices({
@@ -7,6 +8,9 @@ export async function getInvoices({
   startDate: string | null;
   endDate: string | null;
 }) {
+  const session = await auth();
+  const isAdmin = session?.user?.type.name.toLowerCase() === 'admin';
+  const query = isAdmin ? {} : { user: { id: +(session?.user?.id || 0) } };
   const invoices = await prisma.invoices.findMany({
     select: {
       id: true,
@@ -31,6 +35,9 @@ export async function getInvoices({
         ),
         lte: new Date(endDate || new Date()),
       },
+      provider: {
+        ...query,
+      },
     },
   });
 
@@ -50,6 +57,19 @@ export async function validateInvoiceData({
   receiver: string;
   uuid: string;
 }) {
+  const session = await auth();
+  if (!session) {
+    throw new Error('No se pudo obtener la sesión.');
+  }
+
+  if (!session.user?.provider) {
+    throw new Error('No se pudo obtener el RFC del proveedor.');
+  }
+
+  if (session.user?.provider?.rfc !== transmitter) {
+    throw new Error('No puedes cargar facturas de otro proveedor.');
+  }
+
   const isExistTransmitter = await prisma.companies.findFirst({
     where: {
       rfc: transmitter,

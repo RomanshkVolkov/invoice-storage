@@ -103,7 +103,7 @@ function DeleteAction({ id }: { id: number }) {
 function DeleteButton() {
   const { pending } = useFormStatus();
   return (
-    <Tooltip content="Eliminar">
+    <Tooltip content="Eliminar" color="danger">
       <Button color="danger" type="submit" isLoading={pending} isIconOnly>
         <TrashIcon className="w-5" />
       </Button>

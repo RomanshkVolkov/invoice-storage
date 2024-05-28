@@ -23,7 +23,9 @@ export default async function SideNav() {
       </Link>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         <NavLinks userRole={session.user.type.name} />
-        <div className="hidden h-auto w-full grow rounded-lg bg-gray-50 md:block" />
+        <div className="hidden h-auto w-full grow items-end justify-center rounded-lg bg-gray-50 p-2 md:flex">
+          {session.user.email}
+        </div>
         <form
           action={async () => {
             'use server';

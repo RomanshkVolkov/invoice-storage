@@ -4,6 +4,7 @@ import ProvidersTable from '@/app/ui/dashboard/providers-table';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { Button } from '@nextui-org/react';
 import { getProviders } from '@/app/lib/database/providers';
+import { auth } from '@/auth';
 
 const columns = [
   { key: 'rfc', label: 'RFC' },
@@ -14,7 +15,8 @@ const columns = [
 ];
 
 export default async function Providers() {
-  const providers = await getProviders();
+  const session = await auth();
+  const providers = await getProviders(+(session?.user?.id || 0));
 
   return (
     <main>
