@@ -4,9 +4,38 @@ import { blob } from '../blob/autentication';
 import {
   createInvoice,
   deleteInvoiceById,
+  getInvoices,
   validateInvoiceData,
 } from '../database/invoice';
 import { redirect } from 'next/navigation';
+
+export async function getInvoicesByDateRange({
+  startDate,
+  endDate,
+}: {
+  startDate: string;
+  endDate: string;
+}) {
+  try {
+    const isValidStartDate = new Date(startDate).toString() !== 'Invalid Date';
+    const isValidEndDate = new Date(endDate).toString() !== 'Invalid Date';
+    const invoices = await getInvoices({
+      startDate: isValidStartDate ? startDate : null,
+      endDate: isValidEndDate ? endDate : null,
+    });
+    return invoices.concat(
+      Array.from({ length: 20 })
+        .fill(invoices[0])
+        .map((_, i) => ({ ...invoices[0], id: i }))
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      return [];
+    }
+    throw error;
+  }
+}
 
 export async function validateInvoice(prevState: any, formData: FormData) {
   try {
@@ -27,7 +56,15 @@ export async function validateInvoice(prevState: any, formData: FormData) {
     const transmitterRFCLine = xmlContent.match(/<cfdi:Emisor[^>]*\/>/);
     const receiverRFCLine = xmlContent.match(/<cfdi:Receptor[^>]*\/>/);
     const uuidLine = xmlContent.match(/UUID="([^"]*)"/);
-    if (!transmitterRFCLine || !receiverRFCLine || !uuidLine) {
+    const dateLine = xmlContent.match(/Fecha="([^"]*)"/);
+    const certificationLine = xmlContent.match(/FechaTimbrado="([^"]*)"/);
+    if (
+      !transmitterRFCLine ||
+      !receiverRFCLine ||
+      !uuidLine ||
+      !dateLine ||
+      !certificationLine
+    ) {
       throw new Error(invalidXmlMessage);
     }
 
@@ -38,9 +75,11 @@ export async function validateInvoice(prevState: any, formData: FormData) {
       throw new Error(invalidXmlMessage);
     }
 
-    const transmitter = transmitterRFC[0].replace('Rfc="', '').replace('"', '');
-    const receiver = receiverRFC[0].replace('Rfc="', '').replace('"', '');
-    const uuid = uuidLine[0].replace('UUID="', '').replace('"', '');
+    const transmitter = transmitterRFC[1];
+    const receiver = receiverRFC[1];
+    const uuid = uuidLine[1];
+    const date = dateLine[1];
+    const certificationTimestamp = certificationLine[1];
 
     if (!uuid) {
       throw new Error('No se encontró el UUID en el archivo XML.');
@@ -87,6 +126,8 @@ export async function validateInvoice(prevState: any, formData: FormData) {
       uuid,
       transmitterID: relatedData.transmitterID,
       receiverID: relatedData.receiverID,
+      date,
+      certificationTimestamp,
     });
 
     revalidatePath('/dashboard/invoices');
