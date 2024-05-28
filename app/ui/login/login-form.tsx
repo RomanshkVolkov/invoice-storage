@@ -77,17 +77,15 @@ function LoginButton() {
     <Button
       type="submit"
       color="primary"
-      className="m-auto w-full"
+      className="relative m-auto w-full"
       size="lg"
       variant="shadow"
       aria-disabled={pending}
       isDisabled={pending}
       isLoading={pending}
-      endContent={
-        <ArrowLongRightIcon width={28} className="absolute right-6" />
-      }
     >
       Acceder
+      <ArrowLongRightIcon className="absolute right-4 ml-auto w-6 " />
     </Button>
   );
 }

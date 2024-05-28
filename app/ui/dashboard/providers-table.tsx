@@ -8,13 +8,12 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Tooltip,
   Button,
 } from '@nextui-org/react';
 import Link from 'next/link';
-import { useCallback, useEffect, useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
-import { Toaster, toast } from 'sonner';
+import { useCallback } from 'react';
+import { useFormStatus } from 'react-dom';
+import { toast } from 'sonner';
 
 interface Provider {
   id: number;
@@ -28,20 +27,16 @@ interface Provider {
 export default function ProvidersTable({
   providers,
   columns,
+  currentProviderID,
 }: {
   providers: Provider[];
   columns: { key: string; label: string }[];
+  currentProviderID: number;
 }) {
   const renderCell = useCallback((provider: Provider, columnKey: string) => {
     const cellValue = provider[columnKey];
 
     switch (columnKey) {
-      case 'name':
-        return cellValue;
-      case 'role':
-        return cellValue;
-      case 'status':
-        return cellValue;
       case 'actions':
         return (
           <div className="relative flex items-center justify-center gap-2">
@@ -52,7 +47,10 @@ export default function ProvidersTable({
             >
               <PencilSquareIcon className="w-5" />
             </Button>
-            <DeleteAction id={provider.id} />
+            <DeleteAction
+              id={provider.id}
+              canDelete={provider.id !== currentProviderID}
+            />
           </div>
         );
       default:
@@ -86,24 +84,29 @@ export default function ProvidersTable({
   );
 }
 
-function DeleteAction({ id }: { id: number }) {
-  const [isLoading, setIsLoading] = useState(false);
-
+function DeleteAction({ id, canDelete }: { id: number; canDelete: boolean }) {
   const handleDelete = async () => {
-    setIsLoading(true);
     const state = await deleteProvider(id);
-    setIsLoading(false);
     if (state?.message) {
       toast.error(state.message);
     }
   };
 
   return (
+    <form action={handleDelete}>
+      <DeleteButton canDelete={canDelete} />
+    </form>
+  );
+}
+
+function DeleteButton({ canDelete }: { canDelete: boolean }) {
+  const { pending } = useFormStatus();
+  return (
     <Button
       color="danger"
       type="submit"
-      onClick={handleDelete}
-      isLoading={isLoading}
+      isLoading={pending}
+      isDisabled={!canDelete}
       isIconOnly
     >
       <TrashIcon className="w-5" />

@@ -18,15 +18,26 @@ const links = [
     href: '/dashboard/invoices',
     icon: DocumentDuplicateIcon,
   },
-  { name: 'Proveedores', href: '/dashboard/providers', icon: UserGroupIcon },
+  {
+    name: 'Proveedores',
+    href: '/dashboard/providers',
+    icon: UserGroupIcon,
+    isAdminRoute: true,
+  },
 ];
 
-export default function NavLinks() {
+export default function NavLinks({ userRole }: { userRole: string }) {
   const pathname = usePathname();
+  const filteredLinks = [...links].filter((link) => {
+    if (link.isAdminRoute) {
+      return userRole.toLowerCase() === 'admin';
+    }
+    return true;
+  });
 
   return (
     <>
-      {links.map((link) => {
+      {filteredLinks.map((link) => {
         const LinkIcon = link.icon;
         return (
           <Link

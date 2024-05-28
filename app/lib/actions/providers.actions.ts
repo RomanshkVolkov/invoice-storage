@@ -15,6 +15,7 @@ import {
 import { updateUser } from '../database/user';
 import { deleteProvider as delProvider } from '../database/providers';
 import { toast } from 'sonner';
+import { auth } from '@/auth';
 
 export async function createProvider(prevState: any, formData: FormData) {
   const validatedData = await validateData(formData);
@@ -122,7 +123,15 @@ export async function editProvider(
 }
 
 export async function deleteProvider(id: number) {
+  const session = await auth();
+  if (+(session?.user?.provider?.id || '') === id) {
+    return {
+      errors: {},
+      message: 'No puedes eliminar tu propia cuenta.',
+    };
+  }
   try {
+    throw new Error('Error');
     await delProvider(id);
   } catch (error) {
     console.error(error);

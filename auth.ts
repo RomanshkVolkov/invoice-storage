@@ -53,7 +53,7 @@ export const { auth, signIn, signOut } = NextAuth({
         const paswordsMatch = await bcrypt.compare(password, user.password);
 
         if (!paswordsMatch) {
-          console.log('Passwords do not match');
+          console.error('Passwords do not match');
           return null;
         }
 
@@ -64,6 +64,16 @@ export const { auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+        token.type = user.type;
+        token.provider = user.provider;
+        token.picture = user.type.name;
+      }
+      return token;
+    },
     async session({ session, token }) {
       session.user = {
         ...session.user,
@@ -75,18 +85,9 @@ export const { auth, signIn, signOut } = NextAuth({
           name: string;
           rfc: string;
         } | null,
+        image: 'pruebinha',
       };
-
       return session;
-    },
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.email = user.email;
-        token.type = user.type;
-        token.provider = user.provider;
-      }
-      return token;
     },
   },
 });
