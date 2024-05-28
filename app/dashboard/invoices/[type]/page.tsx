@@ -13,15 +13,14 @@ export default async function page({
   searchParams: { path: string };
 }) {
   const file = await getFile(path);
-  console.log(file);
   return (
     <main>
       <div className="mb-6 flex flex-col">
-        <h1 className="mb-4 text-4xl">Factura</h1>
+        <h1 className="mb-4 text-4xl">Factura {type}</h1>
         <CustomBreadcrumbs
           items={[
             { label: 'Facturas', href: '/dashboard/invoices' },
-            { label: 'Factura', href: '#' },
+            { label: `Factura ${type}`, href: '#' },
           ]}
         />
       </div>

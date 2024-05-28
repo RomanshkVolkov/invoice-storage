@@ -17,14 +17,16 @@ model companies {
 }
 
 model invoices {
-  id         String    @id(map: "invoices_pk") @map("uuid") @db.NVarChar(36)
-  providerID Int       @map("provider_id")
-  companyID  Int       @map("company_id")
-  xml        String    @map("xml_path") @db.NVarChar(200)
-  pdf        String    @map("pdf_path") @db.NVarChar(200)
-  isDeleted  Boolean   @default(false)
-  company    companies @relation(fields: [companyID], references: [id], onUpdate: NoAction, map: "invoices_companies_company_id_fk")
-  provider   providers @relation(fields: [providerID], references: [id], onUpdate: NoAction, map: "invoices_providers_provider_id_fk")
+  id                     String    @id(map: "invoices_pk") @map("uuid") @db.NVarChar(36)
+  providerID             Int       @map("provider_id")
+  companyID              Int       @map("company_id")
+  xml                    String    @map("xml_path") @db.NVarChar(200)
+  pdf                    String    @map("pdf_path") @db.NVarChar(200)
+  isDeleted              Boolean   @default(false)
+  date                   DateTime  @map("invoice_date")
+  certificationTimestamp DateTime  @map("certification_timestamp")
+  company                companies @relation(fields: [companyID], references: [id], onUpdate: NoAction, map: "invoices_companies_company_id_fk")
+  provider               providers @relation(fields: [providerID], references: [id], onUpdate: NoAction, map: "invoices_providers_provider_id_fk")
 }
 
 model providers {

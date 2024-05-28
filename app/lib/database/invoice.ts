@@ -1,6 +1,12 @@
 import prisma from './prisma';
 
-export async function getInvoices() {
+export async function getInvoices({
+  startDate,
+  endDate,
+}: {
+  startDate: string | null;
+  endDate: string | null;
+}) {
   const invoices = await prisma.invoices.findMany({
     select: {
       id: true,
@@ -19,6 +25,12 @@ export async function getInvoices() {
     },
     where: {
       isDeleted: false,
+      certificationTimestamp: {
+        gte: new Date(
+          startDate || new Date(new Date().setDate(new Date().getDate() - 7))
+        ),
+        lte: new Date(endDate || new Date()),
+      },
     },
   });
 
@@ -78,10 +90,14 @@ export async function createInvoice({
   transmitterID,
   receiverID,
   uuid,
+  date,
+  certificationTimestamp,
 }: {
   transmitterID: number;
   receiverID: number;
   uuid: string;
+  date: string;
+  certificationTimestamp: string;
 }) {
   return await prisma.$transaction((ctx) => {
     return ctx.invoices.create({
@@ -91,6 +107,8 @@ export async function createInvoice({
         providerID: receiverID,
         pdf: `/invoices/pdf/${uuid}.pdf`,
         xml: `/invoices/xml/${uuid}.xml`,
+        date: new Date(date),
+        certificationTimestamp: new Date(certificationTimestamp),
       },
     });
   });

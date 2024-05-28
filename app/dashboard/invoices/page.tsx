@@ -1,11 +1,18 @@
-import { getInvoices } from '@/app/lib/database/invoice';
+import { getInvoicesByDateRange } from '@/app/lib/actions/invoice.actions';
+import PaginationCustom from '@/app/ui/Pagination';
+import DateFilter from '@/app/ui/dashboard/date-filter';
 import InvoicesTable from '@/app/ui/dashboard/invoices-table';
+import SearchFilter from '@/app/ui/dashboard/search-filter';
 import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
 import { Button } from '@nextui-org/react';
 import Link from 'next/link';
 
-export default async function page() {
-  const invoices = await getInvoices();
+export default async function page({
+  searchParams: { startDate, endDate },
+}: {
+  searchParams: { startDate: string; endDate: string };
+}) {
+  const invoices = await getInvoicesByDateRange({ startDate, endDate });
   const columns = [
     { key: 'id', label: 'UUID' },
     { key: 'company', label: 'Empresa' },
@@ -31,7 +38,12 @@ export default async function page() {
           <CloudArrowUpIcon className="w-6" />
         </Button>
       </div>
+      <div className="mb-2 flex justify-between rounded-large bg-content1 p-2 shadow-sm">
+        <SearchFilter data={{ key: 'invoice-search', label: 'Buscar' }} />
+        <DateFilter />
+      </div>
       <InvoicesTable invoices={invoices} columns={columns} />
+      <PaginationCustom limit={10} items={invoices.length} />
     </main>
   );
 }

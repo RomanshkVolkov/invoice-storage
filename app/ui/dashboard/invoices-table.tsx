@@ -13,6 +13,7 @@ import {
 import Link from 'next/link';
 import { useCallback } from 'react';
 import DeleteButton from './delete-button';
+import { useSearchParams } from 'next/navigation';
 
 interface Invoice {
   id: string;
@@ -30,6 +31,9 @@ export default function InvoicesTable({
   invoices: Invoice[];
   columns: { key: string; label: string }[];
 }) {
+  const searchParams = useSearchParams();
+  const page = searchParams.get('page');
+  const search = searchParams.get('invoice-search');
   const renderCell = useCallback((invoice: Invoice, columnKey: string) => {
     const cellValue = invoice[columnKey];
 
@@ -77,9 +81,18 @@ export default function InvoicesTable({
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody items={invoices}>
+      <TableBody
+        items={(
+          invoices?.filter((item) => {
+            if (!search) return true;
+            const itemToString = Object.values(item).join(' ').toLowerCase();
+            const searchValue = search.toLowerCase().split(' ');
+            return searchValue.every((value) => itemToString.includes(value));
+          }) || []
+        ).slice((Number(page || 1) - 1) * 10, Number(page || 1) * 10)}
+      >
         {(item) => (
-          <TableRow key={item.id}>
+          <TableRow key={`${item.id}`}>
             {(columnKey) => (
               <TableCell>{renderCell(item, columnKey.toString())}</TableCell>
             )}
