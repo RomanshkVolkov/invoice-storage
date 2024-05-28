@@ -9,7 +9,6 @@ import {
 import { Button, Input, Select, SelectItem } from '@nextui-org/react';
 import Link from 'next/link';
 import { useFormState, useFormStatus } from 'react-dom';
-import { FormErrors } from '../form-errors';
 import { hasItems } from '@/app/lib/utils';
 
 interface UserType {
@@ -93,26 +92,15 @@ export default function CreateProviderForm({
           </legend>
         </div>
         <div className="mb-6 flex flex-wrap gap-4">
-          <div className="w-full">
-            <Input
-              id="email"
-              name="email"
-              label="Correo electrónico"
-              type="text"
-              isInvalid={hasItems(state.errors.email)}
-              errorMessage={state.errors.email?.join(', ')}
-            />
-          </div>
-
           <div className="flex w-full gap-4">
             <div className="w-1/2">
               <Input
-                id="password"
-                name="password"
-                label="Contraseña"
-                type="password"
-                isInvalid={hasItems(state.errors.password)}
-                errorMessage={state.errors.password?.join(', ')}
+                id="email"
+                name="email"
+                label="Correo electrónico"
+                type="text"
+                isInvalid={hasItems(state.errors.email)}
+                errorMessage={state.errors.email?.join(', ')}
               />
             </div>
 
@@ -130,6 +118,29 @@ export default function CreateProviderForm({
                   </SelectItem>
                 ))}
               </Select>
+            </div>
+          </div>
+
+          <div className="flex w-full gap-4">
+            <div className="w-1/2">
+              <Input
+                id="password"
+                name="password"
+                label="Contraseña"
+                type="password"
+                isInvalid={hasItems(state.errors.password)}
+                errorMessage={state.errors.password?.join(', ')}
+              />
+            </div>
+
+            <div className="w-1/2">
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                label="Confirmar contraseña"
+                type="password"
+                isInvalid={hasItems(state.errors.password)}
+              />
             </div>
           </div>
         </div>

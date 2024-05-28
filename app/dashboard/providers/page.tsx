@@ -4,8 +4,6 @@ import ProvidersTable from '@/app/ui/dashboard/providers-table';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { Button } from '@nextui-org/react';
 import { getProviders } from '@/app/lib/database/providers';
-import { auth } from '@/auth';
-import { redirect } from 'next/navigation';
 
 const columns = [
   { key: 'rfc', label: 'RFC' },
@@ -17,10 +15,7 @@ const columns = [
 
 export default async function Providers() {
   const providers = await getProviders();
-  const session = await auth();
-  if (!session?.user?.provider) {
-    redirect('/login');
-  }
+
   return (
     <main>
       <div className="mb-6 flex items-center justify-between">
@@ -38,11 +33,7 @@ export default async function Providers() {
         </Button>
       </div>
 
-      <ProvidersTable
-        providers={providers}
-        columns={columns}
-        currentProviderID={session.user.provider.id}
-      />
+      <ProvidersTable providers={providers} columns={columns} />
     </main>
   );
 }

@@ -10,11 +10,11 @@ import {
 import {
   checkExistingEmailAndRFC,
   validateData,
+  validatePasswords,
   validateUpdateData,
 } from '../services/providers.service';
 import { updateUser } from '../database/user';
 import { deleteProvider as delProvider } from '../database/providers';
-import { toast } from 'sonner';
 import { auth } from '@/auth';
 
 export async function createProvider(prevState: any, formData: FormData) {
@@ -43,8 +43,10 @@ export async function createProvider(prevState: any, formData: FormData) {
     { email: user.email },
     { rfc: provider.rfc }
   );
-
   if (existingData) return existingData;
+
+  const passwordsNotMatch = validatePasswords(formData);
+  if (passwordsNotMatch) return passwordsNotMatch;
 
   try {
     await newProvider(provider, user);
@@ -131,7 +133,6 @@ export async function deleteProvider(id: number) {
     };
   }
   try {
-    throw new Error('Error');
     await delProvider(id);
   } catch (error) {
     console.error(error);
