@@ -1,8 +1,7 @@
 import { getProviderByID } from '@/app/lib/database/providers';
 import { getUserTypes } from '@/app/lib/database/user';
 import Breadcrumbs from '@/app/ui/breadcrumbs';
-import CreateProviderForm from '@/app/ui/dashboard/create-provider-form';
-import EditProviderForm from '@/app/ui/dashboard/edit-provider-form';
+import EditProviderForm from '@/app/ui/dashboard/providers/edit-form';
 import { notFound } from 'next/navigation';
 
 export default async function Providers({

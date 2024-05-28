@@ -14,4 +14,5 @@ export interface Provider {
   name: string;
   zipcode: number | null;
   user: User;
+  [key: string]: any;
 }

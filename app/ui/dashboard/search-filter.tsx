@@ -14,11 +14,11 @@ export default function SearchFilter({ data }: Props) {
   const { replace } = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.isPropagationStopped();
-    const value = e.target.value;
+
+  const handleOnChange = (value: string) => {
     const params = new URLSearchParams(searchParams);
-    params.set(key, value);
+    if (value) params.set(key, value);
+    else params.delete(key);
     replace(`${pathname}?${params.toString()}`);
   };
 
@@ -30,14 +30,12 @@ export default function SearchFilter({ data }: Props) {
   return (
     <Input
       className="max-w-[350px]"
+      size="sm"
       label={label}
-      variant="underlined"
-      onChange={handleOnChange}
-      endContent={
-        <Button variant="light" isIconOnly onClick={handleClearInput}>
-          <XMarkIcon className="w-5" />
-        </Button>
-      }
+      defaultValue={searchParams.get(key)?.toString()}
+      onChange={(e) => handleOnChange(e.target.value)}
+      onClear={handleClearInput}
+      isClearable
     />
   );
 }

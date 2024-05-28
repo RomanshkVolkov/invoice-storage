@@ -1,6 +1,6 @@
 import { getUserTypes } from '@/app/lib/database/user';
 import Breadcrumbs from '@/app/ui/breadcrumbs';
-import CreateProviderForm from '@/app/ui/dashboard/create-provider-form';
+import CreateProviderForm from '@/app/ui/dashboard/providers/create-form';
 
 export default async function Providers() {
   const userTypes = await getUserTypes();

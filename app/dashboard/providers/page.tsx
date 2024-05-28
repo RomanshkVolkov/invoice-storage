@@ -1,23 +1,11 @@
 import Link from 'next/link';
 
-import ProvidersTable from '@/app/ui/dashboard/providers-table';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { Button } from '@nextui-org/react';
-import { getProviders } from '@/app/lib/database/providers';
-import { auth } from '@/auth';
-
-const columns = [
-  { key: 'rfc', label: 'RFC' },
-  { key: 'name', label: 'NOMBRE' },
-  { key: 'zipcode', label: 'CÓDIGO POSTAL' },
-  { key: 'email', label: 'EMAIL' },
-  { key: 'actions', label: 'ACCIONES' },
-];
+import SearchFilter from '@/app/ui/dashboard/search-filter';
+import TableWrapper from '@/app/ui/dashboard/providers/table-wrapper';
 
 export default async function Providers() {
-  const session = await auth();
-  const providers = await getProviders(+(session?.user?.id || 0));
-
   return (
     <main>
       <div className="mb-6 flex items-center justify-between">
@@ -34,8 +22,10 @@ export default async function Providers() {
           <PlusIcon className="w-6" />
         </Button>
       </div>
-
-      <ProvidersTable providers={providers} columns={columns} />
+      <div className="mb-4">
+        <SearchFilter data={{ key: 'query', label: 'Buscar' }} />
+      </div>
+      <TableWrapper />
     </main>
   );
 }
