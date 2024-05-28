@@ -1,10 +1,16 @@
 import Link from 'next/link';
-import { Button } from '@nextui-org/react';
-import { PowerIcon } from '@heroicons/react/24/outline';
-import { signOut } from '@/auth';
+import { auth, signOut } from '@/auth';
 import NavLinks from './nav-links';
+import LogoutButton from '../logout-button';
+import { redirect } from 'next/navigation';
 
-export default function SideNav() {
+export default async function SideNav() {
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect('/login');
+  }
+
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2">
       <Link
@@ -16,7 +22,7 @@ export default function SideNav() {
         </div>
       </Link>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
-        <NavLinks />
+        <NavLinks userRole={session.user.type.name} />
         <div className="hidden h-auto w-full grow rounded-lg bg-gray-50 md:block" />
         <form
           action={async () => {
@@ -26,17 +32,7 @@ export default function SideNav() {
             });
           }}
         >
-          <Button
-            className="relative flex w-full grow items-center justify-between gap-2 bg-primary-500 text-sm font-medium text-white transition-all md:flex-none md:justify-start"
-            size="lg"
-            variant="shadow"
-            type="submit"
-          >
-            <div className="hidden w-full text-center md:block">
-              Cerrar sesión
-            </div>
-            <PowerIcon className="absolute right-4 ml-auto w-6" />
-          </Button>
+          <LogoutButton />
         </form>
       </div>
     </div>

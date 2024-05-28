@@ -5,14 +5,24 @@ export const authConfig = {
     signIn: '/login',
   },
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
+    async authorized({ auth, request }) {
+      const { nextUrl } = request;
       const isLoggedIn = !!auth?.user;
+
+      const isOnRoot = nextUrl.pathname === '/';
+      const isAdmin = auth?.user?.image === 'Admin';
       const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
+      const isOnProviders = nextUrl.pathname.startsWith('/dashboard/providers');
+
       if (isOnDashboard) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
+        if (!isLoggedIn) return false;
+        if (isOnProviders && !isAdmin)
+          return Response.redirect(new URL('/dashboard', nextUrl));
+        return true;
       } else if (isLoggedIn) {
         return Response.redirect(new URL('/dashboard', nextUrl));
+      } else if (isOnRoot) {
+        return Response.redirect(new URL('/login', nextUrl));
       }
       return true;
     },

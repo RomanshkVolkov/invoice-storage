@@ -10,11 +10,12 @@ import {
 import {
   checkExistingEmailAndRFC,
   validateData,
+  validatePasswords,
   validateUpdateData,
 } from '../services/providers.service';
 import { updateUser } from '../database/user';
 import { deleteProvider as delProvider } from '../database/providers';
-import { toast } from 'sonner';
+import { auth } from '@/auth';
 
 export async function createProvider(prevState: any, formData: FormData) {
   const validatedData = await validateData(formData);
@@ -42,8 +43,10 @@ export async function createProvider(prevState: any, formData: FormData) {
     { email: user.email },
     { rfc: provider.rfc }
   );
-
   if (existingData) return existingData;
+
+  const passwordsNotMatch = validatePasswords(formData);
+  if (passwordsNotMatch) return passwordsNotMatch;
 
   try {
     await newProvider(provider, user);
@@ -122,6 +125,13 @@ export async function editProvider(
 }
 
 export async function deleteProvider(id: number) {
+  const session = await auth();
+  if (+(session?.user?.provider?.id || '') === id) {
+    return {
+      errors: {},
+      message: 'No puedes eliminar tu propia cuenta.',
+    };
+  }
   try {
     await delProvider(id);
   } catch (error) {

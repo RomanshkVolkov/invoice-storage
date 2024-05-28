@@ -15,6 +15,7 @@ const columns = [
 
 export default async function Providers() {
   const providers = await getProviders();
+
   return (
     <main>
       <div className="mb-6 flex items-center justify-between">

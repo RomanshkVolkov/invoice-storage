@@ -8,13 +8,13 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Tooltip,
   Button,
+  Tooltip,
 } from '@nextui-org/react';
 import Link from 'next/link';
-import { useCallback, useEffect, useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
-import { Toaster, toast } from 'sonner';
+import { useCallback } from 'react';
+import { useFormStatus } from 'react-dom';
+import { toast } from 'sonner';
 
 interface Provider {
   id: number;
@@ -22,6 +22,9 @@ interface Provider {
   name: string;
   zipcode: number | null;
   email: string;
+  user: {
+    id: number;
+  };
   [key: string]: any;
 }
 
@@ -36,22 +39,18 @@ export default function ProvidersTable({
     const cellValue = provider[columnKey];
 
     switch (columnKey) {
-      case 'name':
-        return cellValue;
-      case 'role':
-        return cellValue;
-      case 'status':
-        return cellValue;
       case 'actions':
         return (
           <div className="relative flex items-center justify-center gap-2">
-            <Button
-              href={`/dashboard/providers/${provider.id}/edit`}
-              as={Link}
-              isIconOnly
-            >
-              <PencilSquareIcon className="w-5" />
-            </Button>
+            <Tooltip content="Editar">
+              <Button
+                href={`/dashboard/providers/${provider.id}/edit`}
+                as={Link}
+                isIconOnly
+              >
+                <PencilSquareIcon className="w-5" />
+              </Button>
+            </Tooltip>
             <DeleteAction id={provider.id} />
           </div>
         );
@@ -87,26 +86,27 @@ export default function ProvidersTable({
 }
 
 function DeleteAction({ id }: { id: number }) {
-  const [isLoading, setIsLoading] = useState(false);
-
   const handleDelete = async () => {
-    setIsLoading(true);
     const state = await deleteProvider(id);
-    setIsLoading(false);
     if (state?.message) {
       toast.error(state.message);
     }
   };
 
   return (
-    <Button
-      color="danger"
-      type="submit"
-      onClick={handleDelete}
-      isLoading={isLoading}
-      isIconOnly
-    >
-      <TrashIcon className="w-5" />
-    </Button>
+    <form action={handleDelete}>
+      <DeleteButton />
+    </form>
+  );
+}
+
+function DeleteButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Tooltip content="Eliminar">
+      <Button color="danger" type="submit" isLoading={pending} isIconOnly>
+        <TrashIcon className="w-5" />
+      </Button>
+    </Tooltip>
   );
 }

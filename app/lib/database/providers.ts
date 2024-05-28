@@ -55,10 +55,9 @@ export async function getProviders() {
     },
   });
 
-  // Removes the user object from the provider object and adds the email property
-  return providers.map(({ user, ...rest }) => ({
-    ...rest,
-    email: user.email,
+  return providers.map((provider) => ({
+    ...provider,
+    email: provider.user.email,
   }));
 }
 

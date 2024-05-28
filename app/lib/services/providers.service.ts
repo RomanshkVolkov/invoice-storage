@@ -9,6 +9,7 @@ const FormSchema = z.object({
   password: z.string().min(6, {
     message: 'La contraseña debe tener al menos 6 caracteres.',
   }),
+  confirmPassword: z.string(),
   type: z.coerce.number({
     message: 'Por favor, selecciona un tipo de usuario.',
   }),
@@ -33,6 +34,7 @@ const FormSchema = z.object({
 
 const UpdateProvider = FormSchema.omit({
   password: true,
+  confirmPassword: true,
 });
 
 export async function validateData(data: FormData) {
@@ -41,6 +43,23 @@ export async function validateData(data: FormData) {
 
 export async function validateUpdateData(data: FormData) {
   return UpdateProvider.safeParse(Object.fromEntries(data));
+}
+
+export function validatePasswords(data: FormData) {
+  const { password, confirmPassword } = Object.fromEntries(data);
+  if (password !== confirmPassword) {
+    return {
+      errors: {
+        password: ['Las contraseñas no coinciden.'],
+        name: undefined,
+        rfc: undefined,
+        zipcode: undefined,
+        type: undefined,
+        email: undefined,
+      },
+      message: 'Revisa los campos marcados en rojo.',
+    };
+  }
 }
 
 export async function checkExistingEmailAndRFC(
