@@ -9,6 +9,7 @@ export const authConfig = {
       const { nextUrl } = request;
       const isLoggedIn = !!auth?.user;
 
+      const isOnRoot = nextUrl.pathname === '/';
       const isAdmin = auth?.user?.image === 'Admin';
       const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
       const isOnProviders = nextUrl.pathname.startsWith('/dashboard/providers');
@@ -20,6 +21,8 @@ export const authConfig = {
         return true;
       } else if (isLoggedIn) {
         return Response.redirect(new URL('/dashboard', nextUrl));
+      } else if (isOnRoot) {
+        return Response.redirect(new URL('/login', nextUrl));
       }
       return true;
     },
