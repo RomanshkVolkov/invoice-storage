@@ -14,7 +14,7 @@ import {
 } from '@nextui-org/react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useCallback, useMemo } from 'react';
+import { Key, useCallback, useMemo } from 'react';
 import { useFormStatus } from 'react-dom';
 import { toast } from 'sonner';
 
@@ -28,6 +28,8 @@ const columns = [
 
 type ProviderItem = Omit<Provider, 'user'> & {
   user: Omit<User, 'password' | 'type'>;
+  email: string;
+  [key: string]: any;
 };
 
 export default function ProvidersTable({
@@ -49,9 +51,7 @@ export default function ProvidersTable({
   }, [providers, searchParams]);
 
   const renderCell = useCallback(
-    (provider: ProviderItem, columnKey: string) => {
-      const cellValue = provider[columnKey];
-
+    (provider: ProviderItem, columnKey: keyof ProviderItem) => {
       switch (columnKey) {
         case 'actions':
           return (
@@ -69,7 +69,7 @@ export default function ProvidersTable({
             </div>
           );
         default:
-          return cellValue;
+          return provider[columnKey];
       }
     },
     []
