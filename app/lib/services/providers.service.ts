@@ -64,20 +64,20 @@ export function validatePasswords(data: FormData) {
 
 export async function checkExistingEmailAndRFC(
   provider: {
-    email: string;
+    rfc: string;
     id?: number;
   },
   user: {
-    rfc: string;
+    email: string;
     id?: number;
   }
 ) {
   try {
-    const isEmailRegistered = await checkExistingUser(
-      provider.email,
+    const isEmailRegistered = await checkExistingUser(user.email, user.id);
+    const isProviderRegistered = await checkExistingProvider(
+      provider.rfc,
       provider.id
     );
-    const isProviderRegistered = await checkExistingProvider(user.rfc, user.id);
     if (isEmailRegistered || isProviderRegistered) {
       return {
         errors: {

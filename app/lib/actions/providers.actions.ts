@@ -39,14 +39,18 @@ export async function createProvider(prevState: any, formData: FormData) {
     zipcode: +validatedData.data.zipcode,
   };
 
-  const existingData = await checkExistingEmailAndRFC(
-    { email: user.email },
-    { rfc: provider.rfc }
-  );
-  if (existingData) return existingData;
-
   const passwordsNotMatch = validatePasswords(formData);
   if (passwordsNotMatch) return passwordsNotMatch;
+
+  const existingData = await checkExistingEmailAndRFC(
+    {
+      rfc: provider.rfc,
+    },
+    {
+      email: user.email,
+    }
+  );
+  if (existingData) return existingData;
 
   try {
     await newProvider(provider, user);
@@ -92,8 +96,8 @@ export async function editProvider(
   };
 
   const existingData = await checkExistingEmailAndRFC(
-    { email: user.email, id: userID },
-    { rfc: provider.rfc, id: providerID }
+    { rfc: provider.rfc, id: providerID },
+    { email: user.email, id: userID }
   );
 
   if (existingData) return existingData;
