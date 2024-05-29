@@ -3,6 +3,7 @@ import './globals.css';
 import { Providers } from './providers';
 import { inter, quicksand } from './fonts';
 import { Toaster } from 'sonner';
+import ThemeSwitcher from './ui/theme-switcher';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -15,10 +16,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} ${quicksand.variable} antialiased`}>
+    <html lang="en" className="dark">
+      <body
+        className={`${inter.className} ${quicksand.variable} bg-background  antialiased`}
+      >
         <Toaster />
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <div className="absolute bottom-2 right-2 md:bottom-6 md:right-6">
+            <ThemeSwitcher />
+          </div>
+        </Providers>
       </body>
     </html>
   );

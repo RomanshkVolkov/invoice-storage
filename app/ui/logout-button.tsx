@@ -9,7 +9,7 @@ export default function LogoutButton() {
 
   return (
     <Button
-      className="relative flex w-full grow items-center gap-2 bg-primary-500 text-sm font-medium text-white transition-all md:flex-none md:justify-center"
+      className="relative flex w-full grow items-center gap-2 bg-primary-500 text-sm font-medium text-white transition-all dark:bg-primary-400 md:flex-none md:justify-center"
       size="lg"
       variant="shadow"
       type="submit"

@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+/*body {
   background-color: #f8fafc;
-}
+}*/
 
 h1,
 h2,

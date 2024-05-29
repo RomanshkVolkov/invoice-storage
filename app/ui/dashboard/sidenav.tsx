@@ -14,7 +14,7 @@ export default async function SideNav() {
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2">
       <Link
-        className="mb-2 flex h-20 items-center justify-center rounded-lg bg-primary-500 p-4 md:h-32"
+        className="mb-2 flex h-20 items-center justify-center rounded-lg bg-primary-500 p-4 dark:bg-primary-400 md:h-32"
         href="/"
       >
         <div className="w-32 text-white md:w-40">
@@ -23,7 +23,7 @@ export default async function SideNav() {
       </Link>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         <NavLinks userRole={session.user.type.name} />
-        <div className="hidden h-auto w-full grow items-end justify-center rounded-lg bg-gray-50 p-2 md:flex">
+        <div className="hidden h-auto w-full grow items-center justify-end rounded-lg bg-background p-2 md:flex md:flex-col">
           {session.user.email}
         </div>
         <form

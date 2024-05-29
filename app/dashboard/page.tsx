@@ -10,26 +10,26 @@ export default async function Home() {
     <main>
       <div className="mx-auto max-w-7xl">
         <div className="mb-6 rounded-lg">
-          <h1 className="mb-4 text-4xl font-bold text-gray-900">
+          <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-gray-100">
             Bienvenido al Dashboard
           </h1>
-          <p className="mb-4 text-gray-600">
+          <p className="mb-4 text-gray-600 dark:text-gray-300">
             {`Este es tu centro de control principal. Desde aquí puedes gestionar
             tus facturas ${isAdmin ? 'y proveedores ' : ''} de manera eficiente. Utiliza el menú
             lateral para navegar a las diferentes secciones.`}
           </p>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             Si necesitas ayuda o soporte, no dudes en ponerte en contacto con
             nuestro equipo.
           </p>
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <div className="flex flex-col justify-between rounded-xl bg-white p-6 shadow-lg">
+          <div className="flex flex-col justify-between rounded-xl bg-white p-6 shadow-lg dark:bg-black">
             <div>
-              <h2 className="mb-4 text-2xl font-bold text-gray-800">
+              <h2 className="mb-4 text-2xl font-bold text-gray-800 dark:text-gray-200">
                 Facturas
               </h2>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 Sube y valida tus archivos XML de facturas para obtener
                 información específica rápidamente.
               </p>
@@ -45,12 +45,12 @@ export default async function Home() {
           </div>
 
           {isAdmin && (
-            <div className="flex flex-col justify-between rounded-xl bg-white p-6 shadow-lg">
+            <div className="flex flex-col justify-between rounded-xl bg-white p-6 shadow-lg dark:bg-black">
               <div>
-                <h2 className="mb-4 text-2xl font-bold text-gray-800">
+                <h2 className="mb-4 text-2xl font-bold text-gray-800 dark:text-gray-200">
                   Proveedores
                 </h2>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-300">
                   Gestiona tus proveedores y asigna roles de administrador según
                   sea necesario.
                 </p>

@@ -5,9 +5,8 @@ import Form from './login-form';
 export default function LoginCard() {
   return (
     <div className="w-full max-w-[400px]">
-      <div className="w-full rounded-xl border bg-white p-8 shadow-lg">
+      <div className="w-full rounded-xl border bg-white p-8 shadow-xl dark:border-none dark:bg-black dark:shadow-gray-950">
         <p className="mb-8 text-center text-gray-500">¡Bienvenido!</p>
-
         <div>
           <div className="mb-6 flex items-center">
             <LockClosedIcon width={30} className="mr-2 text-primary-500" />
@@ -16,7 +15,7 @@ export default function LoginCard() {
           <Form />
         </div>
         <Image
-          src="/receipt.jpg"
+          src="/receipt.png"
           sizes="100vw"
           width={100}
           height={100}
