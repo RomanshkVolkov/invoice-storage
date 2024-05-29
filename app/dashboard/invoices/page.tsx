@@ -38,7 +38,7 @@ export default async function page({
           <CloudArrowUpIcon className="w-6" />
         </Button>
       </div>
-      <div className="mb-4 flex justify-between rounded-large shadow-sm">
+      <div className="mb-4 flex justify-between rounded-large">
         <SearchFilter data={{ key: 'invoice-search', label: 'Buscar' }} />
         <DateFilter />
       </div>
