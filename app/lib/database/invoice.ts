@@ -66,7 +66,7 @@ export async function validateInvoiceData({
     throw new Error('No se pudo obtener el RFC del proveedor.');
   }
 
-  if (session.user?.provider?.rfc !== transmitter) {
+  if (session.user?.provider?.rfc !== receiver) {
     throw new Error('No puedes cargar facturas de otro proveedor.');
   }
 
