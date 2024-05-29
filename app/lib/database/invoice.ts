@@ -91,6 +91,7 @@ export async function validateInvoiceData({
   const isExistInvoice = await prisma.invoices.findFirst({
     where: {
       id: uuid,
+      isDeleted: false,
     },
   });
 
@@ -119,18 +120,36 @@ export async function createInvoice({
   date: string;
   certificationTimestamp: string;
 }) {
-  return await prisma.$transaction((ctx) => {
-    return ctx.invoices.create({
-      data: {
-        id: uuid,
-        companyID: transmitterID,
-        providerID: receiverID,
-        pdf: `/invoices/pdf/${uuid}.pdf`,
-        xml: `/invoices/xml/${uuid}.xml`,
-        date: new Date(date),
-        certificationTimestamp: new Date(certificationTimestamp),
-      },
-    });
+  return await prisma.$transaction(async (ctx) => {
+    try {
+      const result = await ctx.invoices.update({
+        data: {
+          isDeleted: false,
+          companyID: transmitterID,
+          providerID: receiverID,
+          date: new Date(date),
+          certificationTimestamp: new Date(certificationTimestamp),
+        },
+        where: {
+          id: uuid,
+          isDeleted: true,
+        },
+      });
+      if (result.id) return result;
+    } catch (e) {
+      console.error(e);
+      return ctx.invoices.create({
+        data: {
+          id: uuid,
+          companyID: transmitterID,
+          providerID: receiverID,
+          pdf: `/invoices/pdf/${uuid}.pdf`,
+          xml: `/invoices/xml/${uuid}.xml`,
+          date: new Date(date),
+          certificationTimestamp: new Date(certificationTimestamp),
+        },
+      });
+    }
   });
 }
 
