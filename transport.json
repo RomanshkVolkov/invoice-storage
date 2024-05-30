@@ -1,0 +1,10 @@
+{
+  "service": "gmail",
+  "auth": {
+    "type": "OAuth2",
+    "user": "diegogutcat28@gmail.com",
+    "clientId": "588536859750-62ehkc9vam0rqh2qm5tclrtnfigk1fp5.apps.googleusercontent.com",
+    "clientSecret": "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",
+    "refreshToken": "1//04oSwX6szf1rGCgYIARAAGAQSNwF-L9IrTUHbseYD3v2LayUCGdLYFDmJGq2F90ZhxI0TASsBqXaHgp0TY4Jo8iWrB35Usiy905E"
+  }
+}
