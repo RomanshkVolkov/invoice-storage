@@ -1,25 +1,8 @@
 'use server';
 
 import { AuthError } from 'next-auth';
-import { google } from 'googleapis';
 import nodemailer from 'nodemailer';
 import { signIn } from '@/auth';
-
-const CLIENT_ID =
-  '588536859750-62ehkc9vam0rqh2qm5tclrtnfigk1fp5.apps.googleusercontent.com';
-const CLIENT_SECRET = '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';
-const REDIRECT_URI =
-  '588536859750-62ehkc9vam0rqh2qm5tclrtnfigk1fp5.apps.googleusercontent.com';
-const REFRESH_TOKEN =
-  '1//04oSwX6szf1rGCgYIARAAGAQSNwF-L9IrTUHbseYD3v2LayUCGdLYFDmJGq2F90ZhxI0TASsBqXaHgp0TY4Jo8iWrB35Usiy905E';
-
-const oAuth2Client = new google.auth.OAuth2(
-  CLIENT_ID,
-  CLIENT_SECRET,
-  REDIRECT_URI
-);
-
-oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 export async function authenticate(
   prevState: string | undefined,
@@ -31,7 +14,7 @@ export async function authenticate(
       password: formData.get('password'),
       redirectTo: '/dashboard',
     });
-    await sendEmail();
+    //await sendEmail();
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -47,25 +30,16 @@ export async function authenticate(
 
 export async function sendEmail() {
   try {
-    const accessToken = await oAuth2Client.getAccessToken();
-    if (accessToken.token === null) {
-      throw new Error('Failed to retrieve access token');
-    }
-
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: 'Outlook365',
       auth: {
-        type: 'OAuth2',
-        user: 'diegogutcat28@gmail.com',
-        clientId: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        refreshToken: REFRESH_TOKEN,
-        accessToken: accessToken.token,
+        user: 'web@oceanleader.mx',
+        pass: 'Pap29912',
       },
     });
 
     const mailOptions = {
-      from: 'diego.catzin@outlook.com',
+      from: 'web@oceanleader.mx',
       to: 'diegogutcat28@gmail.com',
       subject: 'Test Email with OAuth2',
       text: 'Hello from Gmail using OAuth2!',
