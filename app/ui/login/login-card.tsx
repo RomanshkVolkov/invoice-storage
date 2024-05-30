@@ -5,7 +5,7 @@ import Form from './login-form';
 export default function LoginCard() {
   return (
     <div className="w-full max-w-[400px]">
-      <div className="w-full rounded-xl border bg-white p-8 shadow-xl dark:border-none dark:bg-black dark:shadow-gray-950">
+      <div className="w-full rounded-xl border bg-white p-8 shadow-xl dark:border-none dark:bg-black dark:shadow-black">
         <p className="mb-8 text-center text-gray-500">¡Bienvenido!</p>
         <div>
           <div className="mb-6 flex items-center">

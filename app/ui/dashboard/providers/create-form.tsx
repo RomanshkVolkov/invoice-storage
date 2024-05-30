@@ -45,7 +45,7 @@ export default function CreateProviderForm({
   return (
     <form
       aria-describedby="form-error"
-      className="rounded-xl border bg-white px-12 py-8 shadow-xl dark:border-none dark:bg-black dark:shadow-gray-950"
+      className="rounded-xl border bg-white px-12 py-8 shadow-xl dark:border-none dark:bg-black dark:shadow-black"
       action={dispatch}
       noValidate
     >
