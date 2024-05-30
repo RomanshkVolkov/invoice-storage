@@ -23,7 +23,11 @@ export async function createProvider(
   });
 }
 
-export async function updateProvider(provider: Omit<Provider, 'user'>) {
+export async function updateProvider(
+  provider: Omit<Provider, 'user'> & {
+    user: Omit<User, 'password' | 'type'> & { userTypeID: number };
+  }
+) {
   return await prisma.providers.update({
     where: {
       id: provider.id,
@@ -32,6 +36,12 @@ export async function updateProvider(provider: Omit<Provider, 'user'>) {
       name: provider.name,
       rfc: provider.rfc,
       zipcode: provider.zipcode,
+      user: {
+        update: {
+          email: provider.user.email,
+          userTypeID: provider.user.userTypeID,
+        },
+      },
     },
   });
 }
