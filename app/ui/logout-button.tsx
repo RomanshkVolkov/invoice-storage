@@ -14,9 +14,10 @@ export default function LogoutButton() {
       variant="shadow"
       type="submit"
       isLoading={pending}
+      isIconOnly
     >
-      Cerrar sesión
-      <PowerIcon className="absolute right-4 ml-auto w-6" />
+      <span className="hidden md:inline-block">Cerrar sesión</span>
+      <PowerIcon className="w-6 md:absolute md:right-4 md:ml-auto" />
     </Button>
   );
 }

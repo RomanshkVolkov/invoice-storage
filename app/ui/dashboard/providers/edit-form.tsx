@@ -50,15 +50,15 @@ export default function EditProviderForm({
       noValidate
     >
       <fieldset>
-        <div className="mb-6 flex items-center">
+        <div className="mb-6 items-center md:flex">
           <TruckIcon className="mr-2 w-8 text-primary-500" />
           <legend className="text-lg text-primary-500">
             Información del proveedor
           </legend>
         </div>
         <div className="mb-8 flex flex-wrap gap-4">
-          <div className="flex w-full gap-4">
-            <div className="w-1/2">
+          <div className="w-full gap-4 md:flex">
+            <div className="mb-4 md:mb-0 md:w-1/2">
               <Input
                 id="rfc"
                 name="rfc"
@@ -70,7 +70,7 @@ export default function EditProviderForm({
                 defaultValue={provider.rfc}
               />
             </div>
-            <div className="w-1/2">
+            <div className="md:w-1/2">
               <Input
                 id="zipcode"
                 name="zipcode"
@@ -95,38 +95,41 @@ export default function EditProviderForm({
       </fieldset>
 
       <fieldset>
-        <div className="mb-6 flex items-center">
+        <div className="mb-6 items-center md:flex">
           <IdentificationIcon className="mr-2 w-8 text-primary-500" />
           <legend className="text-lg text-primary-500">Acceso</legend>
         </div>
-        <div className="mb-6 flex flex-wrap gap-4">
-          <div className="w-full">
-            <Input
-              id="email"
-              name="email"
-              label="Correo electrónico"
-              type="text"
-              isInvalid={hasItems(state.errors.email)}
-              errorMessage={state.errors.email?.join(', ')}
-              defaultValue={provider.user.email}
-            />
-          </div>
 
-          <div className="w-1/2">
-            <Select
-              id="type"
-              name="type"
-              label="Rol"
-              isInvalid={hasItems(state.errors.type)}
-              errorMessage={state.errors.type?.join(', ')}
-              defaultSelectedKeys={new Set([provider.user.type.id])}
-            >
-              {userTypes.map((type) => (
-                <SelectItem key={type.id} value={type.id}>
-                  {type.name}
-                </SelectItem>
-              ))}
-            </Select>
+        <div className="mb-6 flex flex-wrap gap-4">
+          <div className="w-full gap-4 md:flex">
+            <div className="mb-4 md:mb-0 md:w-1/2">
+              <Input
+                id="email"
+                name="email"
+                label="Correo electrónico"
+                type="text"
+                isInvalid={hasItems(state.errors.email)}
+                errorMessage={state.errors.email?.join(', ')}
+                defaultValue={provider.user.email}
+              />
+            </div>
+
+            <div className="md:w-1/2">
+              <Select
+                id="type"
+                name="type"
+                label="Rol"
+                isInvalid={hasItems(state.errors.type)}
+                errorMessage={state.errors.type?.join(', ')}
+                defaultSelectedKeys={new Set([provider.user.type.id])}
+              >
+                {userTypes.map((type) => (
+                  <SelectItem key={type.id} value={type.id}>
+                    {type.name}
+                  </SelectItem>
+                ))}
+              </Select>
+            </div>
           </div>
         </div>
       </fieldset>
@@ -138,7 +141,7 @@ export default function EditProviderForm({
         className="flex items-center justify-between"
       >
         {state.message && <p className="w-full text-danger">{state.message}</p>}
-        <div className="w-full text-right">
+        <div className="flex w-full justify-between sm:justify-end">
           <Button
             className="mr-2"
             href="/dashboard/providers"

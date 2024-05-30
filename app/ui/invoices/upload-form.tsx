@@ -63,7 +63,7 @@ export default function Form() {
           onDragOver={handleOnDragOver}
         >
           <CloudArrowUpIcon className="h-10 w-10 text-gray-500 dark:text-gray-400" />
-          <p className="p-4 text-gray-500 dark:text-gray-400">
+          <p className="p-4 text-gray-500 dark:text-gray-400 text-center">
             Arrastra y suelta tus archivos aquí, debes subir el PDF y XML de tu
             factura al mismo tiempo.
           </p>

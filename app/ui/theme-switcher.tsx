@@ -17,6 +17,7 @@ export default function ThemeSwitcher() {
 
   return (
     <Switch
+      className="hidden md:flex"
       defaultSelected
       size="lg"
       aria-label="Automatic updates"

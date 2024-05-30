@@ -25,8 +25,8 @@ export default async function page({
     <main>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-4xl">Facturas</h1>
-
         <Button
+          className="hidden md:flex"
           color="primary"
           variant="flat"
           size="lg"
@@ -34,11 +34,24 @@ export default async function page({
           href="/dashboard/invoices/create"
           as={Link}
         >
-          Cargar factura
+          <span className="hidden md:inline-block">Cargar factura</span>
+          <CloudArrowUpIcon className="w-6" />
+        </Button>
+
+        <Button
+          className="md:hidden "
+          color="primary"
+          variant="flat"
+          size="lg"
+          type="button"
+          href="/dashboard/invoices/create"
+          as={Link}
+          isIconOnly
+        >
           <CloudArrowUpIcon className="w-6" />
         </Button>
       </div>
-      <div className="mb-4 flex justify-between rounded-large">
+      <div className="mb-4 justify-between rounded-large md:flex ">
         <SearchFilter data={{ key: 'invoice-search', label: 'Buscar' }} />
         <DateFilter />
       </div>

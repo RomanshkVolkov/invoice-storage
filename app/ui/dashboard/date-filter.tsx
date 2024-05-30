@@ -20,7 +20,7 @@ export default function DateFilter() {
   };
   return (
     <DateRangePicker
-      className="h-full w-[250px]"
+      className="h-full max-w-[350px] md:w-[250px]"
       value={value}
       onChange={handleChange}
     />
