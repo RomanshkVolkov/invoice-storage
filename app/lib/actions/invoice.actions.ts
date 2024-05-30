@@ -54,13 +54,7 @@ export async function validateInvoice(prevState: any, formData: FormData) {
     const uuidLine = xmlContent.match(/UUID="([^"]*)"/g);
     const dateLine = xmlContent.match(/Fecha="([^"]*)"/g);
     const certificationLine = xmlContent.match(/FechaTimbrado="([^"]*)"/g);
-    console.log(
-      transmitterRFCLine,
-      receiverRFCLine,
-      uuidLine,
-      dateLine,
-      certificationLine
-    );
+
     if (
       !transmitterRFCLine ||
       !receiverRFCLine ||

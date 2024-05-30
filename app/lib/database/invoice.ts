@@ -57,6 +57,8 @@ export async function validateInvoiceData({
   receiver: string;
   uuid: string;
 }) {
+  // trasmitter -> provder
+  // receiver -> company
   const session = await auth();
   if (!session) {
     throw new Error('No se pudo obtener la sesión.');
@@ -66,19 +68,19 @@ export async function validateInvoiceData({
     throw new Error('No se pudo obtener el RFC del proveedor.');
   }
 
-  if (session.user?.provider?.rfc !== receiver) {
+  if (session.user?.provider?.rfc !== transmitter) {
     throw new Error('No puedes cargar facturas de otro proveedor.');
   }
 
   const isExistTransmitter = await prisma.companies.findFirst({
     where: {
-      rfc: transmitter,
+      rfc: receiver,
     },
   });
 
   const isExistReceiver = await prisma.providers.findFirst({
     where: {
-      rfc: receiver,
+      rfc: transmitter,
     },
   });
 
