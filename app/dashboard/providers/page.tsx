@@ -11,6 +11,7 @@ export default async function Providers() {
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-4xl">Proveedores</h1>
         <Button
+          className="hidden md:flex"
           color="primary"
           variant="flat"
           size="lg"
@@ -19,6 +20,19 @@ export default async function Providers() {
           as={Link}
         >
           Crear proveedor
+          <PlusIcon className="w-6" />
+        </Button>
+
+        <Button
+          className="md:hidden "
+          color="primary"
+          variant="flat"
+          size="lg"
+          type="button"
+          href="/dashboard/providers/create"
+          as={Link}
+          isIconOnly
+        >
           <PlusIcon className="w-6" />
         </Button>
       </div>
