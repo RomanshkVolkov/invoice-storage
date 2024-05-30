@@ -49,11 +49,18 @@ export async function validateInvoice(prevState: any, formData: FormData) {
     const arrayBuffer = await xml.arrayBuffer();
     const xmlContent = new TextDecoder().decode(arrayBuffer);
 
-    const transmitterRFCLine = xmlContent.match(/<cfdi:Emisor[^>]*\/>/);
-    const receiverRFCLine = xmlContent.match(/<cfdi:Receptor[^>]*\/>/);
-    const uuidLine = xmlContent.match(/UUID="([^"]*)"/);
-    const dateLine = xmlContent.match(/Fecha="([^"]*)"/);
-    const certificationLine = xmlContent.match(/FechaTimbrado="([^"]*)"/);
+    const transmitterRFCLine = xmlContent.match(/<cfdi:Emisor\b[^>]*>/);
+    const receiverRFCLine = xmlContent.match(/<cfdi:Receptor\b[^>]*>/);
+    const uuidLine = xmlContent.match(/UUID="([^"]*)"/g);
+    const dateLine = xmlContent.match(/Fecha="([^"]*)"/g);
+    const certificationLine = xmlContent.match(/FechaTimbrado="([^"]*)"/g);
+    console.log(
+      transmitterRFCLine,
+      receiverRFCLine,
+      uuidLine,
+      dateLine,
+      certificationLine
+    );
     if (
       !transmitterRFCLine ||
       !receiverRFCLine ||
@@ -71,11 +78,13 @@ export async function validateInvoice(prevState: any, formData: FormData) {
       throw new Error(invalidXmlMessage);
     }
 
-    const transmitter = transmitterRFC[1];
-    const receiver = receiverRFC[1];
-    const uuid = uuidLine[1];
-    const date = dateLine[1];
-    const certificationTimestamp = certificationLine[1];
+    const transmitter = transmitterRFC[0].replace('Rfc="', '').replace('"', '');
+    const receiver = receiverRFC[0].replace('Rfc="', '').replace('"', '');
+    const uuid = uuidLine[0].replace('UUID="', '').replace('"', '');
+    const date = dateLine[0].replace('Fecha="', '').replace('"', '');
+    const certificationTimestamp = certificationLine[0]
+      .replace('FechaTimbrado="', '')
+      .replace('"', '');
 
     if (!uuid) {
       throw new Error('No se encontró el UUID en el archivo XML.');

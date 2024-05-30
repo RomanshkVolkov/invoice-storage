@@ -13,7 +13,6 @@ import {
   validatePasswords,
   validateUpdateData,
 } from '../services/providers.service';
-import { updateUser } from '../database/user';
 import { deleteProvider as delProvider } from '../database/providers';
 import { auth } from '@/auth';
 
@@ -86,22 +85,12 @@ export async function editProvider(
     name: validatedData.data.name,
     rfc: validatedData.data.rfc.toUpperCase(),
     zipcode: +validatedData.data.zipcode,
+    user,
   };
 
   const existingData = await checkExistingEmailAndRFC(provider, user);
 
   if (existingData) return existingData;
-
-  try {
-    await updateUser(user);
-  } catch (error) {
-    console.error(error);
-    return {
-      errors: {},
-      message:
-        'Ha ocurrido un error al editar el usuario, por favor, contacta a soporte.',
-    };
-  }
 
   try {
     await updateProvider(provider);

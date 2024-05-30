@@ -1,5 +1,5 @@
 import CustomBreadcrumbs from '@/app/ui/breadcrumbs';
-import UploadCard from '@/app/ui/upload-invoice/upload-card';
+import UploadCard from '@/app/ui/invoices/upload-card';
 
 export default function page() {
   return (

@@ -1,7 +1,7 @@
 import { getInvoicesByDateRange } from '@/app/lib/actions/invoice.actions';
 import PaginationCustom from '@/app/ui/Pagination';
 import DateFilter from '@/app/ui/dashboard/date-filter';
-import InvoicesTable from '@/app/ui/dashboard/invoices-table';
+import InvoicesTable from '@/app/ui/invoices/invoices-table';
 import SearchFilter from '@/app/ui/dashboard/search-filter';
 import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
 import { Button } from '@nextui-org/react';

@@ -12,7 +12,7 @@ import {
 } from '@nextui-org/react';
 import Link from 'next/link';
 import { useCallback } from 'react';
-import DeleteButton from './delete-button';
+import DeleteButton from '../dashboard/delete-button';
 import { useSearchParams } from 'next/navigation';
 
 interface Invoice {
