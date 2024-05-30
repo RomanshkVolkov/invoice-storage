@@ -28,7 +28,7 @@ const config: Config = {
         },
         dark: {
           colors: {
-            background: '#0F121A',
+            background: '#0e0e11',
             content1: '#000',
           },
         },
