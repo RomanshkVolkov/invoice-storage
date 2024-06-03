@@ -89,7 +89,7 @@ export async function sendRecoveryCode(
         text: `Tu código de recuperación es: ${otp}. Este código expirará en 10 minutos.`,
       };
 
-      transporter.sendMail(mailOptions);
+      await transporter.sendMail(mailOptions);
     }
 
     return {
