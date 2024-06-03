@@ -4,13 +4,16 @@ import prisma from './prisma';
 export async function getInvoicesByDateRangeDB({
   startDate,
   endDate,
+  company,
 }: {
   startDate: string | null;
   endDate: string | null;
+  company: string | null;
 }) {
   const session = await auth();
   const isAdmin = session?.user?.type.name.toLowerCase() === 'admin';
   const query = isAdmin ? {} : { user: { id: +(session?.user?.id || 0) } };
+  const companyFilter = company ? { id: +(company || 0) } : {};
   const invoices = await prisma.invoices.findMany({
     select: {
       id: true,
@@ -36,6 +39,9 @@ export async function getInvoicesByDateRangeDB({
           startDate || new Date(new Date().setDate(new Date().getDate() - 7))
         ),
         lte: new Date(endDate || new Date()),
+      },
+      company: {
+        ...companyFilter,
       },
       provider: {
         ...query,

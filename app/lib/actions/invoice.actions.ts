@@ -15,9 +15,11 @@ import { auth } from '@/auth';
 export async function getInvoicesByDateRange({
   startDate,
   endDate,
+  company,
 }: {
   startDate: string;
   endDate: string;
+  company: string;
 }) {
   try {
     const isValidStartDate = new Date(startDate).toString() !== 'Invalid Date';
@@ -25,6 +27,7 @@ export async function getInvoicesByDateRange({
     const invoices = await getInvoicesByDateRangeDB({
       startDate: isValidStartDate ? startDate : null,
       endDate: isValidEndDate ? endDate : null,
+      company: company || null,
     });
 
     return invoices.map((invoice) => ({

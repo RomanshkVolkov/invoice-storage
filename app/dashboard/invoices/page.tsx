@@ -5,13 +5,20 @@ import SearchFilter from '@/app/ui/dashboard/search-filter';
 import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
 import { Button } from '@nextui-org/react';
 import Link from 'next/link';
+import CompanyFilter from '@/app/ui/dashboard/providers/company-filter';
+import getCompanies from '@/app/lib/database/companies';
 
 export default async function page({
-  searchParams: { startDate, endDate, items },
+  searchParams: { startDate, endDate, company },
 }: {
-  searchParams: { startDate: string; endDate: string; items: string };
+  searchParams: { startDate: string; endDate: string; company: string };
 }) {
-  const invoices = await getInvoicesByDateRange({ startDate, endDate });
+  const invoices = await getInvoicesByDateRange({
+    startDate,
+    endDate,
+    company,
+  });
+  const companies = await getCompanies(); // This is a call to the database
   const columns = [
     { key: 'reference', label: 'Folio' },
     { key: 'typeID', label: 'Tipo' },
@@ -54,6 +61,7 @@ export default async function page({
       </div>
       <div className="mb-4 justify-between rounded-large md:flex ">
         <SearchFilter data={{ key: 'invoice-search', label: 'Buscar' }} />
+        <CompanyFilter options={companies} />
         <DateFilter />
       </div>
       <InvoicesTable invoices={invoices} columns={columns} />
