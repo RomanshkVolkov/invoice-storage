@@ -11,16 +11,15 @@ import {
   Tooltip,
 } from '@nextui-org/react';
 import Link from 'next/link';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import DeleteButton from '../dashboard/delete-button';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface Invoice {
   id: string;
+  typeID: string;
   provider: string;
   company: string;
-  pdf: string;
-  xml: string;
   [key: string]: any;
 }
 
@@ -34,27 +33,38 @@ export default function InvoicesTable({
   const searchParams = useSearchParams();
   const page = searchParams.get('page');
   const search = searchParams.get('invoice-search');
+  const { replace } = useRouter();
+
+  const filteredInvoices = useMemo(() => {
+    if (!search) return invoices;
+    const items = invoices.filter((invoice) =>
+      Object.values(invoice).some((value) =>
+        Object.values(search.split(' ')).every(
+          (search) =>
+            String(value).toLowerCase().includes(search.toLowerCase()) ||
+            !search
+        )
+      )
+    );
+
+    const params = new URLSearchParams(searchParams);
+    params.set('items', String(items.length));
+    console.log('items', items.length);
+    replace(`?${params.toString()}`);
+
+    return items.slice((Number(page || 1) - 1) * 10, Number(page || 1) * 10);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [invoices, page, search]);
+
   const renderCell = useCallback((invoice: Invoice, columnKey: string) => {
     const cellValue = invoice[columnKey];
 
     switch (columnKey) {
-      case 'pdf':
+      case 'files':
         return (
-          <Tooltip content="Ver PDF">
+          <Tooltip content="Ver archivos">
             <Button
-              href={`/dashboard/invoices/pdf?path=${invoice.pdf}`}
-              as={Link}
-              isIconOnly
-            >
-              <EyeIcon className="w-5" />
-            </Button>
-          </Tooltip>
-        );
-      case 'xml':
-        return (
-          <Tooltip content="Ver XML">
-            <Button
-              href={`/dashboard/invoices/xml?path=${invoice.xml}`}
+              href={`/dashboard/invoices/${invoice.id}`}
               as={Link}
               isIconOnly
             >
@@ -82,14 +92,7 @@ export default function InvoicesTable({
         )}
       </TableHeader>
       <TableBody
-        items={(
-          invoices?.filter((item) => {
-            if (!search) return true;
-            const itemToString = Object.values(item).join(' ').toLowerCase();
-            const searchValue = search.toLowerCase().split(' ');
-            return searchValue.every((value) => itemToString.includes(value));
-          }) || []
-        ).slice((Number(page || 1) - 1) * 10, Number(page || 1) * 10)}
+        items={filteredInvoices}
         emptyContent="No hay facturas disponibles."
       >
         {(item) => (

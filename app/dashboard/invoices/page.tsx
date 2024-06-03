@@ -1,24 +1,25 @@
 import { getInvoicesByDateRange } from '@/app/lib/actions/invoice.actions';
 import PaginationCustom from '@/app/ui/Pagination';
 import DateFilter from '@/app/ui/dashboard/date-filter';
-import InvoicesTable from '@/app/ui/invoices/invoices-table';
+import InvoicesTable from '@/app/ui/invoices/table';
 import SearchFilter from '@/app/ui/dashboard/search-filter';
 import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
 import { Button } from '@nextui-org/react';
 import Link from 'next/link';
 
 export default async function page({
-  searchParams: { startDate, endDate },
+  searchParams: { startDate, endDate, items },
 }: {
-  searchParams: { startDate: string; endDate: string };
+  searchParams: { startDate: string; endDate: string; items: string };
 }) {
   const invoices = await getInvoicesByDateRange({ startDate, endDate });
   const columns = [
-    { key: 'id', label: 'UUID' },
+    { key: 'reference', label: 'Folio' },
+    { key: 'typeID', label: 'Tipo' },
     { key: 'company', label: 'Empresa' },
     { key: 'provider', label: 'Proveedor' },
-    { key: 'pdf', label: 'PDF' },
-    { key: 'xml', label: 'XML' },
+    { key: 'id', label: 'UUID' },
+    { key: 'files', label: 'Ver' },
     { key: 'actions', label: 'Acciones' },
   ];
   return (
@@ -56,7 +57,7 @@ export default async function page({
         <DateFilter />
       </div>
       <InvoicesTable invoices={invoices} columns={columns} />
-      <PaginationCustom limit={10} items={invoices.length} />
+      <PaginationCustom limit={10} items={Number(items || invoices.length)} />
     </main>
   );
 }

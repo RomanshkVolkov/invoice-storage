@@ -1,4 +1,6 @@
 'use client';
+
+import { useMemo } from 'react';
 import { Pagination } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -12,13 +14,15 @@ export default function PaginationCustom({
   const searchParams = useSearchParams();
   const page = searchParams.get('page');
   const { replace } = useRouter();
+
   const handleChange = (page: number) => {
     const params = new URLSearchParams(searchParams);
     params.set('page', String(page));
     replace(`?${params.toString()}`);
   };
-  return (
-    <div className="mr-4 mt-4 flex justify-end">
+
+  const paginationComponent = useMemo(() => {
+    return (
       <Pagination
         total={Math.ceil(items / limit)}
         initialPage={1}
@@ -27,6 +31,11 @@ export default function PaginationCustom({
         showControls
         onChange={handleChange}
       />
-    </div>
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, page]);
+
+  return (
+    <div className="mr-4 mt-4 flex justify-end">{paginationComponent}</div>
   );
 }

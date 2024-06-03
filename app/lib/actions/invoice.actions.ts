@@ -4,7 +4,8 @@ import { blob } from '../blob/autentication';
 import {
   createInvoice,
   deleteInvoiceById,
-  getInvoices,
+  getInvoiceByIdDB,
+  getInvoicesByDateRangeDB,
   validateInvoiceData,
 } from '../database/invoice';
 import { redirect } from 'next/navigation';
@@ -19,7 +20,7 @@ export async function getInvoicesByDateRange({
   try {
     const isValidStartDate = new Date(startDate).toString() !== 'Invalid Date';
     const isValidEndDate = new Date(endDate).toString() !== 'Invalid Date';
-    const invoices = await getInvoices({
+    const invoices = await getInvoicesByDateRangeDB({
       startDate: isValidStartDate ? startDate : null,
       endDate: isValidEndDate ? endDate : null,
     });
@@ -33,14 +34,30 @@ export async function getInvoicesByDateRange({
   }
 }
 
+export async function getInvoiceById(id: string) {
+  try {
+    const invoice = await getInvoiceByIdDB(id);
+    invoice.pdf = `${process.env.AZURE_BLOB_PATH}${invoice.pdf}`;
+    invoice.xml = `${process.env.AZURE_BLOB_PATH}${invoice.xml}`;
+    return invoice;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      return null;
+    }
+    throw error;
+  }
+}
+
 export async function validateInvoice(prevState: any, formData: FormData) {
   try {
-    const files = formData.getAll('files') as File[];
+    const inputPdf = formData.getAll('pdf') as File[];
+    const inputXml = formData.getAll('xml') as File[];
     const uuidInput = formData.get('uuid') as string;
-    const pdf = files.find((file) => file.type === 'application/pdf');
-    const xml = files.find((file) => file.type === 'text/xml');
+    const pdf = inputPdf.find((file) => file.type === 'application/pdf');
+    const xml = inputXml.find((file) => file.type === 'text/xml');
     const invalidFilesMessage = 'Debes subir un archivo PDF y un archivo XML.';
-    const invalidXmlMessage = 'El archivo XML no es un CFDI.';
+    const invalidXmlMessage = 'El archivo XML no es un CFDI valido.';
 
     if (!pdf || !xml) {
       throw new Error(invalidFilesMessage);
@@ -52,6 +69,8 @@ export async function validateInvoice(prevState: any, formData: FormData) {
     const transmitterRFCLine = xmlContent.match(/<cfdi:Emisor\b[^>]*>/);
     const receiverRFCLine = xmlContent.match(/<cfdi:Receptor\b[^>]*>/);
     const uuidLine = xmlContent.match(/UUID="([^"]*)"/g);
+    const referenceLine = xmlContent.match(/Folio="([^"]*)"/g);
+    const typeDocumentLine = xmlContent.match(/TipoDeComprobante="([^"]*)"/g);
     const dateLine = xmlContent.match(/Fecha="([^"]*)"/g);
     const certificationLine = xmlContent.match(/FechaTimbrado="([^"]*)"/g);
 
@@ -60,7 +79,9 @@ export async function validateInvoice(prevState: any, formData: FormData) {
       !receiverRFCLine ||
       !uuidLine ||
       !dateLine ||
-      !certificationLine
+      !certificationLine ||
+      !referenceLine ||
+      !typeDocumentLine
     ) {
       throw new Error(invalidXmlMessage);
     }
@@ -75,6 +96,10 @@ export async function validateInvoice(prevState: any, formData: FormData) {
     const transmitter = transmitterRFC[0].replace('Rfc="', '').replace('"', '');
     const receiver = receiverRFC[0].replace('Rfc="', '').replace('"', '');
     const uuid = uuidLine[0].replace('UUID="', '').replace('"', '');
+    const reference = referenceLine[0].replace('Folio="', '').replace('"', '');
+    const typeDocument = typeDocumentLine[0]
+      .replace('TipoDeComprobante="', '')
+      .replace('"', '');
     const date = dateLine[0].replace('Fecha="', '').replace('"', '');
     const certificationTimestamp = certificationLine[0]
       .replace('FechaTimbrado="', '')
@@ -123,13 +148,20 @@ export async function validateInvoice(prevState: any, formData: FormData) {
 
     await createInvoice({
       uuid,
-      transmitterID: relatedData.transmitterID,
-      receiverID: relatedData.receiverID,
+      transmitterID: relatedData.transmitter.id,
+      receiverID: relatedData.receiver.id,
       date,
       certificationTimestamp,
-    });
-
-    revalidatePath('/dashboard/invoices');
+      reference,
+      typeID: typeDocument,
+    })
+      .then(() => {
+        // send email
+        revalidatePath('/dashboard/invoices');
+      })
+      .catch((error) => {
+        throw error;
+      });
   } catch (error) {
     if (error instanceof Error) {
       return error.message;

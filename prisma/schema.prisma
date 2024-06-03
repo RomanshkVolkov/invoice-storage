@@ -13,20 +13,24 @@ model companies {
   rfc      String     @unique(map: "companies_company_rfc_uindex") @map("company_rfc") @db.NVarChar(12)
   name     String     @db.NVarChar(500)
   prefix   String?    @db.NVarChar(5)
+  emails   String?    @db.NVarChar(MAX)
   invoices invoices[]
 }
 
 model invoices {
-  id                     String    @id(map: "invoices_pk") @map("uuid") @db.NVarChar(36)
-  providerID             Int       @map("provider_id")
-  companyID              Int       @map("company_id")
-  xml                    String    @map("xml_path") @db.NVarChar(200)
-  pdf                    String    @map("pdf_path") @db.NVarChar(200)
-  isDeleted              Boolean   @default(false)
-  date                   DateTime  @map("invoice_date")
-  certificationTimestamp DateTime  @map("certification_timestamp")
-  company                companies @relation(fields: [companyID], references: [id], onUpdate: NoAction, map: "invoices_companies_company_id_fk")
-  provider               providers @relation(fields: [providerID], references: [id], onUpdate: NoAction, map: "invoices_providers_provider_id_fk")
+  id                     String        @id(map: "invoices_pk") @map("uuid") @db.NVarChar(36)
+  providerID             Int           @map("provider_id")
+  companyID              Int           @map("company_id")
+  xml                    String        @map("xml_path") @db.NVarChar(200)
+  pdf                    String        @map("pdf_path") @db.NVarChar(200)
+  isDeleted              Boolean       @default(false)
+  date                   DateTime      @map("invoice_date")
+  certificationTimestamp DateTime      @map("certification_timestamp")
+  reference              String        @map("reference") @db.NVarChar(255)
+  typeID                 String        @map("document_type_id")
+  type                   documentTypes @relation(fields: [typeID], references: [id], onUpdate: NoAction, map: "invoices_document_types_document_type_id_fk")
+  company                companies     @relation(fields: [companyID], references: [id], onUpdate: NoAction, map: "invoices_companies_company_id_fk")
+  provider               providers     @relation(fields: [providerID], references: [id], onUpdate: NoAction, map: "invoices_providers_provider_id_fk")
 }
 
 model providers {
@@ -55,4 +59,12 @@ model users {
   userTypeID Int        @map("user_type_id")
   type       userTypes  @relation(fields: [userTypeID], references: [id], onUpdate: NoAction, map: "FK__users__user_type__17CF3C3F")
   provider   providers?
+}
+
+model documentTypes {
+  id       String     @id(map: "document_types_pk") @map("document_type_id")
+  name     String     @db.NVarChar(50)
+  invoices invoices[]
+
+  @@map("document_types")
 }

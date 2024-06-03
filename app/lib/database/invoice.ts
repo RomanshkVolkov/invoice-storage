@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import prisma from './prisma';
 
-export async function getInvoices({
+export async function getInvoicesByDateRangeDB({
   startDate,
   endDate,
 }: {
@@ -14,8 +14,8 @@ export async function getInvoices({
   const invoices = await prisma.invoices.findMany({
     select: {
       id: true,
-      pdf: true,
-      xml: true,
+      typeID: true,
+      reference: true,
       company: {
         select: {
           name: true,
@@ -29,7 +29,7 @@ export async function getInvoices({
     },
     where: {
       isDeleted: false,
-      certificationTimestamp: {
+      date: {
         gte: new Date(
           startDate || new Date(new Date().setDate(new Date().getDate() - 7))
         ),
@@ -46,6 +46,28 @@ export async function getInvoices({
     company: invoice.company.name,
     provider: invoice.provider.name,
   }));
+}
+
+export async function getInvoiceByIdDB(id: string) {
+  const invoice = await prisma.invoices.findFirst({
+    select: {
+      pdf: true,
+      xml: true,
+      type: true,
+      date: true,
+      certificationTimestamp: true,
+    },
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
+
+  if (!invoice) {
+    throw new Error('No se encontró la factura.');
+  }
+
+  return invoice;
 }
 
 export async function validateInvoiceData({
@@ -104,8 +126,8 @@ export async function validateInvoiceData({
   }
 
   return {
-    transmitterID: isExistTransmitter.id,
-    receiverID: isExistReceiver.id,
+    transmitter: isExistTransmitter,
+    receiver: isExistReceiver,
   };
 }
 
@@ -115,12 +137,16 @@ export async function createInvoice({
   uuid,
   date,
   certificationTimestamp,
+  reference,
+  typeID,
 }: {
   transmitterID: number;
   receiverID: number;
   uuid: string;
   date: string;
   certificationTimestamp: string;
+  reference: string;
+  typeID: string;
 }) {
   return await prisma.$transaction(async (ctx) => {
     try {
@@ -149,6 +175,8 @@ export async function createInvoice({
           xml: `/invoices/xml/${uuid}.xml`,
           date: new Date(date),
           certificationTimestamp: new Date(certificationTimestamp),
+          reference,
+          typeID,
         },
       });
     }
