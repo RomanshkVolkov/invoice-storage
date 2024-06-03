@@ -127,9 +127,19 @@ export async function validateInvoiceData({
     );
   }
 
+  const company = await prisma.companies.findFirst({
+    where: {
+      rfc: receiver,
+    },
+    select: {
+      emails: true,
+    },
+  });
+
   return {
     transmitter: isExistTransmitter,
     receiver: isExistReceiver,
+    companyEmails: company?.emails || '',
   };
 }
 
