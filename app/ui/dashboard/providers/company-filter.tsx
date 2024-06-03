@@ -19,7 +19,11 @@ export default function CompanyFilter({
   };
 
   return (
-    <Select placeholder="Select a company" onSelectionChange={handleOnChange}>
+    <Select
+      placeholder="Selecciona una empresa"
+      onSelectionChange={handleOnChange}
+      className="h-full w-full md:w-[350px]"
+    >
       {options.map((option) => (
         <SelectItem key={option.value} value={option.value}>
           {option.label}

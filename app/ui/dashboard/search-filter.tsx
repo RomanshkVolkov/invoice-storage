@@ -29,7 +29,7 @@ export default function SearchFilter({ data }: Props) {
   };
   return (
     <Input
-      className="mb-2 max-w-[350px] sm:mr-2 md:mb-0"
+      className="max-w-[350px] "
       size="sm"
       label={label}
       defaultValue={searchParams.get(key)?.toString()}
