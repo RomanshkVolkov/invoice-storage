@@ -1,4 +1,5 @@
 'use client';
+import { BuildingOfficeIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { Select, SelectItem, Selection } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -23,6 +24,7 @@ export default function CompanyFilter({
       placeholder="Selecciona una empresa"
       onSelectionChange={handleOnChange}
       className="h-full w-full md:w-[350px]"
+      startContent={<BuildingOfficeIcon className="h-6 w-6 text-gray-500" />}
     >
       {options.map((option) => (
         <SelectItem key={option.value} value={option.value}>
