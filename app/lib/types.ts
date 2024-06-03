@@ -6,6 +6,8 @@ export interface User {
     id: number;
     name: string;
   };
+  otp?: number;
+  otpExpireDate?: Date;
 }
 
 export interface Provider {

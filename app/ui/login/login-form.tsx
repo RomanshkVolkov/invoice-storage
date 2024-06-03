@@ -10,6 +10,7 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { authenticate } from '@/app/lib/actions/auth.actions';
+import Link from 'next/link';
 
 export default function Form() {
   const [errorMessage, dispatch] = useFormState(authenticate, undefined);
@@ -33,7 +34,7 @@ export default function Form() {
         name="password"
         label="Contraseña"
         minLength={6}
-        className="mb-6"
+        className="mb-2"
         type={isVisible ? 'text' : 'password'}
         errorMessage="La contraseña debe tener al menos 6 caracteres."
         isRequired
@@ -57,6 +58,13 @@ export default function Form() {
           </button>
         }
       />
+      <div className="mb-6">
+        <Link href="/forgot-password">
+          <span className="text-sm text-gray-500 hover:underline">
+            ¿Olvidaste tu contraseña?
+          </span>
+        </Link>
+      </div>
       <LoginButton />
       <div className="mt-2 flex gap-1" aria-live="polite" aria-atomic="true">
         {errorMessage && (
