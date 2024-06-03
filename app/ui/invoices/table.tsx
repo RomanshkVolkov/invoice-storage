@@ -1,19 +1,23 @@
 'use client';
-import { EyeIcon, TrashIcon } from '@heroicons/react/24/outline';
+
+import { ArrowDownCircleIcon, EyeIcon } from '@heroicons/react/24/outline';
 import {
   Button,
+  Selection,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
-  Tooltip,
 } from '@nextui-org/react';
 import Link from 'next/link';
-import { useCallback, useMemo } from 'react';
+import { Link as LinkComponent } from '@nextui-org/react';
+import React, { useCallback, useMemo } from 'react';
 import DeleteButton from '../dashboard/delete-button';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import PaginationCustom from '../Pagination';
+import DownloadFiles from './download-files';
 
 interface Invoice {
   id: string;
@@ -33,7 +37,7 @@ export default function InvoicesTable({
   const searchParams = useSearchParams();
   const page = searchParams.get('page');
   const search = searchParams.get('invoice-search');
-  const { replace } = useRouter();
+  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
 
   const filteredInvoices = useMemo(() => {
     if (!search) return invoices;
@@ -47,11 +51,6 @@ export default function InvoicesTable({
       )
     );
 
-    const params = new URLSearchParams(searchParams);
-    params.set('items', String(items.length));
-    console.log('items', items.length);
-    replace(`?${params.toString()}`);
-
     return items.slice((Number(page || 1) - 1) * 10, Number(page || 1) * 10);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [invoices, page, search]);
@@ -60,17 +59,17 @@ export default function InvoicesTable({
     const cellValue = invoice[columnKey];
 
     switch (columnKey) {
-      case 'files':
+      case 'pdf':
         return (
-          <Tooltip content="Ver archivos">
-            <Button
-              href={`/dashboard/invoices/${invoice.id}`}
-              as={Link}
-              isIconOnly
-            >
-              <EyeIcon className="w-5" />
-            </Button>
-          </Tooltip>
+          <LinkComponent href={invoice.pdf} target="_blank" as={Link}>
+            <EyeIcon className="w-5" />
+          </LinkComponent>
+        );
+      case 'xml':
+        return (
+          <LinkComponent href={invoice.xml} target="_blank" as={Link}>
+            <EyeIcon className="w-5" />
+          </LinkComponent>
         );
       case 'actions':
         return <DeleteButton id={invoice.id} />;
@@ -80,7 +79,25 @@ export default function InvoicesTable({
   }, []);
 
   return (
-    <Table isStriped aria-labelledby="providers-table">
+    <Table
+      isStriped
+      aria-labelledby="providers-table"
+      selectionMode="multiple"
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys as any}
+      topContent={
+        <DownloadFiles
+          uuids={invoices.map((item) => item.id)}
+          selected={selectedKeys}
+        />
+      }
+      bottomContent={
+        <div className="flex w-full justify-center">
+          <PaginationCustom limit={10} items={invoices.length} />
+        </div>
+      }
+      classNames={{ wrapper: 'min-h-[300px]' }}
+    >
       <TableHeader columns={columns}>
         {(column) => (
           <TableColumn

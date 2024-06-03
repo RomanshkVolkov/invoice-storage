@@ -1,5 +1,4 @@
 import { getInvoicesByDateRange } from '@/app/lib/actions/invoice.actions';
-import PaginationCustom from '@/app/ui/Pagination';
 import DateFilter from '@/app/ui/dashboard/date-filter';
 import InvoicesTable from '@/app/ui/invoices/table';
 import SearchFilter from '@/app/ui/dashboard/search-filter';
@@ -19,7 +18,8 @@ export default async function page({
     { key: 'company', label: 'Empresa' },
     { key: 'provider', label: 'Proveedor' },
     { key: 'id', label: 'UUID' },
-    { key: 'files', label: 'Ver' },
+    { key: 'pdf', label: 'PDF' },
+    { key: 'xml', label: 'XML' },
     { key: 'actions', label: 'Acciones' },
   ];
   return (
@@ -57,7 +57,6 @@ export default async function page({
         <DateFilter />
       </div>
       <InvoicesTable invoices={invoices} columns={columns} />
-      <PaginationCustom limit={10} items={Number(items || invoices.length)} />
     </main>
   );
 }

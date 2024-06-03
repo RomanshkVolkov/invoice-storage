@@ -16,6 +16,8 @@ export async function getInvoicesByDateRangeDB({
       id: true,
       typeID: true,
       reference: true,
+      pdf: true,
+      xml: true,
       company: {
         select: {
           name: true,

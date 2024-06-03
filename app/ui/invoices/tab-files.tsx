@@ -23,7 +23,11 @@ export default function TabFiles({
             </div>
           }
         >
-          {pdf ? <FrameViewer src={pdf} type="pdf" /> : 'No hay archivo PDF'}
+          {pdf ? (
+            <FrameViewer src={pdf} type="application/pdf" />
+          ) : (
+            'No hay archivo PDF'
+          )}
         </Tab>
         <Tab
           key="xml-file"
@@ -34,7 +38,11 @@ export default function TabFiles({
             </div>
           }
         >
-          {xml ? <FrameViewer src={xml} type="xml" /> : 'No hay archivo XML'}
+          {xml ? (
+            <FrameViewer src={xml} type="text/xml" />
+          ) : (
+            'No hay archivo XML'
+          )}
         </Tab>
       </Tabs>
     </div>

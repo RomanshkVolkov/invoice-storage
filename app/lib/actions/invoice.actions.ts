@@ -9,6 +9,7 @@ import {
   validateInvoiceData,
 } from '../database/invoice';
 import { redirect } from 'next/navigation';
+import archiver from 'archiver';
 
 export async function getInvoicesByDateRange({
   startDate,
@@ -24,7 +25,12 @@ export async function getInvoicesByDateRange({
       startDate: isValidStartDate ? startDate : null,
       endDate: isValidEndDate ? endDate : null,
     });
-    return invoices;
+
+    return invoices.map((invoice) => ({
+      ...invoice,
+      pdf: `${process.env.AZURE_BLOB_PATH}${invoice.pdf}`,
+      xml: `${process.env.AZURE_BLOB_PATH}${invoice.xml}`,
+    }));
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);

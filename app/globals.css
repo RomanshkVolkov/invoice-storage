@@ -56,9 +56,3 @@ button {
 .progress-bar {
   animation: progress 1s linear infinite;
 }
-
-iframe {
-  & > p:first-of-type {
-    display: none;
-  }
-}
