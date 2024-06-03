@@ -1,5 +1,6 @@
 'use server';
 import { revalidatePath } from 'next/cache';
+import nodemailer from 'nodemailer';
 import { blob } from '../blob/autentication';
 import {
   createInvoice,
@@ -9,6 +10,7 @@ import {
   validateInvoiceData,
 } from '../database/invoice';
 import { redirect } from 'next/navigation';
+import { auth } from '@/auth';
 
 export async function getInvoicesByDateRange({
   startDate,
@@ -51,6 +53,7 @@ export async function getInvoiceById(id: string) {
 
 export async function validateInvoice(prevState: any, formData: FormData) {
   try {
+    const session = await auth();
     const inputPdf = formData.getAll('pdf') as File[];
     const inputXml = formData.getAll('xml') as File[];
     const uuidInput = formData.get('uuid') as string;
@@ -146,6 +149,28 @@ export async function validateInvoice(prevState: any, formData: FormData) {
       }
     );
 
+    const transporter = nodemailer.createTransport({
+      service: 'Outlook365',
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+      },
+    });
+
+    const companyMailOptions = {
+      from: `"Invoice Storage" <${process.env.MAIL_USER}>`,
+      to: relatedData.companyEmails.split(';'),
+      subject: 'Nueva factura',
+      text: `El proveedor ${session?.user?.provider?.name} con RFC ${session?.user?.provider?.rfc} ha subido una factura de esta empresa con el UUID: ${uuid}`,
+    };
+
+    const providerMailOptions = {
+      from: `"Invoice Storage" <${process.env.MAIL_USER}>`,
+      to: session?.user?.email || '',
+      subject: 'Nueva factura',
+      text: `Has subido una factura con el UUID: ${uuid}`,
+    };
+
     await createInvoice({
       uuid,
       transmitterID: relatedData.transmitter.id,
@@ -157,6 +182,8 @@ export async function validateInvoice(prevState: any, formData: FormData) {
     })
       .then(() => {
         // send email
+        transporter.sendMail(companyMailOptions);
+        transporter.sendMail(providerMailOptions);
         revalidatePath('/dashboard/invoices');
       })
       .catch((error) => {
