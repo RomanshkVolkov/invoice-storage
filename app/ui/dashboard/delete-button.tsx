@@ -9,8 +9,8 @@ import { toast } from 'sonner';
 export default function DeleteButton({ id }: { id: string }) {
   const [ispending, startTransition] = useTransition();
 
-  const handleDelete = async (id: string) => {
-    startTransition(async () => {
+  const handleDelete = (id: string) => {
+    startTransition(() => {
       deleteInvoice(id)
         .then(() => {
           toast.success('Factura eliminada correctamente');

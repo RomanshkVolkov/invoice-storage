@@ -4,7 +4,6 @@ import { useFormState, useFormStatus } from 'react-dom';
 import { Button, Input } from '@nextui-org/react';
 import { validateInvoice } from '@/app/lib/actions/invoice.actions';
 import {
-  ArrowUpOnSquareIcon,
   CloudArrowUpIcon,
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
@@ -13,10 +12,6 @@ import React from 'react';
 
 export default function Form() {
   const [errorMessage, dispatch] = useFormState(validateInvoice, undefined);
-  const [loadedFiles, setLoadedFiles] = React.useState({
-    pdf: false,
-    xml: false,
-  });
 
   const handleClickFileInput = (key: string) => {
     const fileInput = document.getElementById(key) as HTMLInputElement;
@@ -28,7 +23,7 @@ export default function Form() {
     const fileInputPdf = document.getElementById('pdf') as HTMLInputElement;
     const fileInputXml = document.getElementById('xml') as HTMLInputElement;
     const files = e.dataTransfer.files;
-    const _asignedFiles = Array.from(files).reduce(
+    Array.from(files).reduce(
       (acc, file) => {
         const dt = new DataTransfer();
         dt.items.add(file);

@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  createProvider,
-  editProvider,
-} from '@/app/lib/actions/providers.actions';
+import { editProvider } from '@/app/lib/actions/providers.actions';
 import {
   CheckCircleIcon,
   IdentificationIcon,

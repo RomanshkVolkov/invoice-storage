@@ -37,11 +37,11 @@ const UpdateProvider = FormSchema.omit({
   confirmPassword: true,
 });
 
-export async function validateData(data: FormData) {
+export function validateData(data: FormData) {
   return FormSchema.safeParse(Object.fromEntries(data));
 }
 
-export async function validateUpdateData(data: FormData) {
+export function validateUpdateData(data: FormData) {
   return UpdateProvider.safeParse(Object.fromEntries(data));
 }
 

@@ -1,6 +1,5 @@
 import { Input } from '@nextui-org/react';
 import React, {
-  useState,
   useRef,
   ChangeEvent,
   KeyboardEvent,
@@ -12,7 +11,7 @@ export function OTPInput({
   setOtp,
 }: {
   otp: string[];
-  setOtp: (otp: string[]) => void;
+  setOtp: (_otp: string[]) => void;
 }) {
   const inputs = useRef<(HTMLInputElement | null)[]>([]);
 

@@ -22,9 +22,10 @@ export default function PaginationCustom({
   };
 
   const paginationComponent = useMemo(() => {
+    const total = Math.ceil(items / limit);
     return (
       <Pagination
-        total={Math.ceil(items / limit)}
+        total={total}
         initialPage={1}
         page={Number(page || 1)}
         variant="bordered"

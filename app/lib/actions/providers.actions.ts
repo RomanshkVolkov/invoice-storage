@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import {
   createProvider as newProvider,
   updateProvider,
+  deleteProvider as delProvider,
 } from '../database/providers';
 import {
   checkExistingEmailAndRFC,
@@ -13,7 +14,6 @@ import {
   validatePasswords,
   validateUpdateData,
 } from '../services/providers.service';
-import { deleteProvider as delProvider } from '../database/providers';
 import { auth } from '@/auth';
 
 export async function createProvider(prevState: any, formData: FormData) {

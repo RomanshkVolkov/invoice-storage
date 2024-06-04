@@ -14,7 +14,7 @@ import {
 } from '@nextui-org/react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Key, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useFormStatus } from 'react-dom';
 import { toast } from 'sonner';
 

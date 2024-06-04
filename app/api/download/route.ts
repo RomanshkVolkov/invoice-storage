@@ -24,8 +24,6 @@ export async function POST(req: Request) {
         pdfBlobClient.download(),
         xmlBlobClient.download(),
       ]);
-      const pdfblobBody = await pdfResponse.blobBody;
-      const xmlblobBody = await xmlResponse.blobBody;
 
       if (!pdfResponse.readableStreamBody || !xmlResponse.readableStreamBody) {
         console.error('Error downloading blobs:', pdfBlobName, xmlBlobName);

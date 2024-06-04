@@ -131,7 +131,7 @@ function OTPForm({
   setStep,
 }: {
   userID?: number;
-  setStep: (step: 'email' | 'otp' | 'password') => void;
+  setStep: (_step: 'email' | 'otp' | 'password') => void;
 }) {
   const [otp, setOtp] = useState<string[]>(['', '', '', '', '', '']);
   const validateOTPWithUser = validateOTP.bind(null, userID || 0);

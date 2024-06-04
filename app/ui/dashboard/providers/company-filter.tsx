@@ -1,5 +1,5 @@
 'use client';
-import { BuildingOfficeIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { BuildingOfficeIcon } from '@heroicons/react/24/outline';
 import { Select, SelectItem, Selection } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -9,7 +9,6 @@ export default function CompanyFilter({
   options: { label: string; value: string }[];
 }) {
   const searchparams = useSearchParams();
-  const company = searchparams.get('company');
   const { replace } = useRouter();
   const handleOnChange = (keys: Selection) => {
     const value = Array.from(keys)[0];

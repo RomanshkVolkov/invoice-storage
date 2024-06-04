@@ -1,6 +1,6 @@
 'use client';
-import { XMarkIcon } from '@heroicons/react/24/outline';
-import { Button, Input } from '@nextui-org/react';
+
+import { Input } from '@nextui-org/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 interface Props {
   data: {

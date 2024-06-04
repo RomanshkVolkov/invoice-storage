@@ -1,3 +1,42 @@
 {
-  "extends": ["next/core-web-vitals", "prettier"]
+  "extends": ["next/core-web-vitals", "prettier"],
+
+  "rules": {
+    "no-duplicate-imports": "error",
+    "no-self-compare": "error",
+    "use-isnan": "error",
+    "arrow-body-style": ["error", "as-needed"],
+    "camelcase": "error",
+    "class-methods-use-this": "error",
+    "curly": ["error", "multi-line"],
+    "eqeqeq": ["error", "always"],
+    "no-var": "error",
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "no-useless-concat": "error",
+    "prefer-const": "error",
+    "prefer-template": "error",
+    "require-await": "error",
+    "array-bracket-spacing": "error",
+    "arrow-parens": "error",
+    "brace-style": "error",
+    "comma-dangle": ["error", "always-multiline"],
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "jsx-quotes": ["error", "prefer-double"],
+    "keyword-spacing": [
+      "error",
+      {
+        "before": true
+      }
+    ],
+    "key-spacing": [
+      "error",
+      {
+        "afterColon": true
+      }
+    ],
+    "object-curly-spacing": ["error", "always"],
+    "quotes": ["error", "single"],
+    "semi": "error",
+    "space-before-blocks": "error"
+  }
 }

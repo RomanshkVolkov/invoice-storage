@@ -1,5 +1,4 @@
 import SideNav from '@/app/ui/dashboard/sidenav';
-import ThemeSwitcher from '../ui/theme-switcher';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

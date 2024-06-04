@@ -22,8 +22,7 @@ export default function DownloadFiles({
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        return;
+        throw new Error('Error al descargar');
       }
 
       const blob = await response.blob();
@@ -40,7 +39,7 @@ export default function DownloadFiles({
     }
   };
 
-  const actionDownload = async () => {
+  const actionDownload = () => {
     toast.promise(handleDownload(), {
       icon: <ArrowDownCircleIcon className="w-6" />,
       loading: 'Descargando facturas...',

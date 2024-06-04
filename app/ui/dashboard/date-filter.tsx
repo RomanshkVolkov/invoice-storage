@@ -12,7 +12,7 @@ export default function DateFilter() {
   const startDate = searchParams.get('startDate');
   const endDate = searchParams.get('endDate');
 
-  let [value, setValue] = React.useState(() => {
+  const [value, setValue] = React.useState(() => {
     const start = startDate
       ? stringToCalendarDate(startDate)
       : today(getLocalTimeZone()).add({ weeks: -1 });

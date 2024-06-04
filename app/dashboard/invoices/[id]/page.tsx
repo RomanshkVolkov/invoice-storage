@@ -1,18 +1,13 @@
 import { getInvoiceById } from '@/app/lib/actions/invoice.actions';
 import CustomBreadcrumbs from '@/app/ui/breadcrumbs';
-import FrameViewer from '@/app/ui/frame-viewer';
 import TabFiles from '@/app/ui/invoices/tab-files';
-
-const getInvoice = async (id: string) => {
-  return await getInvoiceById(id);
-};
 
 export default async function page({
   params: { id },
 }: {
   params: { id: string };
 }) {
-  const file = await getInvoice(id);
+  const file = await getInvoiceById(id);
   return (
     <main>
       <div className="mb-6 flex flex-col">

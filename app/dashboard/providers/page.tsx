@@ -5,7 +5,7 @@ import { Button } from '@nextui-org/react';
 import SearchFilter from '@/app/ui/dashboard/search-filter';
 import TableWrapper from '@/app/ui/dashboard/providers/table-wrapper';
 
-export default async function Providers() {
+export default function Providers() {
   return (
     <main>
       <div className="mb-6 flex items-center justify-between">
