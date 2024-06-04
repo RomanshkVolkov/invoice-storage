@@ -7,12 +7,14 @@ import { Button } from '@nextui-org/react';
 import Link from 'next/link';
 import CompanyFilter from '@/app/ui/dashboard/providers/company-filter';
 import getCompanies from '@/app/lib/database/companies';
+import { auth } from '@/auth';
 
 export default async function page({
   searchParams: { startDate, endDate, company },
 }: {
   searchParams: { startDate: string; endDate: string; company: string };
 }) {
+  const session = await auth();
   const invoices = await getInvoicesByDateRange({
     startDate,
     endDate,
@@ -61,7 +63,7 @@ export default async function page({
       </div>
       <div className="mb-4 flex flex-col justify-between gap-2 rounded-large md:flex-row ">
         <SearchFilter data={{ key: 'invoice-search', label: 'Buscar' }} />
-        <CompanyFilter options={companies} />
+        {session?.user?.type.id === 1 && <CompanyFilter options={companies} />}
         <DateFilter />
       </div>
       <InvoicesTable invoices={invoices} columns={columns} />

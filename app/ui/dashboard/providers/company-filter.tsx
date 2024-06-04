@@ -11,7 +11,6 @@ export default function CompanyFilter({
   const searchparams = useSearchParams();
   const company = searchparams.get('company');
   const { replace } = useRouter();
-
   const handleOnChange = (keys: Selection) => {
     const value = Array.from(keys)[0];
     const params = new URLSearchParams(searchparams);
