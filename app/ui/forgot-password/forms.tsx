@@ -51,10 +51,11 @@ export default function Forms() {
           </p>
           <form action={emailDispatch}>
             <Input
+              data-testid="email-field"
+              id="email"
               label="Email"
               type="email"
               name="email"
-              id="email"
               className="mb-4"
               errorMessage="Por favor, ingresa un correo válido"
               isClearable
@@ -91,6 +92,7 @@ function NextButton({ isDisabled }: { isDisabled?: boolean }) {
 
   return (
     <Button
+      data-testid="submit-button"
       type="submit"
       color={isDisabled ? 'default' : 'primary'}
       className="relative m-auto w-full"
@@ -155,7 +157,9 @@ function OTPForm({
       />
       <div className="mb-2 items-center md:flex">
         <KeyIcon width={30} className="mr-2 flex text-primary-500" />
-        <h2 className="text-2xl">Código de seguridad</h2>
+        <h2 data-testid="otp-code-title" className="text-2xl">
+          Código de seguridad
+        </h2>
       </div>
       <p className="mb-6 text-gray-500">
         Si el correo ingresado está registrado, recibirás un código de 6 dígitos

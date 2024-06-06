@@ -25,6 +25,7 @@ export default function Form() {
         type="email"
         name="email"
         id="email"
+        data-testid="email-field"
         className="mb-4"
         errorMessage="Por favor, ingresa un correo válido"
         isClearable
@@ -33,6 +34,8 @@ export default function Form() {
       <Input
         name="password"
         label="Contraseña"
+        id="password"
+        data-testid="password-field"
         minLength={6}
         className="mb-2"
         type={isVisible ? 'text' : 'password'}
@@ -85,6 +88,7 @@ function LoginButton() {
     <Button
       type="submit"
       color="primary"
+      data-testid="submit-button"
       className="relative m-auto w-full"
       size="lg"
       variant="shadow"
