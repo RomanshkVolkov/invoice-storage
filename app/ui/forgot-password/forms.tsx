@@ -113,6 +113,7 @@ function AcceptButton({ isDisabled }: { isDisabled?: boolean }) {
 
   return (
     <Button
+      data-testid="submit-button"
       type="submit"
       color={isDisabled ? 'default' : 'primary'}
       className="relative m-auto w-full"
@@ -196,7 +197,9 @@ function PasswordForm({ userID }: { userID?: number }) {
         <>
           <div className="mb-2 items-center md:flex">
             <LockClosedIcon width={30} className="mr-2 flex text-primary-500" />
-            <h2 className="text-2xl">Nueva contraseña</h2>
+            <h2 data-testid="password-title" className="text-2xl">
+              Nueva contraseña
+            </h2>
           </div>
           <p className="mb-6 text-gray-500">
             ¡Casi listo! Ingresa tu nueva contraseña para continuar.
@@ -205,20 +208,22 @@ function PasswordForm({ userID }: { userID?: number }) {
             <fieldset>
               <div className="mb-4 flex w-full flex-col gap-2">
                 <Input
+                  id="password"
+                  data-testid="password-field"
                   label="Contraseña"
                   type="password"
                   name="password"
-                  id="password"
                   className="w-full"
                   errorMessage="La contraseña es requerida"
                   isClearable
                   isRequired
                 />
                 <Input
+                  data-testid="password-confirm-field"
+                  id="passwordConfirm"
                   label="Confirmar contraseña"
                   type="password"
                   name="passwordConfirm"
-                  id="passwordConfirm"
                   className="w-full"
                   errorMessage="Las contraseñas no coinciden"
                   isClearable
@@ -266,13 +271,16 @@ function PasswordForm({ userID }: { userID?: number }) {
               width={30}
               className="mr-2 flex text-primary-500"
             />
-            <h2 className="text-2xl">Contraseña actualizada</h2>
+            <h2 data-testid="password-updated-title" className="text-2xl">
+              Contraseña actualizada
+            </h2>
           </div>
           <p className="mb-6 text-gray-500">
             ¡Felicidades! Haz terminado el proceso, hora puedes iniciar sesión
             con tu nueva contraseña.
           </p>
           <Button
+            data-testid="login-button-redirect"
             className="relative m-auto"
             href="/login"
             color="primary"

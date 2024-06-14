@@ -21,4 +21,12 @@ export class ForgotPasswordPage {
       await this.page.fill(`[data-testid="code${i}-field"]`, otp[i]);
     }
   }
+
+  async populatePassword(password: string) {
+    await this.page.fill('[data-testid="password-field"]', password);
+  }
+
+  async populateConfirmPassword(password: string) {
+    await this.page.fill('[data-testid="password-confirm-field"]', password);
+  }
 }

@@ -138,4 +138,98 @@ test.describe('Forgot Password', () => {
       page.getByRole('heading', { name: 'Nueva contraseña' })
     ).toBeVisible();
   });
+
+  test('should show an error message when password is less than 6', async ({
+    forgotPasswordPage,
+    providerAccount,
+    page,
+  }) => {
+    await forgotPasswordPage.populateEmail(providerAccount.email);
+    await page.click('[data-testid="submit-button"]');
+    await page.waitForSelector('[data-testid="otp-code-title"]'); // Wait until the otp code step is visible
+
+    const user = await prisma.users.findFirst({
+      where: {
+        email: providerAccount.email,
+      },
+    });
+
+    await forgotPasswordPage.populateOTP(String(user?.otp) || '');
+    await page.click('[data-testid="submit-button"]');
+    await page.waitForSelector('[data-testid="password-title"]'); // Wait until the password step is visible
+
+    await forgotPasswordPage.populatePassword('123');
+
+    await page.click('[data-testid="submit-button"]');
+
+    await expect(
+      page.getByText('La contraseña debe tener al menos 6 caracteres')
+    ).toBeVisible();
+  });
+
+  test('should show an error message when password and confirm password do not match', async ({
+    forgotPasswordPage,
+    providerAccount,
+    page,
+  }) => {
+    await forgotPasswordPage.populateEmail(providerAccount.email);
+    await page.click('[data-testid="submit-button"]');
+    await page.waitForSelector('[data-testid="otp-code-title"]'); // Wait until the otp code step is visible
+
+    const user = await prisma.users.findFirst({
+      where: {
+        email: providerAccount.email,
+      },
+    });
+
+    await forgotPasswordPage.populateOTP(String(user?.otp) || '');
+    await page.click('[data-testid="submit-button"]');
+    await page.waitForSelector('[data-testid="password-title"]'); // Wait until the password step is visible
+
+    await forgotPasswordPage.populatePassword('123456');
+    await forgotPasswordPage.populateConfirmPassword('1234567');
+
+    await page.click('[data-testid="submit-button"]');
+
+    await expect(page.getByText('Las contraseñas no coinciden')).toBeVisible();
+  });
+
+  test('should change the password and login with the new password', async ({
+    forgotPasswordPage,
+    providerAccount,
+    page,
+  }) => {
+    await forgotPasswordPage.populateEmail(providerAccount.email);
+    await page.click('[data-testid="submit-button"]');
+    await page.waitForSelector('[data-testid="otp-code-title"]'); // Wait until the otp code step is visible
+
+    const user = await prisma.users.findFirst({
+      where: {
+        email: providerAccount.email,
+      },
+    });
+
+    await forgotPasswordPage.populateOTP(String(user?.otp) || '');
+    await page.click('[data-testid="submit-button"]');
+    await page.waitForSelector('[data-testid="password-title"]'); // Wait until the password step is visible
+
+    const password = faker.internet.password({
+      length: 10,
+    });
+
+    await forgotPasswordPage.populatePassword(password);
+    await forgotPasswordPage.populateConfirmPassword(password);
+
+    await page.click('[data-testid="submit-button"]');
+    await page.waitForSelector('[data-testid="password-updated-title"]');
+    await page.click('[data-testid="login-button-redirect"]');
+
+    await page.waitForSelector('[data-testid="email-field"]');
+    await page.fill('[data-testid="email-field"]', providerAccount.email);
+    await page.fill('[data-testid="password-field"]', password);
+    await page.click('[data-testid="submit-button"]');
+    await page.waitForLoadState('networkidle');
+
+    await expect(page).toHaveURL('/dashboard');
+  });
 });
