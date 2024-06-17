@@ -4,6 +4,7 @@ import {
   UserGroupIcon,
   HomeIcon,
   DocumentDuplicateIcon,
+  BuildingOffice2Icon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -22,6 +23,12 @@ const links = [
     name: 'Proveedores',
     href: '/dashboard/providers',
     icon: UserGroupIcon,
+    isAdminRoute: true,
+  },
+  {
+    name: 'Empresas',
+    href: '/dashboard/companies',
+    icon: BuildingOffice2Icon,
     isAdminRoute: true,
   },
 ];
