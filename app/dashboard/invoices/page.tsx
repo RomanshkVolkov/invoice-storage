@@ -6,7 +6,7 @@ import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
 import { Button } from '@nextui-org/react';
 import Link from 'next/link';
 import CompanyFilter from '@/app/ui/dashboard/providers/company-filter';
-import getCompanies from '@/app/lib/database/companies';
+import { getCompanies } from '@/app/lib/database/companies';
 import { auth } from '@/auth';
 
 export default async function page({
