@@ -18,10 +18,20 @@ export async function getCompanies() {
 }
 
 export async function crudGetCompanies() {
-  return await prisma.companies.findMany();
+  return await prisma.companies.findMany({
+    select: {
+      id: true,
+      name: true,
+      rfc: true,
+      prefix: true,
+      isDeletable: true,
+    },
+  });
 }
 
-export async function crudCreateCompany(data: Required<Omit<Companies, 'id'>>) {
+export async function crudCreateCompany(
+  data: Required<Omit<Companies, 'id' | 'isDeletable' | 'isDeleted'>>
+) {
   const company = await prisma.companies.create({
     data,
   });
@@ -44,9 +54,13 @@ export async function crudUpdateCompany(id: number, data: Partial<Companies>) {
 }
 
 export async function crudDeleteCompany(id: number) {
-  const deleted = await prisma.companies.delete({
+  const deleted = await prisma.companies.update({
     where: {
       id,
+      isDeletable: true,
+    },
+    data: {
+      isDeleted: true,
     },
   });
 
