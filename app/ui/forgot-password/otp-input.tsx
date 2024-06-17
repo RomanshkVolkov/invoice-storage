@@ -55,6 +55,7 @@ export function OTPInput({
     <div className="mb-4 flex w-full gap-2" onPaste={handlePaste}>
       {otp.map((data, index) => (
         <Input
+          data-testid={`code${index}-field`}
           id={`code${index}`}
           name={`code${index}`}
           key={index}
