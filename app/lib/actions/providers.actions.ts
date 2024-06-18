@@ -1,8 +1,9 @@
 'use server';
 
-import bcrypt from 'bcrypt';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import bcrypt from 'bcrypt';
+import { auth } from '@/auth';
 import {
   createProvider as newProvider,
   updateProvider,
@@ -14,7 +15,6 @@ import {
   validatePasswords,
   validateUpdateData,
 } from '../services/providers.service';
-import { auth } from '@/auth';
 
 export async function createProvider(prevState: any, formData: FormData) {
   const validatedData = await validateData(formData);

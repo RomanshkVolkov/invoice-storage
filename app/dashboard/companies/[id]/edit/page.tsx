@@ -1,7 +1,6 @@
-import { getProviderByID } from '@/app/lib/database/providers';
-import { getUserTypes } from '@/app/lib/database/user';
+import { getCompanyByID } from '@/app/lib/database/companies';
 import Breadcrumbs from '@/app/ui/breadcrumbs';
-import EditProviderForm from '@/app/ui/dashboard/providers/edit-form';
+import EditCompanyForm from '@/app/ui/dashboard/companies/edit-form';
 import { notFound } from 'next/navigation';
 
 export default async function Providers({
@@ -10,26 +9,24 @@ export default async function Providers({
   params: { id: string };
 }) {
   const { id } = params;
-  const provider = await getProviderByID(+id);
+  const company = await getCompanyByID(+id);
 
-  if (!provider) {
+  if (!company) {
     notFound();
   }
-
-  const userTypes = await getUserTypes();
 
   return (
     <main>
       <div className="mb-6 flex flex-col">
-        <h1 className="mb-4 text-4xl">Editar proveedor</h1>
+        <h1 className="mb-4 text-4xl">Editar empresa</h1>
         <Breadcrumbs
           items={[
-            { label: 'Proveedores', href: '/dashboard/providers' },
+            { label: 'Empresas', href: '/dashboard/companies' },
             { label: 'Editar', href: '#' },
           ]}
         />
       </div>
-      <EditProviderForm provider={provider} userTypes={userTypes} />
+      <EditCompanyForm company={company} />
     </main>
   );
 }
