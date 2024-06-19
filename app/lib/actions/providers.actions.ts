@@ -17,7 +17,7 @@ import {
 import { auth } from '@/auth';
 
 export async function createProvider(prevState: any, formData: FormData) {
-  const validatedData = await validateData(formData);
+  const validatedData = validateData(formData);
 
   if (!validatedData.success) {
     return {

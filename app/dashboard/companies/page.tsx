@@ -16,7 +16,7 @@ export default function Companies() {
           variant="flat"
           size="lg"
           type="button"
-          href="/dashboard/providers/create"
+          href="/dashboard/companies/create"
           as={Link}
         >
           Crear empresa
@@ -29,7 +29,7 @@ export default function Companies() {
           variant="flat"
           size="lg"
           type="button"
-          href="/dashboard/providers/create"
+          href="/dashboard/companies/create"
           as={Link}
           isIconOnly
         >

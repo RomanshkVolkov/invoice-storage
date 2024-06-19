@@ -17,6 +17,17 @@ export async function getCompanies() {
   );
 }
 
+export async function checkExistingCompany(rfc: string, id?: number) {
+  return await prisma.companies.findFirst({
+    where: {
+      rfc,
+      NOT: {
+        id,
+      },
+    },
+  });
+}
+
 export async function crudGetCompanies() {
   return await prisma.companies.findMany({
     select: {
