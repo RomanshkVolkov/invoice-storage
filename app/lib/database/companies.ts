@@ -52,6 +52,9 @@ export async function crudGetCompanies() {
       prefix: true,
       isDeletable: true,
     },
+    where: {
+      isDeleted: false,
+    },
   });
 }
 

@@ -8,7 +8,7 @@ export default function Providers() {
         <h1 className="mb-4 text-4xl">Crear empresa</h1>
         <Breadcrumbs
           items={[
-            { label: 'Proveedores', href: '/dashboard/companies' },
+            { label: 'Empresas', href: '/dashboard/companies' },
             { label: 'Crear', href: '#' },
           ]}
         />

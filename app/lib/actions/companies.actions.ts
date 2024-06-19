@@ -9,42 +9,6 @@ import {
   crudCreateCompany,
   getCompanyByRFC,
 } from '../database/companies';
-import {
-  checkExistingCompany,
-  validateCrateData,
-} from '../services/companies.service';
-
-export async function createCompany(prevState: any, formData: FormData) {
-  const validatedData = validateCrateData(formData);
-
-  if (!validatedData.success) {
-    return {
-      errors: validatedData.error.flatten().fieldErrors,
-      message: 'Por favor, revisa los campos en rojo.',
-    };
-  }
-
-  const company = {
-    rfc: validatedData.data.rfc.toUpperCase(),
-    name: validatedData.data.name,
-    prefix: validatedData.data.prefix,
-    emails: validatedData.data.emails,
-  };
-
-  const existingCompany = await checkExistingCompany(company.rfc);
-  if (existingCompany) return existingCompany;
-
-  try {
-    await crudCreateCompany(company);
-  } catch (error) {
-    console.error(error);
-    return {
-      errors: {},
-      message:
-        'Ha ocurrido un error inesperado, por favor, contacta a soporte.',
-    };
-  }
-}
 
 const BaseFormSchema = z.object({
   rfc: z.string().length(12, {
@@ -62,8 +26,73 @@ const BaseFormSchema = z.object({
 
 const EmailSchema = z.record(
   z.string().regex(/^email-\d+$/, 'Formato de clave de email inválido'),
-  z.string().email({ message: 'Por favor, ingresa un correo válido.' })
+  z
+    .string()
+    .email({ message: 'Por favor, ingresa un correo válido.' })
+    .nullable()
 );
+
+export async function createCompany(prevState: any, data: FormData) {
+  // Convertir FormData a un objeto
+  const formDataObj = Object.fromEntries(data);
+
+  const baseValidation = BaseFormSchema.safeParse(formDataObj);
+  if (!baseValidation.success) {
+    return {
+      errors: baseValidation.error.flatten().fieldErrors,
+      message: 'Por favor, revisa los campos marcados en rojo.',
+    };
+  }
+
+  // Filtrar y validar correos electrónicos
+  const emailEntries = Object.entries(formDataObj).filter(([key]) =>
+    key.startsWith('email-')
+  );
+
+  const emailObj = Object.fromEntries(emailEntries);
+  const emailValidation = EmailSchema.safeParse(emailObj);
+
+  if (!emailValidation.success) {
+    return {
+      errors: emailValidation.error.flatten().fieldErrors,
+      message: 'Por favor, revisa los campos marcados en rojo.',
+    };
+  }
+
+  const emails = Object.values(emailValidation.data).join(';');
+
+  const company = {
+    ...baseValidation.data,
+    rfc: baseValidation.data.rfc.toUpperCase(),
+    emails: emails || null,
+  };
+
+  const existingCompany = await getCompanyByRFC(company.rfc);
+  if (existingCompany) {
+    return {
+      errors: {
+        rfc: ['El RFC ya está registrado.'],
+        name: undefined,
+        prefix: undefined,
+      },
+      message: 'Revisa los campos marcados en rojo.',
+    };
+  }
+
+  try {
+    await crudCreateCompany(company);
+  } catch (error) {
+    console.error(error);
+    return {
+      errors: {},
+      message:
+        'Ha ocurrido un error inesperado, por favor, contacta a soporte.',
+    };
+  }
+
+  revalidatePath('/dashboard/companies');
+  redirect('/dashboard/companies');
+}
 
 export async function editCompany(
   companyID: number,
@@ -101,6 +130,7 @@ export async function editCompany(
 
   const company = {
     ...baseValidation.data,
+    rfc: baseValidation.data.rfc.toUpperCase(),
     emails: emails || null,
   };
 
@@ -142,4 +172,5 @@ export async function deleteCompany(id: number) {
         'Ha ocurrido un error al eliminar la empresa, por favor, contacta a soporte.',
     };
   }
+  revalidatePath('/dashboard/companies');
 }

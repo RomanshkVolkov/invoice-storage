@@ -16,8 +16,8 @@ import {
   Button,
   Tooltip,
 } from '@nextui-org/react';
-import { deleteProvider } from '@/app/lib/actions/providers.actions';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { deleteCompany } from '@/app/lib/actions/companies.actions';
 
 const columns = [
   { key: 'name', label: 'NOMBRE' },
@@ -108,7 +108,7 @@ function DeleteAction({
 }) {
   const handleDelete = async () => {
     if (!isDeletable) return;
-    const state = await deleteProvider(id);
+    const state = await deleteCompany(id);
     if (state?.message) {
       toast.error(state.message);
     }

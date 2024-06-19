@@ -1,16 +1,28 @@
-/*
-rfc: string;
-name: string;
-prefix: string | null;
-emails: string | null;
-*/
 'use client';
+
+import { useState } from 'react';
+import { useFormState, useFormStatus } from 'react-dom';
+import {
+  Button,
+  Input,
+  Link,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from '@nextui-org/react';
+import {
+  CheckCircleIcon,
+  EnvelopeIcon,
+  PlusIcon,
+  TrashIcon,
+  TruckIcon,
+} from '@heroicons/react/24/outline';
 
 import { createCompany } from '@/app/lib/actions/companies.actions';
 import { hasItems } from '@/app/lib/utils';
-import { CheckCircleIcon, TruckIcon } from '@heroicons/react/24/outline';
-import { Button, Input, Link } from '@nextui-org/react';
-import { useFormState, useFormStatus } from 'react-dom';
 
 interface Errors {
   rfc?: string[] | undefined;
@@ -20,6 +32,8 @@ interface Errors {
 }
 
 export default function CreateCompanyForm() {
+  const [emails, setEmails] = useState<string[]>([]);
+
   const initialState = {
     message: '',
     errors: {} as Errors,
@@ -33,14 +47,14 @@ export default function CreateCompanyForm() {
       action={dispatch}
       noValidate
     >
-      <fieldset>
+      <fieldset className="mb-8">
         <div className="mb-6 items-center md:flex">
           <TruckIcon className="mr-2 w-8 text-primary-500" />
           <legend className="text-lg text-primary-500">
             Información de la empresa
           </legend>
         </div>
-        <div className="mb-8 flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-4">
           <div className="w-full gap-4 md:flex">
             <div className="mb-4 md:mb-0 md:w-1/3">
               <Input
@@ -49,8 +63,8 @@ export default function CreateCompanyForm() {
                 label="RFC"
                 maxLength={12}
                 formNoValidate
-                isInvalid={hasItems(state?.errors.rfc)}
-                errorMessage={state?.errors.rfc?.join(', ')}
+                isInvalid={hasItems(state.errors.rfc)}
+                errorMessage={state.errors.rfc?.join(', ')}
               />
             </div>
             <div className="md:w-1/3">
@@ -58,7 +72,7 @@ export default function CreateCompanyForm() {
                 id="name"
                 name="name"
                 label="Nombre"
-                isInvalid={hasItems(state?.errors.name)}
+                isInvalid={hasItems(state.errors.name)}
                 errorMessage={state.errors.name?.join(', ')}
               />
             </div>
@@ -72,17 +86,74 @@ export default function CreateCompanyForm() {
               />
             </div>
           </div>
+        </div>
+      </fieldset>
+
+      <fieldset className="mb-8">
+        <div className="mb-6 items-center md:flex">
+          <EnvelopeIcon className="mr-2 w-8 text-primary-500" />
+          <legend className="text-lg text-primary-500">Lista de correos</legend>
+          <Button
+            color="primary"
+            variant="shadow"
+            className="ml-auto"
+            onClick={() => setEmails([...emails, ''])}
+          >
+            Agregar correo
+            <PlusIcon className="w-6" />
+          </Button>
+        </div>
+        <div className="flex flex-wrap gap-4">
           <div className="w-full">
-            <Input
-              id="emails"
-              name="emails"
-              label="Correo electrónico"
-              isInvalid={hasItems(state.errors.emails)}
-              errorMessage={state.errors.emails?.join(', ')}
-            />
+            <Table aria-label="Company emails" removeWrapper>
+              <TableHeader>
+                <TableColumn>CORREO ELECTRÓNICO</TableColumn>
+                <TableColumn className="text-center">Eliminar</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {emails.map((email, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="p-1 pl-0">
+                      <Input
+                        aria-label={`Correo número ${index + 1}`}
+                        placeholder="Escribir..."
+                        radius="sm"
+                        size="sm"
+                        id={`email-${index}`}
+                        name={`email-${index}`}
+                        isInvalid={hasItems(
+                          (state.errors as Record<string, string[]>)[
+                            `email-${index}`
+                          ]
+                        )}
+                        errorMessage={(
+                          state.errors as Record<string, string[]>
+                        )[`email-${index}`]?.join('; ')}
+                        defaultValue={email}
+                        isClearable
+                      />
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Button
+                        size="sm"
+                        color="danger"
+                        variant="shadow"
+                        isIconOnly
+                        onClick={() =>
+                          setEmails(emails.filter((_, i) => i !== index))
+                        }
+                      >
+                        <TrashIcon className="w-5" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </div>
       </fieldset>
+
       <div
         aria-live="polite"
         aria-atomic="true"
