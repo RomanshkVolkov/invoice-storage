@@ -14,11 +14,11 @@ import {
   TableRow,
 } from '@nextui-org/react';
 import {
+  BuildingOfficeIcon,
   CheckCircleIcon,
   EnvelopeIcon,
   PlusIcon,
   TrashIcon,
-  TruckIcon,
 } from '@heroicons/react/24/outline';
 
 import { createCompany } from '@/app/lib/actions/companies.actions';
@@ -49,7 +49,7 @@ export default function CreateCompanyForm() {
     >
       <fieldset className="mb-8">
         <div className="mb-6 items-center md:flex">
-          <TruckIcon className="mr-2 w-8 text-primary-500" />
+          <BuildingOfficeIcon className="mr-2 w-8 text-primary-500" />
           <legend className="text-lg text-primary-500">
             Información de la empresa
           </legend>

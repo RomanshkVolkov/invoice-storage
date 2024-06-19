@@ -1,11 +1,11 @@
 'use client';
 
 import {
+  BuildingOfficeIcon,
   CheckCircleIcon,
   EnvelopeIcon,
   PlusIcon,
   TrashIcon,
-  TruckIcon,
 } from '@heroicons/react/24/outline';
 import {
   Button,
@@ -51,7 +51,7 @@ export default function EditCompanyForm({ company }: { company: Company }) {
     >
       <fieldset className="mb-8">
         <div className="mb-6 items-center md:flex">
-          <TruckIcon className="mr-2 w-8 text-primary-500" />
+          <BuildingOfficeIcon className="mr-2 w-8 text-primary-500" />
           <legend className="text-lg text-primary-500">
             Información de la empresa
           </legend>
