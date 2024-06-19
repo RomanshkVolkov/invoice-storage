@@ -3,9 +3,15 @@ import Link from 'next/link';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { Button } from '@nextui-org/react';
 import SearchFilter from '@/app/ui/dashboard/search-filter';
-import TableWrapper from '@/app/ui/dashboard/providers/table-wrapper';
+import { auth } from '@/auth';
+import { getProviders } from '@/app/lib/database/providers';
+import ProvidersTable from '@/app/ui/dashboard/providers/table';
 
-export default function Providers() {
+export default async function Page() {
+  const session = await auth();
+  const userID = +(session?.user?.id || 0);
+  const providers = await getProviders(userID);
+
   return (
     <main>
       <div className="mb-6 flex items-center justify-between">
@@ -39,7 +45,7 @@ export default function Providers() {
       <div className="mb-4">
         <SearchFilter data={{ key: 'query', label: 'Buscar' }} />
       </div>
-      <TableWrapper />
+      <ProvidersTable providers={providers} />
     </main>
   );
 }

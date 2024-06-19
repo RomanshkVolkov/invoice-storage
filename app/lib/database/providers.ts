@@ -1,6 +1,8 @@
 import prisma from '@/app/lib/database/prisma';
 import { Provider, User } from '../types';
 
+const ITEMS_PER_PAGE = 5;
+
 export async function createProvider(
   provider: Omit<Provider, 'id' | 'user'>,
   user: Omit<User, 'id' | 'type'> & {
@@ -74,6 +76,20 @@ export async function getProviders(userID: number) {
     ...provider,
     email: provider.user.email,
   }));
+}
+
+export async function getProvidersPages(userID: number) {
+  const count = await prisma.providers.count({
+    where: {
+      isDeleted: false,
+      NOT: {
+        user: {
+          id: userID,
+        },
+      },
+    },
+  });
+  return Math.ceil(count / ITEMS_PER_PAGE);
 }
 
 export async function getProviderByID(id: number) {

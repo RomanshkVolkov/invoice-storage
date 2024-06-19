@@ -19,6 +19,7 @@ export default function CompanyFilter({
 
   return (
     <Select
+      aria-label="Selecciona una empresa"
       placeholder="Selecciona una empresa"
       onSelectionChange={handleOnChange}
       className="h-full w-full md:w-[350px]"
