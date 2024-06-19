@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { checkExistingCompany as xd } from '../database/companies';
+import { getCompanyByRFC } from '../database/companies';
 
 const FormSchema = z.object({
   rfc: z.string().length(12, {
@@ -22,7 +22,7 @@ export function validateCrateData(data: FormData) {
 
 export async function checkExistingCompany(rfc: string, id?: number) {
   try {
-    const isCompanyRegistered = await xd(rfc, id);
+    const isCompanyRegistered = await getCompanyByRFC(rfc, id);
 
     if (isCompanyRegistered) {
       return {
