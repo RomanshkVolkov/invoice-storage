@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt';
 import { login } from './app/lib/database/user';
 
 declare module 'next-auth' {
+  // eslint-disable-next-line no-unused-vars
   interface User {
     type: {
       id: number;
@@ -64,7 +65,7 @@ export const { auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -74,7 +75,7 @@ export const { auth, signIn, signOut } = NextAuth({
       }
       return token;
     },
-    async session({ session, token }) {
+    session({ session, token }) {
       session.user = {
         ...session.user,
         id: token.id as unknown as string,
