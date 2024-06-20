@@ -69,3 +69,13 @@ jobs:
           app-name: 'invoice-storage'
           slot-name: 'Production'
           package: .
+          
+      - name: Clean zip file
+        run: rm release.zip
+        
+      - name: Install dependencies
+        run: |
+          npm install -g pnpm
+          pnpm install
+          pnpm build
+        
