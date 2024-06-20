@@ -1,0 +1,10 @@
+[build]
+builder = "custom"
+build-command = "rm -rf node_modules && npm install -g pnpm && pnpm i && pnpm build"
+
+[runtime]
+web = "node"
+
+[pnpm]
+enable = true
+version = "9.4.0"
