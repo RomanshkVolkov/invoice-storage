@@ -9,7 +9,7 @@ on:
       - main
   workflow_dispatch:
 env: |
-  DATABASE_URL: "${{ secrets.DATABASE_URL }}"
+  DATABASE_URL: '${{ secrets.DATABASE_URL }}'
   AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
   AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
   AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
