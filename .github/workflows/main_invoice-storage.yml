@@ -9,7 +9,6 @@ on:
       - main
   workflow_dispatch:
 env: |
-  DATABASE_URL: '${{ secrets.DATABASE_URL }}'
   AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
   AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
   AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
@@ -17,6 +16,8 @@ env: |
   AZURE_BLOB_PATH: ${{ secrets.AZURE_BLOB_PATH }}
   MAIL_USER: ${{ secrets.MAIL_USER }}
   MAIL_PASS: ${{ secrets.MAIL_PASS }}
+  // DATABASE_URL STRING SPECIAL CHARS NEED TO BE ESCAPED
+  DATABASE_URL: '${{ fromBase64(secrets.DATABASE_URL) }}'
 
 jobs:
   build:
