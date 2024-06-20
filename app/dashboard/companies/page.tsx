@@ -1,45 +1,23 @@
-import Link from 'next/link';
-
-import { PlusIcon } from '@heroicons/react/24/outline';
-import { Button } from '@nextui-org/react';
+import { crudGetCompanies } from '@/app/lib/database/companies';
 import SearchFilter from '@/app/ui/dashboard/search-filter';
-import TableWrapper from '@/app/ui/dashboard/companies/table-wrapper';
+import CreateLinkButton from '@/app/ui/dashboard/create-button';
+import CompaniesTable from '@/app/ui/dashboard/companies/table';
 
-export default function Companies() {
+export default async function Companies() {
+  const companies = await crudGetCompanies();
+
   return (
     <main>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-4xl">Empresas</h1>
-        <Button
-          className="hidden md:flex"
-          color="primary"
-          variant="flat"
-          size="lg"
-          type="button"
-          href="/dashboard/companies/create"
-          as={Link}
-        >
+        <CreateLinkButton href="/dashboard/companies/create">
           Crear empresa
-          <PlusIcon className="w-6" />
-        </Button>
-
-        <Button
-          className="md:hidden "
-          color="primary"
-          variant="flat"
-          size="lg"
-          type="button"
-          href="/dashboard/companies/create"
-          as={Link}
-          isIconOnly
-        >
-          <PlusIcon className="w-6" />
-        </Button>
+        </CreateLinkButton>
       </div>
       <div className="mb-4">
         <SearchFilter data={{ key: 'query', label: 'Buscar' }} />
       </div>
-      <TableWrapper />
+      <CompaniesTable companies={companies} />
     </main>
   );
 }

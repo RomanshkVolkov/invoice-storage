@@ -1,7 +1,7 @@
 'use client';
 import { deleteProvider } from '@/app/lib/actions/providers.actions';
 import { Provider, User } from '@/app/lib/types';
-import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { TrashIcon } from '@heroicons/react/24/outline';
 import {
   Table,
   TableHeader,
@@ -12,11 +12,11 @@ import {
   Button,
   Tooltip,
 } from '@nextui-org/react';
-import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 import { useFormStatus } from 'react-dom';
 import { toast } from 'sonner';
+import EditLinkButton from '../edit-button';
 
 const columns = [
   { key: 'rfc', label: 'RFC' },
@@ -57,13 +57,9 @@ export default function ProvidersTable({
           return (
             <div className="relative flex items-center justify-center gap-2">
               <Tooltip content="Editar">
-                <Button
+                <EditLinkButton
                   href={`/dashboard/providers/${provider.id}/edit`}
-                  as={Link}
-                  isIconOnly
-                >
-                  <PencilSquareIcon className="w-5" />
-                </Button>
+                />
               </Tooltip>
               <DeleteAction id={provider.id} />
             </div>

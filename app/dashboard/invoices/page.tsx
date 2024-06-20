@@ -3,11 +3,10 @@ import DateFilter from '@/app/ui/dashboard/date-filter';
 import InvoicesTable from '@/app/ui/invoices/table';
 import SearchFilter from '@/app/ui/dashboard/search-filter';
 import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
-import { Button } from '@nextui-org/react';
-import Link from 'next/link';
 import CompanyFilter from '@/app/ui/dashboard/providers/company-filter';
 import { getCompanies } from '@/app/lib/database/companies';
 import { auth } from '@/auth';
+import CreateLinkButton from '@/app/ui/dashboard/create-button';
 
 export default async function page({
   searchParams: { startDate, endDate, company },
@@ -35,31 +34,12 @@ export default async function page({
     <main>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-4xl">Facturas</h1>
-        <Button
-          className="hidden md:flex"
-          color="primary"
-          variant="flat"
-          size="lg"
-          type="button"
+        <CreateLinkButton
           href="/dashboard/invoices/create"
-          as={Link}
+          icon={CloudArrowUpIcon}
         >
-          <span className="hidden md:inline-block">Cargar factura</span>
-          <CloudArrowUpIcon className="w-6" />
-        </Button>
-
-        <Button
-          className="md:hidden "
-          color="primary"
-          variant="flat"
-          size="lg"
-          type="button"
-          href="/dashboard/invoices/create"
-          as={Link}
-          isIconOnly
-        >
-          <CloudArrowUpIcon className="w-6" />
-        </Button>
+          Cargar factura
+        </CreateLinkButton>
       </div>
       <div className="mb-4 flex flex-col justify-between gap-2 rounded-large md:flex-row ">
         <SearchFilter data={{ key: 'invoice-search', label: 'Buscar' }} />

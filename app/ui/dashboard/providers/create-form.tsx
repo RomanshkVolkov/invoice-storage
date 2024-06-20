@@ -2,7 +2,6 @@
 
 import { createProvider } from '@/app/lib/actions/providers.actions';
 import {
-  CheckCircleIcon,
   EyeIcon,
   EyeSlashIcon,
   IdentificationIcon,
@@ -10,9 +9,14 @@ import {
 } from '@heroicons/react/24/outline';
 import { Button, Input, Select, SelectItem } from '@nextui-org/react';
 import Link from 'next/link';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 import { hasItems } from '@/app/lib/utils';
 import { useState } from 'react';
+import SubmitButton from '../submit-button';
+import FormLegend from '../../form-legend';
+import FormError from '../../form-error';
+import FieldsWrapper from '../../fields-wrapper';
+import Fields from '../../fields';
 
 interface UserType {
   id: number;
@@ -49,15 +53,12 @@ export default function CreateProviderForm({
       action={dispatch}
       noValidate
     >
-      <fieldset>
+      <fieldset className="mb-8">
         <div className="mb-6 items-center md:flex">
-          <TruckIcon className="mr-2 w-8 text-primary-500" />
-          <legend className="text-lg text-primary-500">
-            Información del proveedor
-          </legend>
+          <FormLegend icon={TruckIcon}>Información del proveedor</FormLegend>
         </div>
-        <div className="mb-8 flex flex-wrap gap-4">
-          <div className="w-full gap-4 md:flex">
+        <FieldsWrapper>
+          <Fields>
             <div className="mb-4 md:mb-0 md:w-1/2">
               <Input
                 id="rfc"
@@ -78,7 +79,7 @@ export default function CreateProviderForm({
                 errorMessage={state.errors.zipcode?.join(', ')}
               />
             </div>
-          </div>
+          </Fields>
           <div className="w-full">
             <Input
               id="name"
@@ -88,18 +89,17 @@ export default function CreateProviderForm({
               errorMessage={state.errors.name?.join(', ')}
             />
           </div>
-        </div>
+        </FieldsWrapper>
       </fieldset>
 
-      <fieldset>
+      <fieldset className="mb-8">
         <div className="mb-6 items-center md:flex">
-          <IdentificationIcon className="mr-2 w-8 text-primary-500" />
-          <legend className="text-lg text-primary-500">
+          <FormLegend icon={IdentificationIcon}>
             Credenciales de acceso
-          </legend>
+          </FormLegend>
         </div>
-        <div className="mb-6 flex flex-wrap gap-4">
-          <div className="w-full gap-4 md:flex">
+        <FieldsWrapper>
+          <Fields>
             <div className="mb-4 md:mb-0 md:w-1/2">
               <Input
                 id="email"
@@ -126,9 +126,9 @@ export default function CreateProviderForm({
                 ))}
               </Select>
             </div>
-          </div>
+          </Fields>
 
-          <div className="w-full gap-4 md:flex">
+          <Fields>
             <div className="mb-4 md:mb-0 md:w-1/2">
               <Input
                 id="password"
@@ -187,16 +187,11 @@ export default function CreateProviderForm({
                 }
               />
             </div>
-          </div>
-        </div>
+          </Fields>
+        </FieldsWrapper>
       </fieldset>
 
-      <div
-        aria-live="polite"
-        aria-atomic="true"
-        id="form-error"
-        className="flex items-center justify-between"
-      >
+      <FormError>
         {state.message && <p className="w-full text-danger">{state.message}</p>}
         <div className="flex w-full justify-between sm:justify-end">
           <Button
@@ -207,19 +202,9 @@ export default function CreateProviderForm({
           >
             Cancelar
           </Button>
-          <CreateButton />
+          <SubmitButton />
         </div>
-      </div>
+      </FormError>
     </form>
-  );
-}
-
-function CreateButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button color="success" variant="shadow" type="submit" isLoading={pending}>
-      Finalizar
-      <CheckCircleIcon className="w-6" />
-    </Button>
   );
 }

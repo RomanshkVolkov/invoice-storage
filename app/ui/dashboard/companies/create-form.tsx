@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 import {
   Button,
   Input,
@@ -15,7 +15,6 @@ import {
 } from '@nextui-org/react';
 import {
   BuildingOfficeIcon,
-  CheckCircleIcon,
   EnvelopeIcon,
   PlusIcon,
   TrashIcon,
@@ -23,6 +22,12 @@ import {
 
 import { createCompany } from '@/app/lib/actions/companies.actions';
 import { hasItems } from '@/app/lib/utils';
+import SubmitButton from '../submit-button';
+import FormLegend from '../../form-legend';
+import Form from '../../form';
+import FormError from '../../form-error';
+import Fields from '../../fields';
+import FieldsWrapper from '../../fields-wrapper';
 
 interface Errors {
   rfc?: string[] | undefined;
@@ -41,21 +46,15 @@ export default function CreateCompanyForm() {
   const [state, dispatch] = useFormState(createCompany, initialState);
 
   return (
-    <form
-      aria-describedby="form-error"
-      className="rounded-xl border bg-white p-6 shadow-xl  dark:border-none dark:bg-black dark:shadow-black md:px-12 md:py-8"
-      action={dispatch}
-      noValidate
-    >
+    <Form action={dispatch}>
       <fieldset className="mb-8">
         <div className="mb-6 items-center md:flex">
-          <BuildingOfficeIcon className="mr-2 w-8 text-primary-500" />
-          <legend className="text-lg text-primary-500">
+          <FormLegend icon={BuildingOfficeIcon}>
             Información de la empresa
-          </legend>
+          </FormLegend>
         </div>
-        <div className="flex flex-wrap gap-4">
-          <div className="w-full gap-4 md:flex">
+        <FieldsWrapper>
+          <Fields>
             <div className="mb-4 md:mb-0 md:w-1/3">
               <Input
                 id="rfc"
@@ -85,14 +84,13 @@ export default function CreateCompanyForm() {
                 errorMessage={state.errors.prefix?.join(', ')}
               />
             </div>
-          </div>
-        </div>
+          </Fields>
+        </FieldsWrapper>
       </fieldset>
 
       <fieldset className="mb-8">
         <div className="mb-6 items-center md:flex">
-          <EnvelopeIcon className="mr-2 w-8 text-primary-500" />
-          <legend className="text-lg text-primary-500">Lista de correos</legend>
+          <FormLegend icon={EnvelopeIcon}>Lista de correos</FormLegend>
           <Button
             color="primary"
             variant="shadow"
@@ -103,8 +101,8 @@ export default function CreateCompanyForm() {
             <PlusIcon className="w-6" />
           </Button>
         </div>
-        <div className="flex flex-wrap gap-4">
-          <div className="w-full">
+        <FieldsWrapper>
+          <Fields>
             <Table aria-label="Company emails" removeWrapper>
               <TableHeader>
                 <TableColumn>CORREO ELECTRÓNICO</TableColumn>
@@ -150,16 +148,11 @@ export default function CreateCompanyForm() {
                 ))}
               </TableBody>
             </Table>
-          </div>
-        </div>
+          </Fields>
+        </FieldsWrapper>
       </fieldset>
 
-      <div
-        aria-live="polite"
-        aria-atomic="true"
-        id="form-error"
-        className="flex items-center justify-between"
-      >
+      <FormError>
         {state.message && <p className="w-full text-danger">{state.message}</p>}
         <div className="flex w-full justify-between sm:justify-end">
           <Button
@@ -170,19 +163,9 @@ export default function CreateCompanyForm() {
           >
             Cancelar
           </Button>
-          <CreateButton />
+          <SubmitButton />
         </div>
-      </div>
-    </form>
-  );
-}
-
-function CreateButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button color="success" variant="shadow" type="submit" isLoading={pending}>
-      Finalizar
-      <CheckCircleIcon className="w-6" />
-    </Button>
+      </FormError>
+    </Form>
   );
 }

@@ -1,16 +1,18 @@
 'use client';
 
 import { editProvider } from '@/app/lib/actions/providers.actions';
-import {
-  CheckCircleIcon,
-  IdentificationIcon,
-  TruckIcon,
-} from '@heroicons/react/24/outline';
+import { IdentificationIcon, TruckIcon } from '@heroicons/react/24/outline';
 import { Button, Input, Select, SelectItem } from '@nextui-org/react';
 import Link from 'next/link';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 import { hasItems } from '@/app/lib/utils';
 import { Provider, User } from '@/app/lib/types';
+import SubmitButton from '../submit-button';
+import FormLegend from '../../form-legend';
+import Form from '../../form';
+import FormError from '../../form-error';
+import FieldsWrapper from '../../fields-wrapper';
+import Fields from '../../fields';
 
 interface Errors {
   rfc?: string[] | undefined;
@@ -40,21 +42,13 @@ export default function EditProviderForm({
   const [state, dispatch] = useFormState(editProviderWithIds, initialState);
 
   return (
-    <form
-      aria-describedby="form-error"
-      className="rounded-xl border bg-white px-12 py-8 shadow-xl dark:border-none dark:bg-black dark:shadow-black"
-      action={dispatch}
-      noValidate
-    >
-      <fieldset>
+    <Form action={dispatch}>
+      <fieldset className="mb-8">
         <div className="mb-6 items-center md:flex">
-          <TruckIcon className="mr-2 w-8 text-primary-500" />
-          <legend className="text-lg text-primary-500">
-            Información del proveedor
-          </legend>
+          <FormLegend icon={TruckIcon}>Información del proveedor</FormLegend>
         </div>
-        <div className="mb-8 flex flex-wrap gap-4">
-          <div className="w-full gap-4 md:flex">
+        <FieldsWrapper>
+          <Fields>
             <div className="mb-4 md:mb-0 md:w-1/2">
               <Input
                 id="rfc"
@@ -77,7 +71,7 @@ export default function EditProviderForm({
                 defaultValue={String(provider.zipcode) || ''}
               />
             </div>
-          </div>
+          </Fields>
           <div className="w-full">
             <Input
               id="name"
@@ -88,17 +82,16 @@ export default function EditProviderForm({
               defaultValue={provider.name}
             />
           </div>
-        </div>
+        </FieldsWrapper>
       </fieldset>
 
-      <fieldset>
+      <fieldset className="mb-8">
         <div className="mb-6 items-center md:flex">
-          <IdentificationIcon className="mr-2 w-8 text-primary-500" />
-          <legend className="text-lg text-primary-500">Acceso</legend>
+          <FormLegend icon={IdentificationIcon}>Acceso</FormLegend>
         </div>
 
-        <div className="mb-6 flex flex-wrap gap-4">
-          <div className="w-full gap-4 md:flex">
+        <FieldsWrapper>
+          <Fields>
             <div className="mb-4 md:mb-0 md:w-1/2">
               <Input
                 id="email"
@@ -127,16 +120,11 @@ export default function EditProviderForm({
                 ))}
               </Select>
             </div>
-          </div>
-        </div>
+          </Fields>
+        </FieldsWrapper>
       </fieldset>
 
-      <div
-        aria-live="polite"
-        aria-atomic="true"
-        id="form-error"
-        className="flex items-center justify-between"
-      >
+      <FormError>
         {state.message && <p className="w-full text-danger">{state.message}</p>}
         <div className="flex w-full justify-between sm:justify-end">
           <Button
@@ -147,19 +135,9 @@ export default function EditProviderForm({
           >
             Cancelar
           </Button>
-          <CreateButton />
+          <SubmitButton />
         </div>
-      </div>
-    </form>
-  );
-}
-
-function CreateButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button color="success" variant="shadow" type="submit" isLoading={pending}>
-      Finalizar
-      <CheckCircleIcon className="w-6" />
-    </Button>
+      </FormError>
+    </Form>
   );
 }
