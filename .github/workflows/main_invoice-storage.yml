@@ -8,8 +8,6 @@ on:
     branches:
       - main
   workflow_dispatch:
-env: |
-  DATABASE_URL: '${{ secrets.DATABASE_URL }}'
 
 jobs:
   build:
@@ -17,6 +15,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up Database conection
+        run: |
+          export DATABASE_URL=${{ secrets.DATABASE_URL }}
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
