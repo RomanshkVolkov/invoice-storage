@@ -2,6 +2,7 @@
   "name": "invoice-storage",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@9.4.0",
   "scripts": {
     "generate": "npx prisma generate && next dev",
     "dev": "op run --env-file='./.env' -- pnpm generate",
