@@ -120,7 +120,7 @@ export async function validateInvoice(prevState: any, formData: FormData) {
       throw new Error('No se encontró el UUID en el archivo XML.');
     }
 
-    if (uuid !== uuidInput) {
+    if (uuid.toUpperCase() !== uuidInput.toUpperCase()) {
       throw new Error(`El UUID no coincide con el ingresado (${uuid}).`);
     }
 
