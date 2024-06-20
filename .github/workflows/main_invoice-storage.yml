@@ -17,7 +17,7 @@ env: |
   MAIL_USER: ${{ secrets.MAIL_USER }}
   MAIL_PASS: ${{ secrets.MAIL_PASS }}
   // DATABASE_URL STRING SPECIAL CHARS NEED TO BE ESCAPED
-  DATABASE_URL: '${{ fromBase64(secrets.DATABASE_URL) }}'
+  DATABASE_URL: '${{ secrets.DATABASE_URL }}'
 
 jobs:
   build:
