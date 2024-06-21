@@ -6,7 +6,9 @@
   "scripts": {
     "generate": "npx prisma generate && next dev",
     "dev": "op run --env-file='./.env' -- pnpm generate",
-    "build": "npx prisma generate && next build",
+    "build": "npx prisma generate && pnpm build:prod",
+    "build:prod": "next build",
+    "build:local": "op run --env-file='./.env' -- pnpm build",
     "start": "next start",
     "lint": "next lint",
     "test": "npx prisma generate && pnpm playwright test --ui"
