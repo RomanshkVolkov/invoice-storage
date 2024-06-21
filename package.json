@@ -8,7 +8,7 @@
     "dev": "op run --env-file='./.env' -- pnpm generate",
     "build": "npx prisma generate && next build",
     "build:prod": "op run --env-file='./.env' -- pnpm build",
-    "start": "/home/site/wwwroot/node_modules/next/dist/bin/next",
+    "start": "next start",
     "lint": "next lint",
     "test": "npx prisma generate && pnpm playwright test --ui"
   },
