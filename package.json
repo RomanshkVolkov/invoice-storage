@@ -22,6 +22,7 @@
     "archiver": "^7.0.1",
     "bcrypt": "^5.1.1",
     "clsx": "^2.1.1",
+    "dwit-ui": "^1.0.3",
     "framer-motion": "^11.2.6",
     "next": "14.2.3",
     "next-auth": "5.0.0-beta.18",

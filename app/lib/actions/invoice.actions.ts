@@ -92,6 +92,15 @@ export async function validateInvoice(prevState: any, formData: FormData) {
       certificationTimestamp,
     } = extractInvoiceData(xmlContent, uuidInput, invalidXmlMessage);
 
+    const now = Intl.DateTimeFormat('es-MX', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    }).format(new Date());
+
     const relatedData = await validateInvoiceData({
       transmitter,
       receiver,
@@ -136,15 +145,15 @@ export async function validateInvoice(prevState: any, formData: FormData) {
     const companyMailOptions = {
       from: `"Invoice Storage" <${process.env.MAIL_USER}>`,
       to: relatedData?.receiver?.emails?.split(';'),
-      subject: 'Nueva factura',
+      subject: `${session?.user?.provider?.name} - ${now}`,
       text: `El proveedor ${session?.user?.provider?.name} con RFC ${session?.user?.provider?.rfc} ha subido una factura de esta empresa con el UUID: ${uuid}`,
     };
 
     const providerMailOptions = {
       from: `"Invoice Storage" <${process.env.MAIL_USER}>`,
-      to: session?.user?.email || '',
-      subject: 'Nueva factura',
-      text: `Has subido una factura con el UUID: ${uuid}`,
+      to: `${session?.user?.email || ''}`,
+      subject: `${session?.user?.provider?.name} - ${now}`,
+      text: `El proveedor ${session?.user?.provider?.name} ha subido una factura con el UUID: ${uuid}`,
     };
 
     await createInvoice({

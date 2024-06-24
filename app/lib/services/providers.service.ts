@@ -73,21 +73,14 @@ export async function checkExistingEmailAndRFC(
   }
 ) {
   try {
-    const isEmailRegistered = await checkExistingUser(user.email, user.id);
-    const isProviderRegistered = await checkExistingProvider(
-      provider.rfc,
-      provider.id
-    );
-    if (isEmailRegistered || isProviderRegistered) {
+    const emailExist = await checkExistingUser(user.email, user.id);
+
+    if (emailExist) {
       return {
         errors: {
-          email: isEmailRegistered
-            ? ['El correo ya está registrado.']
-            : undefined,
+          email: emailExist ? ['El correo ya está registrado.'] : undefined,
           name: undefined,
-          rfc: isProviderRegistered
-            ? ['El proveedor ya está registrado.']
-            : undefined,
+          rfc: undefined,
           zipcode: undefined,
           type: undefined,
           password: undefined,
