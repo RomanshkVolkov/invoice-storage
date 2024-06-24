@@ -42,13 +42,15 @@ model Invoices {
 }
 
 model Providers {
-  id        Int        @id(map: "providers_pk") @default(autoincrement()) @map("provider_id")
-  rfc       String     @unique @map("provider_rfc") @db.NVarChar(12)
-  name      String     @db.NVarChar(500)
-  zipcode   Int?
-  isDeleted Boolean    @default(false)
-  users     Users[]
-  invoices  Invoices[]
+  id            Int             @id(map: "providers_pk") @default(autoincrement()) @map("provider_id")
+  rfc           String          @unique @map("provider_rfc") @db.NVarChar(12)
+  name          String          @db.NVarChar(500)
+  email         String          @db.NVarChar(500)
+  zipcode       Int?
+  isDeleted     Boolean         @default(false)
+  invoices      Invoices[]
+  users         Users[]
+  UserProviders UserProviders[]
 
   @@map("providers")
 }
@@ -62,19 +64,31 @@ model UserTypes {
 }
 
 model Users {
-  id            Int        @id(map: "users_pk") @default(autoincrement()) @map("user_id")
-  email         String     @db.NVarChar(500)
-  password      String     @db.NVarChar(300)
-  userTypeID    Int        @map("user_type_id")
+  id            Int             @id(map: "users_pk") @default(autoincrement()) @map("user_id")
+  username      String          @db.NVarChar(500)
+  email         String          @db.NVarChar(500)
+  password      String          @db.NVarChar(300)
+  name          String          @db.NVarChar(500)
+  userTypeID    Int             @map("user_type_id")
   otp           Int?
-  otpExpireDate DateTime?  @map("otp_expire_date")
-  providerID    Int?       @map("provider_id")
-  isActive      Boolean    @default(true)
-  type          UserTypes  @relation(fields: [userTypeID], references: [id], onUpdate: NoAction, map: "FK__users__user_type__17CF3C3F")
-  provider      Providers? @relation(fields: [providerID], references: [id], onUpdate: NoAction, map: "users_providers_provider_id_fk")
+  otpExpireDate DateTime?       @map("otp_expire_date")
+  isActive      Boolean         @default(true)
+  providers     Providers[]
+  type          UserTypes       @relation(fields: [userTypeID], references: [id], onUpdate: NoAction, map: "FK__users__user_type__17CF3C3F")
   invoices      Invoices[]
+  UserProviders UserProviders[]
 
   @@map("users")
+}
+
+model UserProviders {
+  userID     Int       @map("user_id")
+  providerID Int       @map("provider_id")
+  user       Users     @relation(fields: [userID], references: [id], onUpdate: NoAction, map: "users_providers_users_user_id_fk")
+  provider   Providers @relation(fields: [providerID], references: [id], onUpdate: NoAction, map: "users_providers_providers_provider_id_fk")
+
+  @@id([userID, providerID])
+  @@map("users_providers")
 }
 
 model DocumentTypes {

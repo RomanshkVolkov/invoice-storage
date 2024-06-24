@@ -24,13 +24,13 @@ export async function login(email: string) {
   return user;
 }
 
-export async function findUserByEmail(email: string) {
+export async function findUserByUsername(username: string) {
   const user = await prisma.users.findFirst({
     select: {
       id: true,
       email: true,
       type: true,
-      provider: {
+      providers: {
         select: {
           id: true,
           name: true,
@@ -39,7 +39,7 @@ export async function findUserByEmail(email: string) {
       },
     },
     where: {
-      email,
+      username,
     },
   });
   return user;
@@ -58,8 +58,10 @@ export async function checkExistingUser(email: string, id?: number) {
         id,
       },
       AND: {
-        provider: {
-          isDeleted: false,
+        providers: {
+          some: {
+            isDeleted: false,
+          },
         },
       },
     },
