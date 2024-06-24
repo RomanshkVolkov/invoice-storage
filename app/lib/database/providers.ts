@@ -10,13 +10,13 @@ export async function createProvider(
   }
 ) {
   return await prisma.$transaction(async (context) => {
-    const isExistProvider = await context.providers.findUnique({
+    const existingProvider = await context.providers.findUnique({
       where: {
         rfc: provider.rfc,
       },
     });
 
-    if (!isExistProvider) {
+    if (!existingProvider) {
       const providerCreated = await context.providers.create({
         data: {
           ...provider,
@@ -33,7 +33,7 @@ export async function createProvider(
 
     await context.providers.update({
       where: {
-        id: isExistProvider.id,
+        id: existingProvider.id,
       },
       data: {
         isDeleted: false,
@@ -41,12 +41,12 @@ export async function createProvider(
     }); // reactivate provider
 
     const userCreated = await context.users.create({
-      data: { ...user, providerID: isExistProvider.id },
+      data: { ...user, providerID: existingProvider.id },
     });
 
     return {
       user: userCreated,
-      provider: isExistProvider,
+      provider: existingProvider,
     };
   });
 }
