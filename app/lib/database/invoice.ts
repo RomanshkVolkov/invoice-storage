@@ -4,16 +4,28 @@ import prisma from './prisma';
 export async function getInvoicesByDateRangeDB({
   startDate,
   endDate,
-  company,
+  companyID,
+  isSearch = false,
 }: {
   startDate: string | null;
   endDate: string | null;
-  company: string | null;
+  companyID: string | null;
+  isSearch: boolean;
 }) {
   const session = await auth();
   const isAdmin = session?.user?.type.name.toLowerCase() === 'admin';
-  const query = isAdmin ? {} : { user: { id: +(session?.user?.id || 0) } };
-  const companyFilter = company ? { id: +(company || 0) } : {};
+  const query = isAdmin ? {} : { user: { id: +(session!.user!.id || 0) } };
+  const companyFilter = companyID ? { id: +(companyID || 0) } : {};
+
+  const currentDate = new Date();
+  const date = isSearch
+    ? {}
+    : {
+        gte: new Date(
+          startDate || new Date(currentDate.setDate(currentDate.getDate() - 7))
+        ),
+      };
+
   const invoices = await prisma.invoices.findMany({
     select: {
       id: true,
@@ -34,18 +46,11 @@ export async function getInvoicesByDateRangeDB({
     },
     where: {
       isDeleted: false,
-      date: {
-        gte: new Date(
-          startDate || new Date(new Date().setDate(new Date().getDate() - 7))
-        ),
-        lte: new Date(endDate || new Date()),
-      },
+      date,
       company: {
         ...companyFilter,
       },
-      provider: {
-        ...query,
-      },
+      ...query,
     },
   });
 
@@ -93,7 +98,6 @@ export async function validateInvoiceData({
   if (!session) {
     throw new Error('No se pudo obtener la sesión.');
   }
-
   if (!session.user?.provider) {
     throw new Error('No se pudo obtener el RFC del proveedor.');
   }
@@ -102,15 +106,15 @@ export async function validateInvoiceData({
     throw new Error('No puedes cargar facturas de otro proveedor.');
   }
 
-  const isExistTransmitter = await prisma.companies.findFirst({
+  const isExistTransmitter = await prisma.providers.findFirst({
     where: {
-      rfc: receiver,
+      rfc: transmitter,
     },
   });
 
-  const isExistReceiver = await prisma.providers.findFirst({
+  const isExistReceiver = await prisma.companies.findFirst({
     where: {
-      rfc: transmitter,
+      rfc: receiver,
     },
   });
 
@@ -133,19 +137,9 @@ export async function validateInvoiceData({
     );
   }
 
-  const company = await prisma.companies.findFirst({
-    where: {
-      rfc: receiver,
-    },
-    select: {
-      emails: true,
-    },
-  });
-
   return {
     transmitter: isExistTransmitter,
     receiver: isExistReceiver,
-    companyEmails: company?.emails || '',
   };
 }
 
@@ -157,6 +151,7 @@ export async function createInvoice({
   certificationTimestamp,
   reference,
   typeID,
+  userID,
 }: {
   transmitterID: number;
   receiverID: number;
@@ -165,38 +160,49 @@ export async function createInvoice({
   certificationTimestamp: string;
   reference: string;
   typeID: string;
+  userID: number;
 }) {
   return await prisma.$transaction(async (ctx) => {
     try {
-      const result = await ctx.invoices.update({
-        data: {
-          isDeleted: false,
-          companyID: transmitterID,
-          providerID: receiverID,
-          date: new Date(date),
-          certificationTimestamp: new Date(certificationTimestamp),
-        },
+      const isExistAndDeleted = await ctx.invoices.findFirst({
         where: {
           id: uuid,
           isDeleted: true,
         },
       });
-      if (result.id) return result;
-    } catch (e) {
-      console.error(e);
+      if (isExistAndDeleted) {
+        const result = await ctx.invoices.update({
+          data: {
+            isDeleted: false,
+            companyID: receiverID,
+            providerID: transmitterID,
+            date: new Date(date),
+            certificationTimestamp: new Date(certificationTimestamp),
+          },
+          where: {
+            id: uuid,
+            isDeleted: true,
+          },
+        });
+        if (result.id) return result;
+      }
       return ctx.invoices.create({
         data: {
           id: uuid,
-          companyID: transmitterID,
-          providerID: receiverID,
+          companyID: receiverID,
+          providerID: transmitterID,
           pdf: `/invoices/pdf/${uuid}.pdf`,
           xml: `/invoices/xml/${uuid}.xml`,
           date: new Date(date),
           certificationTimestamp: new Date(certificationTimestamp),
           reference,
           typeID,
+          userID,
         },
       });
+    } catch (e) {
+      console.error(e);
+      throw new Error('No se pudo crear la factura.');
     }
   });
 }

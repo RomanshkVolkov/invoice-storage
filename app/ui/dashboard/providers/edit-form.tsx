@@ -54,7 +54,7 @@ export default function EditProviderForm({
                 id="rfc"
                 name="rfc"
                 label="RFC"
-                maxLength={12}
+                maxLength={13}
                 formNoValidate
                 isInvalid={hasItems(state.errors.rfc)}
                 errorMessage={state.errors.rfc?.join(', ')}
@@ -111,7 +111,7 @@ export default function EditProviderForm({
                 label="Rol"
                 isInvalid={hasItems(state.errors.type)}
                 errorMessage={state.errors.type?.join(', ')}
-                defaultSelectedKeys={new Set([provider.user.type.id])}
+                defaultSelectedKeys={new Set([String(provider.user.type.id)])}
               >
                 {userTypes.map((type) => (
                   <SelectItem key={type.id} value={type.id}>

@@ -18,6 +18,7 @@ export async function login(email: string) {
     },
     where: {
       email,
+      isActive: true,
     },
   });
   return user;

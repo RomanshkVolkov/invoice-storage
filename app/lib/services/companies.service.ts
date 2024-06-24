@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { getCompanyByRFC } from '../database/companies';
 
 const FormSchema = z.object({
-  rfc: z.string().length(12, {
-    message: 'El RFC debe tener 12 caracteres.',
+  rfc: z.string().refine((val) => val.length === 12 || val.length === 13, {
+    message: 'El campo debe tener 12 o 13 caracteres.',
   }),
   name: z
     .string({

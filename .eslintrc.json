@@ -20,7 +20,16 @@
     "arrow-parens": "error",
     "brace-style": "error",
     "comma-dangle": ["error", "always-multiline"],
-    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "indent": [
+      "error",
+      2,
+      {
+        "SwitchCase": 1,
+        "ObjectExpression": "off",
+        "ArrayExpression": "off",
+        "offsetTernaryExpression": true
+      }
+    ],
     "jsx-quotes": ["error", "prefer-double"],
     "keyword-spacing": [
       "error",

@@ -9,25 +9,30 @@ import {
   getInvoicesByDateRangeDB,
   validateInvoiceData,
 } from '../database/invoice';
-import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
+import { extractInvoiceData } from '../utils';
 
 export async function getInvoicesByDateRange({
   startDate,
   endDate,
   company,
+  isSearch,
 }: {
-  startDate: string;
-  endDate: string;
-  company: string;
+  startDate: string | null;
+  endDate: string | null;
+  company: string | null;
+  isSearch: boolean;
 }) {
   try {
-    const isValidStartDate = new Date(startDate).toString() !== 'Invalid Date';
-    const isValidEndDate = new Date(endDate).toString() !== 'Invalid Date';
+    const isValidStartDate =
+      startDate && new Date(startDate).toString() !== 'Invalid Date';
+    const isValidEndDate =
+      endDate && new Date(endDate).toString() !== 'Invalid Date';
     const invoices = await getInvoicesByDateRangeDB({
       startDate: isValidStartDate ? startDate : null,
       endDate: isValidEndDate ? endDate : null,
-      company: company || null,
+      companyID: company || null,
+      isSearch,
     });
 
     return invoices.map((invoice) => ({
@@ -77,52 +82,15 @@ export async function validateInvoice(prevState: any, formData: FormData) {
     const arrayBuffer = await xml.arrayBuffer();
     const xmlContent = new TextDecoder().decode(arrayBuffer);
 
-    const transmitterRFCLine = xmlContent.match(/<cfdi:Emisor\b[^>]*>/);
-    const receiverRFCLine = xmlContent.match(/<cfdi:Receptor\b[^>]*>/);
-    const uuidLine = xmlContent.match(/UUID="([^"]*)"/g);
-    const referenceLine = xmlContent.match(/Folio="([^"]*)"/g);
-    const typeDocumentLine = xmlContent.match(/TipoDeComprobante="([^"]*)"/g);
-    const dateLine = xmlContent.match(/Fecha="([^"]*)"/g);
-    const certificationLine = xmlContent.match(/FechaTimbrado="([^"]*)"/g);
-
-    if (
-      !transmitterRFCLine ||
-      !receiverRFCLine ||
-      !uuidLine ||
-      !dateLine ||
-      !certificationLine ||
-      !referenceLine ||
-      !typeDocumentLine
-    ) {
-      throw new Error(invalidXmlMessage);
-    }
-
-    const transmitterRFC = transmitterRFCLine[0].match(/Rfc="([^"]*)"/);
-    const receiverRFC = receiverRFCLine[0].match(/Rfc="([^"]*)"/);
-
-    if (!transmitterRFC || !receiverRFC) {
-      throw new Error(invalidXmlMessage);
-    }
-
-    const transmitter = transmitterRFC[0].replace('Rfc="', '').replace('"', '');
-    const receiver = receiverRFC[0].replace('Rfc="', '').replace('"', '');
-    const uuid = uuidLine[0].replace('UUID="', '').replace('"', '');
-    const reference = referenceLine[0].replace('Folio="', '').replace('"', '');
-    const typeDocument = typeDocumentLine[0]
-      .replace('TipoDeComprobante="', '')
-      .replace('"', '');
-    const date = dateLine[0].replace('Fecha="', '').replace('"', '');
-    const certificationTimestamp = certificationLine[0]
-      .replace('FechaTimbrado="', '')
-      .replace('"', '');
-
-    if (!uuid) {
-      throw new Error('No se encontró el UUID en el archivo XML.');
-    }
-
-    if (uuid.toUpperCase() !== uuidInput.toUpperCase()) {
-      throw new Error(`El UUID no coincide con el ingresado (${uuid}).`);
-    }
+    const {
+      transmitter,
+      receiver,
+      uuid,
+      typeDocument,
+      reference,
+      date,
+      certificationTimestamp,
+    } = extractInvoiceData(xmlContent, uuidInput, invalidXmlMessage);
 
     const relatedData = await validateInvoiceData({
       transmitter,
@@ -132,7 +100,7 @@ export async function validateInvoice(prevState: any, formData: FormData) {
 
     //upload files to azure blob storage
     const container = process.env!.AZURE_STORAGE_CONTAINER!;
-    const azureBlobStorage = (await blob()).getContainerClient(container);
+    const azureBlobStorage = blob().getContainerClient(container);
     await azureBlobStorage.createIfNotExists();
     const pdfArrayBuffer = await pdf!.arrayBuffer();
 
@@ -167,7 +135,7 @@ export async function validateInvoice(prevState: any, formData: FormData) {
 
     const companyMailOptions = {
       from: `"Invoice Storage" <${process.env.MAIL_USER}>`,
-      to: relatedData.companyEmails.split(';'),
+      to: relatedData?.receiver?.emails?.split(';'),
       subject: 'Nueva factura',
       text: `El proveedor ${session?.user?.provider?.name} con RFC ${session?.user?.provider?.rfc} ha subido una factura de esta empresa con el UUID: ${uuid}`,
     };
@@ -187,6 +155,7 @@ export async function validateInvoice(prevState: any, formData: FormData) {
       certificationTimestamp,
       reference,
       typeID: typeDocument,
+      userID: +session!.user!.id!,
     })
       .then(() => {
         // send email
@@ -197,13 +166,13 @@ export async function validateInvoice(prevState: any, formData: FormData) {
       .catch((error) => {
         throw error;
       });
+    return 'Factura subida correctamente.';
   } catch (error) {
     if (error instanceof Error) {
       return error.message;
     }
     throw error;
   }
-  redirect('/dashboard/invoices');
 }
 
 export async function deleteInvoice(id: string) {

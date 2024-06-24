@@ -58,10 +58,10 @@ export default function ProvidersTable({
             <div className="relative flex items-center justify-center gap-2">
               <Tooltip content="Editar">
                 <EditLinkButton
-                  href={`/dashboard/providers/${provider.id}/edit`}
+                  href={`/dashboard/providers/${provider.id}/edit?user=${provider.user.id}`}
                 />
               </Tooltip>
-              <DeleteAction id={provider.id} />
+              <DeleteAction id={provider.id} userID={provider.user.id} />
             </div>
           );
         default:
@@ -97,9 +97,9 @@ export default function ProvidersTable({
   );
 }
 
-function DeleteAction({ id }: { id: number }) {
+function DeleteAction({ id, userID }: { id: number; userID: number }) {
   const handleDelete = async () => {
-    const state = await deleteProvider(id);
+    const state = await deleteProvider(id, userID);
     if (state?.message) {
       toast.error(state.message);
     }

@@ -9,15 +9,22 @@ import { auth } from '@/auth';
 import CreateLinkButton from '@/app/ui/dashboard/create-button';
 
 export default async function page({
-  searchParams: { startDate, endDate, company },
+  searchParams: { startDate, endDate, company, query },
 }: {
-  searchParams: { startDate: string; endDate: string; company: string };
+  searchParams: {
+    startDate: string;
+    endDate: string;
+    company: string;
+    query: string;
+  };
 }) {
   const session = await auth();
+  const isSearch = !!query;
   const invoices = await getInvoicesByDateRange({
-    startDate,
-    endDate,
-    company,
+    startDate: isSearch ? null : startDate,
+    endDate: isSearch ? null : endDate,
+    company: session?.user?.type.id === 1 ? company : null,
+    isSearch,
   });
   const companies = await getCompanies(); // This is a call to the database
   const columns = [
@@ -42,7 +49,7 @@ export default async function page({
         </CreateLinkButton>
       </div>
       <div className="mb-4 flex flex-col justify-between gap-2 rounded-large md:flex-row ">
-        <SearchFilter data={{ key: 'invoice-search', label: 'Buscar' }} />
+        <SearchFilter data={{ key: 'query', label: 'Buscar' }} />
         {session?.user?.type.id === 1 && <CompanyFilter options={companies} />}
         <DateFilter />
       </div>

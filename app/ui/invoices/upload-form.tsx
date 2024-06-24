@@ -6,11 +6,14 @@ import { validateInvoice } from '@/app/lib/actions/invoice.actions';
 import {
   CloudArrowUpIcon,
   ExclamationCircleIcon,
+  InformationCircleIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function Form() {
+  const [inputPDF, setInputPDF] = useState<boolean | null | undefined>(null);
+  const [inputXML, setInputXML] = useState<boolean | null | undefined>(null);
   const [errorMessage, dispatch] = useFormState(validateInvoice, undefined);
 
   const handleClickFileInput = (key: string) => {
@@ -29,10 +32,12 @@ export default function Form() {
         dt.items.add(file);
         if (file.type === 'application/pdf') {
           fileInputPdf.files = dt.files;
+          setInputPDF(true);
           acc.pdf = true;
         }
         if (file.type === 'text/xml') {
           fileInputXml.files = dt.files;
+          setInputXML(true);
           acc.xml = true;
         }
         return acc;
@@ -62,6 +67,11 @@ export default function Form() {
         type="file"
         className="h-0 w-0"
         accept="application/pdf"
+        onChange={(e) =>
+          setInputPDF(
+            e.target.files && e.target.files?.length > 0 ? true : false
+          )
+        }
       />
       <input
         id="xml"
@@ -69,7 +79,22 @@ export default function Form() {
         type="file"
         className="h-0 w-0"
         accept="text/xml"
+        onChange={(e) =>
+          setInputXML(
+            e.target.files && e.target.files?.length > 0 ? true : false
+          )
+        }
       />
+
+      <div className="mb-5 text-gray-500 dark:text-gray-400">
+        <div className="flex flex-row justify-start">
+          <InformationCircleIcon className="mr-2 w-6" />
+          <p>
+            Nota: El bóton de carga se volverá azul cuando se haya cargado el
+            archivo correspondiente.
+          </p>
+        </div>
+      </div>
       <div className="flex flex-col items-center justify-center space-y-6">
         <div
           className="flex h-56 w-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-400"
@@ -91,6 +116,9 @@ export default function Form() {
             variant="bordered"
             onClick={() => handleClickFileInput('pdf')}
             aria-label="Cargar pdf"
+            className={clsx({
+              'dark:bg-primary-dark bg-primary': inputPDF,
+            })}
           >
             Cargar pdf
           </Button>
@@ -100,6 +128,9 @@ export default function Form() {
             variant="bordered"
             onClick={() => handleClickFileInput('xml')}
             aria-label="Cargar xml"
+            className={clsx({
+              'dark:bg-primary-dark bg-primary': inputXML,
+            })}
           >
             Cargar xml
           </Button>
