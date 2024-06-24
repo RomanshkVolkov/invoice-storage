@@ -10,7 +10,7 @@ const FormSchema = z.object({
     message: 'La contraseña debe tener al menos 6 caracteres.',
   }),
   confirmPassword: z.string(),
-  type: z.coerce.number({
+  type: z.coerce.string({
     message: 'Por favor, selecciona un tipo de usuario.',
   }),
   name: z
@@ -20,8 +20,8 @@ const FormSchema = z.object({
     .min(1, {
       message: 'Por favor, ingresa un nombre.',
     }),
-  rfc: z.string().length(12, {
-    message: 'El RFC debe tener 12 caracteres.',
+  rfc: z.string().refine((val) => val.length === 12 || val.length === 13, {
+    message: 'El RFC debe tener 12 o 13 caracteres.',
   }),
   zipcode: z.coerce
     .number({

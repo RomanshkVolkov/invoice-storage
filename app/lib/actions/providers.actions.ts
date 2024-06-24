@@ -107,7 +107,7 @@ export async function editProvider(
   redirect('/dashboard/providers');
 }
 
-export async function deleteProvider(id: number) {
+export async function deleteProvider(id: number, userID: number) {
   const session = await auth();
   if (+(session?.user?.provider?.id || '') === id) {
     return {
@@ -116,7 +116,7 @@ export async function deleteProvider(id: number) {
     };
   }
   try {
-    await delProvider(id);
+    await delProvider(id, userID);
   } catch (error) {
     console.error(error);
     return {

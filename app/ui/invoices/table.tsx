@@ -34,20 +34,21 @@ export default function InvoicesTable({
 }) {
   const searchParams = useSearchParams();
   const page = searchParams.get('page');
-  const search = searchParams.get('invoice-search');
+  const search = searchParams.get('query');
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
 
   const filteredInvoices = useMemo(() => {
     if (!search) return invoices;
-    const items = invoices.filter((invoice) =>
-      Object.values(invoice).some((value) =>
+    const items = invoices.filter((invoice) => {
+      const { pdf, xml, ...item } = invoice;
+      return Object.values(item).some((value) =>
         Object.values(search.split(' ')).every(
           (search) =>
             String(value).toLowerCase().includes(search.toLowerCase()) ||
             !search
         )
-      )
-    );
+      );
+    });
 
     return items.slice((Number(page || 1) - 1) * 10, Number(page || 1) * 10);
     // eslint-disable-next-line react-hooks/exhaustive-deps

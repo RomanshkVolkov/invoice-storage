@@ -1,5 +1,8 @@
-import { ArrowDownCircleIcon } from '@heroicons/react/24/outline';
-import { Button } from '@nextui-org/react';
+import {
+  ArrowDownCircleIcon,
+  InformationCircleIcon,
+} from '@heroicons/react/24/outline';
+import { Button, Tooltip } from '@nextui-org/react';
 import { toast } from 'sonner';
 
 export default function DownloadFiles({
@@ -54,6 +57,13 @@ export default function DownloadFiles({
         <ArrowDownCircleIcon className="w-6" />
         <p>Descargar</p>
       </Button>
+      <Tooltip
+        content="Descargar facturas seleccionadas"
+        placement="top"
+        size="lg"
+      >
+        <InformationCircleIcon className="ml-2 w-6 cursor-help" />
+      </Tooltip>
     </div>
   );
 }

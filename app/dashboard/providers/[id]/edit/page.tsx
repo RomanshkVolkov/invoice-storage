@@ -6,11 +6,14 @@ import { notFound } from 'next/navigation';
 
 export default async function Providers({
   params,
+  searchParams,
 }: {
   params: { id: string };
+  searchParams: { user: string };
 }) {
   const { id } = params;
-  const provider = await getProviderByID(+id);
+  const { user } = searchParams;
+  const provider = await getProviderByID(+id, +user);
 
   if (!provider) {
     notFound();

@@ -32,22 +32,23 @@ model Invoices {
   certificationTimestamp DateTime      @map("certification_timestamp")
   reference              String        @map("reference") @db.NVarChar(255)
   typeID                 String        @map("document_type_id")
-  type                   documentTypes @relation(fields: [typeID], references: [id], onUpdate: NoAction, map: "invoices_document_types_document_type_id_fk")
+  userID                 Int           @map("user_load")
+  type                   DocumentTypes @relation(fields: [typeID], references: [id], onUpdate: NoAction, map: "invoices_document_types_document_type_id_fk")
   company                Companies     @relation(fields: [companyID], references: [id], onUpdate: NoAction, map: "invoices_companies_company_id_fk")
   provider               Providers     @relation(fields: [providerID], references: [id], onUpdate: NoAction, map: "invoices_providers_provider_id_fk")
+  user                   Users         @relation(fields: [userID], references: [id], onUpdate: NoAction, map: "invoices_users_user_id_fk")
 
   @@map("invoices")
 }
 
 model Providers {
   id        Int        @id(map: "providers_pk") @default(autoincrement()) @map("provider_id")
-  rfc       String     @map("provider_rfc") @db.NVarChar(12)
+  rfc       String     @unique @map("provider_rfc") @db.NVarChar(12)
   name      String     @db.NVarChar(500)
   zipcode   Int?
-  userID    Int        @unique @map("user_id")
   isDeleted Boolean    @default(false)
+  users     Users[]
   invoices  Invoices[]
-  user      Users      @relation(fields: [userID], references: [id], onUpdate: NoAction, map: "providers_users_user_id_fk")
 
   @@map("providers")
 }
@@ -67,13 +68,16 @@ model Users {
   userTypeID    Int        @map("user_type_id")
   otp           Int?
   otpExpireDate DateTime?  @map("otp_expire_date")
+  providerID    Int?       @map("provider_id")
+  isActive      Boolean    @default(true)
   type          UserTypes  @relation(fields: [userTypeID], references: [id], onUpdate: NoAction, map: "FK__users__user_type__17CF3C3F")
-  provider      Providers?
+  provider      Providers? @relation(fields: [providerID], references: [id], onUpdate: NoAction, map: "users_providers_provider_id_fk")
+  invoices      Invoices[]
 
   @@map("users")
 }
 
-model documentTypes {
+model DocumentTypes {
   id       String     @id(map: "document_types_pk") @map("document_type_id")
   name     String     @db.NVarChar(50)
   invoices Invoices[]

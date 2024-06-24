@@ -64,7 +64,7 @@ export default function CreateProviderForm({
                 id="rfc"
                 name="rfc"
                 label="RFC"
-                maxLength={12}
+                maxLength={13}
                 formNoValidate
                 isInvalid={hasItems(state.errors.rfc)}
                 errorMessage={state.errors.rfc?.join(', ')}
