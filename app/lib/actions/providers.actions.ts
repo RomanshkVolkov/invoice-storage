@@ -15,6 +15,7 @@ import {
   validatePasswords,
   validateUpdateData,
 } from '../services/providers.service';
+import email from 'next-auth/providers/email';
 
 export async function createProvider(prevState: any, formData: FormData) {
   const validatedData = validateData(formData);
@@ -26,13 +27,10 @@ export async function createProvider(prevState: any, formData: FormData) {
     };
   }
 
-  const user = {
-    email: validatedData.data.email,
-    password: await bcrypt.hash(validatedData.data.password, 10),
-    userTypeID: +validatedData.data.type,
-  };
+  const users = validatedData.data.users;
 
   const provider = {
+    email: validatedData.data.email,
     name: validatedData.data.name,
     rfc: validatedData.data.rfc.toUpperCase(),
     zipcode: +validatedData.data.zipcode,
@@ -41,11 +39,11 @@ export async function createProvider(prevState: any, formData: FormData) {
   const passwordsNotMatch = validatePasswords(formData);
   if (passwordsNotMatch) return passwordsNotMatch;
 
-  const existingData = await checkExistingEmailAndRFC(provider, user);
-  if (existingData) return existingData;
+  // const existingData = await checkExistingEmailAndRFC(provider, users);
+  // if (existingData) return existingData;
 
   try {
-    await newProvider(provider, user);
+    await newProvider(provider, users);
   } catch (error) {
     console.error(error);
     return {
@@ -65,7 +63,7 @@ export async function editProvider(
   prevState: any,
   formData: FormData
 ) {
-  const validatedData = await validateUpdateData(formData);
+  const validatedData = validateUpdateData(formData);
 
   if (!validatedData.success) {
     return {
@@ -74,26 +72,22 @@ export async function editProvider(
     };
   }
 
-  const user = {
-    id: userID,
-    email: validatedData.data.email,
-    userTypeID: +validatedData.data.type,
-  };
+  const users = validatedData.data.users;
 
   const provider = {
     id: providerID,
     name: validatedData.data.name,
+    email: validatedData.data.email,
     rfc: validatedData.data.rfc.toUpperCase(),
     zipcode: +validatedData.data.zipcode,
-    user,
   };
 
-  const existingData = await checkExistingEmailAndRFC(provider, user);
+  // const existingData = await checkExistingEmailAndRFC(provider, user);
 
-  if (existingData) return existingData;
+  // if (existingData) return existingData;
 
   try {
-    await updateProvider(provider);
+    await updateProvider(provider, users);
   } catch (error) {
     console.error(error);
     return {
@@ -107,7 +101,7 @@ export async function editProvider(
   redirect('/dashboard/providers');
 }
 
-export async function deleteProvider(id: number, userID: number) {
+export async function deleteProvider(id: number) {
   const session = await auth();
   if (+(session?.user?.provider?.id || '') === id) {
     return {
@@ -116,7 +110,7 @@ export async function deleteProvider(id: number, userID: number) {
     };
   }
   try {
-    await delProvider(id, userID);
+    await delProvider(id);
   } catch (error) {
     console.error(error);
     return {

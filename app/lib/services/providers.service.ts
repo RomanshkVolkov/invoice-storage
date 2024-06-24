@@ -17,7 +17,7 @@ const FormSchema = z.object({
     .string({
       message: 'Nombre inválido.',
     })
-    .min(1, {
+    .min(3, {
       message: 'Por favor, ingresa un nombre.',
     }),
   rfc: z.string().refine((val) => val.length === 12 || val.length === 13, {
@@ -30,6 +30,7 @@ const FormSchema = z.object({
     .min(1, {
       message: 'Por favor, ingresa un código postal.',
     }),
+  users: z.array(z.number()),
 });
 
 const UpdateProvider = FormSchema.omit({
@@ -68,12 +69,12 @@ export async function checkExistingEmailAndRFC(
     id?: number;
   },
   user: {
-    email: string;
+    username: string;
     id?: number;
   }
 ) {
   try {
-    const emailExist = await checkExistingUser(user.email, user.id);
+    const emailExist = await checkExistingUser(user.username, user.id);
 
     if (emailExist) {
       return {

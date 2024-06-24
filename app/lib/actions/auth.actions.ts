@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt';
 import { AuthError } from 'next-auth';
 import nodemailer from 'nodemailer';
 import { signIn } from '@/auth';
-import { findUserByEmail, updateUserOTP } from '../database/user';
+import { findUserByUsername, updateUserOTP } from '../database/user';
 import { z } from 'zod';
 
 const mailUser = process.env.MAIL_USER;
@@ -17,7 +17,7 @@ export async function authenticate(
 ) {
   try {
     await signIn('credentials', {
-      email: formData.get('email'),
+      username: formData.get('username'),
       password: formData.get('password'),
       redirectTo: '/dashboard',
     });
@@ -35,8 +35,8 @@ export async function authenticate(
 }
 
 const FormSchema = z.object({
-  email: z.string().email({
-    message: 'Por favor, ingresa un correo válido.',
+  username: z.string().min(6, {
+    message: 'El usuario debe tener al menos 6 caracteres.',
   }),
 });
 
@@ -44,8 +44,8 @@ export async function sendRecoveryCode(
   prevState: any,
   formData: FormData
 ): Promise<{
-  errors: { email?: string[] | undefined };
-  step: 'email' | 'otp' | '';
+  errors: { username?: string[] | undefined };
+  step: 'username' | 'otp' | '';
   message: string;
   userID?: number;
 }> {
@@ -55,13 +55,13 @@ export async function sendRecoveryCode(
   if (!validatedData.success) {
     return {
       errors: validatedData.error.flatten().fieldErrors,
-      step: 'email',
+      step: 'username',
       message: '',
     };
   }
 
   try {
-    const user = await findUserByEmail(validatedData.data.email);
+    const user = await findUserByUsername(validatedData.data.username);
     if (user) {
       //create a random 6 digit number
       const otp = crypto.randomInt(100000, 1000000);
@@ -102,7 +102,7 @@ export async function sendRecoveryCode(
     console.error(error);
     return {
       errors: {},
-      step: 'email',
+      step: 'username',
       message:
         'Ha ocurrido un error al enviar el código de recuperación, por favor, contacta a soporte.',
     };

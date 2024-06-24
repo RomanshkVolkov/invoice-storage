@@ -13,6 +13,7 @@ import Form from '../../form';
 import FormError from '../../form-error';
 import FieldsWrapper from '../../fields-wrapper';
 import Fields from '../../fields';
+import { Providers } from '@prisma/client';
 
 interface Errors {
   rfc?: string[] | undefined;
@@ -27,7 +28,7 @@ export default function EditProviderForm({
   provider,
   userTypes,
 }: {
-  provider: Provider;
+  provider: Omit<Providers, 'isDeleted'>;
   userTypes: User['type'][];
 }) {
   const editProviderWithIds = editProvider.bind(

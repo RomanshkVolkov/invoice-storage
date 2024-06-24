@@ -21,11 +21,11 @@ export default function Form() {
   return (
     <form action={dispatch}>
       <Input
-        label="Email"
-        type="email"
-        name="email"
-        id="email"
-        data-testid="email-field"
+        label="Usuario"
+        type="text"
+        name="username"
+        id="username"
+        data-testid="username-field"
         className="mb-4"
         errorMessage="Por favor, ingresa un correo válido"
         isClearable

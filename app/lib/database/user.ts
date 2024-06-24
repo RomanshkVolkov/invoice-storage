@@ -1,5 +1,20 @@
 import prisma from '@/app/lib/database/prisma';
-import { Users } from '@prisma/client';
+import { Users, UserTypes } from '@prisma/client';
+
+export async function getUsersByType() {
+  const users = await prisma.users.findMany({
+    where: {
+      isActive: true,
+      userTypeID: 2, // provider
+    },
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      email: true,
+    },
+  });
+}
 
 export async function login(email: string) {
   const user = await prisma.users.findFirst({
@@ -8,11 +23,15 @@ export async function login(email: string) {
       email: true,
       password: true,
       type: true,
-      provider: {
+      providers: {
         select: {
-          id: true,
-          name: true,
-          rfc: true,
+          providers: {
+            select: {
+              id: true,
+              name: true,
+              rfc: true,
+            },
+          },
         },
       },
     },
@@ -28,15 +47,9 @@ export async function findUserByUsername(username: string) {
   const user = await prisma.users.findFirst({
     select: {
       id: true,
+      username: true,
       email: true,
       type: true,
-      providers: {
-        select: {
-          id: true,
-          name: true,
-          rfc: true,
-        },
-      },
     },
     where: {
       username,
@@ -50,19 +63,12 @@ export async function getUserTypes() {
   return userTypes;
 }
 
-export async function checkExistingUser(email: string, id?: number) {
+export async function checkExistingUser(username: string, id?: number) {
   const user = await prisma.users.findFirst({
     where: {
-      email,
+      username,
       NOT: {
         id,
-      },
-      AND: {
-        providers: {
-          some: {
-            isDeleted: false,
-          },
-        },
       },
     },
   });

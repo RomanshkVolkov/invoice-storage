@@ -13,10 +13,11 @@ import {
   Tooltip,
 } from '@nextui-org/react';
 import { useSearchParams } from 'next/navigation';
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useFormStatus } from 'react-dom';
 import { toast } from 'sonner';
 import EditLinkButton from '../edit-button';
+import { Providers } from '@prisma/client';
 
 const columns = [
   { key: 'rfc', label: 'RFC' },
@@ -26,9 +27,7 @@ const columns = [
   { key: 'actions', label: 'ACCIONES' },
 ];
 
-type ProviderItem = Omit<Provider, 'user'> & {
-  user: Omit<User, 'password' | 'type'>;
-  email: string;
+type ProviderItem = Omit<Providers, 'isDeleted'> & {
   [key: string]: any;
 };
 
@@ -58,10 +57,10 @@ export default function ProvidersTable({
             <div className="relative flex items-center justify-center gap-2">
               <Tooltip content="Editar">
                 <EditLinkButton
-                  href={`/dashboard/providers/${provider.id}/edit?user=${provider.user.id}`}
+                  href={`/dashboard/providers/${provider.id}/edit`}
                 />
               </Tooltip>
-              <DeleteAction id={provider.id} userID={provider.user.id} />
+              <DeleteAction id={provider.id} />
             </div>
           );
         default:
@@ -97,9 +96,9 @@ export default function ProvidersTable({
   );
 }
 
-function DeleteAction({ id, userID }: { id: number; userID: number }) {
+function DeleteAction({ id }: { id: number }) {
   const handleDelete = async () => {
-    const state = await deleteProvider(id, userID);
+    const state = await deleteProvider(id);
     if (state?.message) {
       toast.error(state.message);
     }
