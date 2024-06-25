@@ -33,6 +33,7 @@ export async function updateProvider(
   users: number[]
 ) {
   return await prisma.$transaction(async (ctx) => {
+    // eslint-disable-next-line no-unused-vars
     const { id, ...rest } = provider;
     const updatedProvider = await ctx.providers.update({
       where: {
@@ -64,7 +65,7 @@ export async function updateProvider(
   });
 }
 
-export async function getProviders(userID: number) {
+export async function getProviders() {
   const providers = await prisma.providers.findMany({
     select: {
       id: true,
@@ -81,7 +82,7 @@ export async function getProviders(userID: number) {
   return providers;
 }
 
-export async function getProvidersPages(userID: number) {
+export async function getProvidersPages() {
   const count = await prisma.providers.count({
     where: {
       isDeleted: false,
@@ -138,14 +139,15 @@ export async function checkExistingProvider(rfc: string, id?: number) {
 }
 
 export async function deleteProvider(id: number) {
-  return await prisma.$transaction(async (ctx) => {
-    const updatedProvider = await ctx.providers.update({
-      where: {
-        id,
-      },
-      data: {
-        isDeleted: true,
-      },
-    });
-  });
+  return await prisma.$transaction(
+    async (ctx) =>
+      await ctx.providers.update({
+        where: {
+          id,
+        },
+        data: {
+          isDeleted: true,
+        },
+      })
+  );
 }

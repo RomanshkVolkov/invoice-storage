@@ -8,7 +8,6 @@ export const authConfig = {
     authorized({ auth, request }) {
       const { nextUrl } = request;
       const isLoggedIn = !!auth?.user;
-
       const isOnRoot = nextUrl.pathname === '/';
       const isAdmin = auth?.user?.image === 'Admin';
       const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');

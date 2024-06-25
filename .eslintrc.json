@@ -20,7 +20,7 @@
     "arrow-parens": "error",
     "brace-style": "error",
     "comma-dangle": ["error", "always-multiline"],
-    "indent": [
+    /*"indent": [
       "error",
       2,
       {
@@ -29,7 +29,7 @@
         "ArrayExpression": "off",
         "offsetTernaryExpression": true
       }
-    ],
+    ],*/
     "jsx-quotes": ["error", "prefer-double"],
     "keyword-spacing": [
       "error",

@@ -12,21 +12,26 @@ declare module 'next-auth' {
       id: number;
       name: string;
     };
-    provider: {
-      id: number;
-      name: string;
-      rfc: string;
-    } | null;
+    providers:
+      | {
+          id: number;
+          name: string;
+          rfc: string;
+        }[]
+      | null;
     givenName?: string | null;
     preferLanguage?: string | null;
   }
 }
 
-async function getUser(email: string) {
+async function getUser(username: string) {
   try {
-    const user = await login(email);
+    const user = await login(username);
     if (!user) return null;
-    return user;
+    return {
+      ...user,
+      providers: user.providers.map((provider) => provider.providers),
+    };
   } catch (error) {
     console.error('Failed to fetch user: ', error);
     throw new Error('Failed to fetch user');
@@ -40,15 +45,15 @@ export const { auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         const parsedCredentials = z
           .object({
-            email: z.string().email(),
+            username: z.string().email(),
             password: z.string().min(6),
           })
           .safeParse(credentials);
 
         if (!parsedCredentials.success) return null;
 
-        const { email, password } = parsedCredentials.data;
-        const user = await getUser(email);
+        const { username, password } = parsedCredentials.data;
+        const user = await getUser(username);
         if (!user) return null;
 
         const paswordsMatch = await bcrypt.compare(password, user.password);
@@ -71,8 +76,9 @@ export const { auth, signIn, signOut } = NextAuth({
         token.id = user.id;
         token.email = user.email;
         token.type = user.type;
-        token.provider = user.provider;
+        token.providers = user.providers;
         token.picture = user.type.name;
+        token.name = user.name;
       }
       return token;
     },
@@ -82,12 +88,13 @@ export const { auth, signIn, signOut } = NextAuth({
         id: token.id as unknown as string,
         email: token.email ?? '',
         type: token.type as unknown as { id: number; name: string },
-        provider: token.provider as unknown as {
-          id: number;
-          name: string;
-          rfc: string;
-        } | null,
-        image: 'pruebinha',
+        providers: token.providers as unknown as
+          | {
+              id: number;
+              name: string;
+              rfc: string;
+            }[]
+          | null,
       };
       return session;
     },

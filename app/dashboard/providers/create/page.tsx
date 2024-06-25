@@ -1,4 +1,4 @@
-import { getUserTypes, getProviderUsers } from '@/app/lib/database/user';
+import { getProviderUsers } from '@/app/lib/database/user';
 import Breadcrumbs from '@/app/ui/breadcrumbs';
 import CreateProviderForm from '@/app/ui/dashboard/providers/create-form';
 

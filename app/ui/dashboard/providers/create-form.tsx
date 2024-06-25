@@ -55,7 +55,7 @@ export default function CreateProviderForm({ users }: { users: User[] }) {
   const createProviderWithUsers = createProvider.bind(
     null,
     selectedUsers === 'all'
-      ? users.map((user) => user.id + '')
+      ? users.map((user) => `${user.id}`)
       : Array.from(selectedUsers)
   );
   const [state, dispatch] = useFormState(createProviderWithUsers, initialState);

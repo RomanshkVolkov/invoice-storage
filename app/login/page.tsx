@@ -1,5 +1,4 @@
 import LoginCard from '../ui/login/login-card';
-import { authenticate } from '../lib/actions/auth.actions';
 
 export default function Login() {
   return (

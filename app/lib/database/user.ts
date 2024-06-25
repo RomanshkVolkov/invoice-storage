@@ -1,5 +1,5 @@
 import prisma from '@/app/lib/database/prisma';
-import { Users, UserTypes } from '@prisma/client';
+import { Users } from '@prisma/client';
 
 export async function getProviderUsers() {
   const users = await prisma.users.findMany({
@@ -30,13 +30,14 @@ export async function getProviderUsers() {
   return users;
 }*/
 
-export async function login(email: string) {
+export async function login(username: string) {
   const user = await prisma.users.findFirst({
     select: {
       id: true,
       email: true,
       password: true,
       type: true,
+      name: true,
       providers: {
         select: {
           providers: {
@@ -50,7 +51,7 @@ export async function login(email: string) {
       },
     },
     where: {
-      email,
+      username,
       isActive: true,
     },
   });

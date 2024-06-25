@@ -1,13 +1,10 @@
-import { auth } from '@/auth';
 import { getProviders } from '@/app/lib/database/providers';
 import SearchFilter from '@/app/ui/dashboard/search-filter';
 import ProvidersTable from '@/app/ui/dashboard/providers/table';
 import CreateLinkButton from '@/app/ui/dashboard/create-button';
 
 export default async function Page() {
-  const session = await auth();
-  const userID = +(session?.user?.id || 0);
-  const providers = await getProviders(userID);
+  const providers = await getProviders();
 
   return (
     <main>
