@@ -1,11 +1,15 @@
-import { crudGetCompanies } from '@/app/lib/database/companies';
 import SearchFilter from '@/app/ui/dashboard/search-filter';
 import CreateLinkButton from '@/app/ui/dashboard/create-button';
-import CompaniesTable from '@/app/ui/dashboard/companies/table';
+import TableWrapper from '@/app/ui/dashboard/companies/table-wrapper';
 
-export default async function Companies() {
-  const companies = await crudGetCompanies();
-
+// eslint-disable-next-line require-await
+export default async function Companies({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+  };
+}) {
   return (
     <main>
       <div className="mb-6 flex items-center justify-between">
@@ -17,7 +21,7 @@ export default async function Companies() {
       <div className="mb-4">
         <SearchFilter data={{ key: 'query', label: 'Buscar' }} />
       </div>
-      <CompaniesTable companies={companies} />
+      <TableWrapper query={searchParams?.query} />
     </main>
   );
 }

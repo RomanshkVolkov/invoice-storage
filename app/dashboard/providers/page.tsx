@@ -1,11 +1,15 @@
-import { getProviders } from '@/app/lib/database/providers';
 import SearchFilter from '@/app/ui/dashboard/search-filter';
-import ProvidersTable from '@/app/ui/dashboard/providers/table';
 import CreateLinkButton from '@/app/ui/dashboard/create-button';
+import TableWrapper from '@/app/ui/dashboard/providers/table-wrapper';
 
-export default async function Page() {
-  const providers = await getProviders();
-
+// eslint-disable-next-line require-await
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+  };
+}) {
   return (
     <main>
       <div className="mb-6 flex items-center justify-between">
@@ -17,7 +21,7 @@ export default async function Page() {
       <div className="mb-4">
         <SearchFilter data={{ key: 'query', label: 'Buscar' }} />
       </div>
-      <ProvidersTable providers={providers} />
+      <TableWrapper query={searchParams?.query} />
     </main>
   );
 }
