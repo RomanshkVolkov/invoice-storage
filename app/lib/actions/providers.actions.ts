@@ -22,8 +22,8 @@ export async function createProvider(
     assignedUsers: assignedUsers.map((id) => +id),
     ...Object.fromEntries(formData),
   };
-  const validatedData = FormSchema.safeParse(data);
 
+  const validatedData = FormSchema.safeParse(data);
   if (!validatedData.success) {
     return {
       errors: validatedData.error.flatten().fieldErrors,
@@ -72,7 +72,7 @@ export async function createProvider(
 
 export async function editProvider(
   providerID: number,
-  assignedUsers: string[],
+  assignedUsers: string[] | number[],
   prevState: any,
   formData: FormData
 ): Promise<{ errors: Errors; message: string }> {

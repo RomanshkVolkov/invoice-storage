@@ -58,14 +58,16 @@ export default function EditProviderForm({
     errors: {} as Errors,
   };
 
-  const [selectedUsers, setSelectedUsers] = useState(
+  const [selectedUsers, setSelectedUsers] = useState<Set<string> | 'all'>(
     new Set(provider.users.map((user) => user.id + ''))
   );
 
   const editProviderWithIds = editProvider.bind(
     null,
     provider.id,
-    Array.from(selectedUsers)
+    selectedUsers === 'all'
+      ? users.map((user) => user.id + '')
+      : Array.from(selectedUsers)
   );
   const [state, dispatch] = useFormState(editProviderWithIds, initialState);
 
