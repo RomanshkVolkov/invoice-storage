@@ -49,14 +49,12 @@ export const { auth, signIn, signOut } = NextAuth({
             password: z.string().min(6),
           })
           .safeParse(credentials);
-
         if (!parsedCredentials.success) return null;
         const { username, password } = parsedCredentials.data;
         const user = await getUser(username);
         if (!user) return null;
 
         const paswordsMatch = await bcrypt.compare(password, user.password);
-
         if (!paswordsMatch) {
           console.error('Passwords do not match');
           return null;

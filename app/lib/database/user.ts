@@ -65,6 +65,7 @@ export async function findUserByUsername(username: string) {
       email: true,
       name: true,
       username: true,
+      isActive: true,
     },
     where: {
       username,

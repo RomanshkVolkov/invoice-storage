@@ -62,7 +62,7 @@ export async function sendRecoveryCode(
 
   try {
     const user = await findUserByUsername(validatedData.data.username);
-    if (user) {
+    if (user && user.isActive) {
       //create a random 6 digit number
       const otp = crypto.randomInt(100000, 1000000);
       const otpExpireDate = new Date();
@@ -123,6 +123,7 @@ export async function validateOTP(
     where: {
       otp: +otp,
       id: userID,
+      isActive: true,
     },
     select: {
       otpExpireDate: true,

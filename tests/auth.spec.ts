@@ -108,6 +108,34 @@ test.describe('Forgot Password', () => {
     ).toBeVisible();
   });
 
+  test('should not set opt code if user is not active', async ({
+    forgotPasswordPage,
+    providerAccount,
+    page,
+  }) => {
+    const user = await prisma.users.findFirst({
+      where: {
+        username: providerAccount.username,
+      },
+    });
+
+    await prisma.users.update({
+      where: {
+        id: user?.id,
+      },
+      data: {
+        isActive: false,
+      },
+    });
+
+    await forgotPasswordPage.populateUsername(providerAccount.username);
+    await page.click('[data-testid="submit-button"]');
+
+    await page.waitForSelector('[data-testid="otp-code-title"]'); // Wait until the otp code step is visible
+
+    expect(user?.otp).toBeNull();
+  });
+
   test('should show an error message when the otp code has expired', async ({
     forgotPasswordPage,
     providerAccount,
