@@ -1,4 +1,5 @@
 'use server';
+
 import { revalidatePath } from 'next/cache';
 import nodemailer from 'nodemailer';
 import { blob } from '../blob/autentication';
@@ -123,6 +124,7 @@ export async function validateInvoice(prevState: any, formData: FormData) {
         },
       }
     );
+
     await azureBlobStorage.uploadBlockBlob(
       `pdf/${uuid}.pdf`,
       pdfArrayBuffer,
@@ -145,15 +147,15 @@ export async function validateInvoice(prevState: any, formData: FormData) {
     const companyMailOptions = {
       from: `"Invoice Storage" <${process.env.MAIL_USER}>`,
       to: relatedData?.receiver?.emails?.split(';'),
-      subject: `${session?.user?.provider?.name} - ${now}`,
-      text: `El proveedor ${session?.user?.provider?.name} con RFC ${session?.user?.provider?.rfc} ha subido una factura de esta empresa con el UUID: ${uuid}`,
+      subject: `${relatedData.receiver.name} - ${now}`,
+      text: `El proveedor ${relatedData.transmitter.name} con RFC ${relatedData.transmitter.rfc} ha subido una factura de esta empresa con el UUID: ${uuid}`,
     };
 
     const providerMailOptions = {
       from: `"Invoice Storage" <${process.env.MAIL_USER}>`,
       to: `${session?.user?.email || ''}`,
-      subject: `${session?.user?.provider?.name} - ${now}`,
-      text: `El proveedor ${session?.user?.provider?.name} ha subido una factura con el UUID: ${uuid}`,
+      subject: `${relatedData.transmitter.name} - ${now}`,
+      text: `El proveedor ${relatedData.transmitter.name} ha subido una factura con el UUID: ${uuid}`,
     };
 
     await createInvoice({

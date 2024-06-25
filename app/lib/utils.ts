@@ -2,6 +2,15 @@ export function hasItems(array: any[] | undefined): boolean {
   return array && array.length > 0 ? true : false;
 }
 
+export function normalizeDate(dateObject: Date): string {
+  const date = new Date(dateObject);
+  const day = date.getDay().toString().padStart(2, '0');
+  const month = date.getMonth().toString().padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}
+
 export function extractInvoiceData(
   file: string,
   uuidInput: string,

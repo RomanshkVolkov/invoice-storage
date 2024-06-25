@@ -32,7 +32,8 @@ model Invoices {
   certificationTimestamp DateTime      @map("certification_timestamp")
   reference              String        @map("reference") @db.NVarChar(255)
   typeID                 String        @map("document_type_id")
-  userID                 Int           @map("user_load")
+  userID                 Int           @map("user_load_id")
+  dateLoad               DateTime      @default(now()) @map("date_load")
   type                   DocumentTypes @relation(fields: [typeID], references: [id], onUpdate: NoAction, map: "invoices_document_types_document_type_id_fk")
   company                Companies     @relation(fields: [companyID], references: [id], onUpdate: NoAction, map: "invoices_companies_company_id_fk")
   provider               Providers     @relation(fields: [providerID], references: [id], onUpdate: NoAction, map: "invoices_providers_provider_id_fk")
@@ -64,14 +65,15 @@ model Providers {
 
 model Users {
   id            Int             @id(map: "users_pk") @default(autoincrement()) @map("user_id")
+  name          String          @db.NVarChar(500)
   username      String          @db.NVarChar(500)
   email         String          @db.NVarChar(500)
   password      String          @db.NVarChar(300)
-  name          String          @db.NVarChar(500)
   userTypeID    Int             @map("user_type_id")
   otp           Int?
   otpExpireDate DateTime?       @map("otp_expire_date")
-  isActive      Boolean         @default(true)
+  isActive      Boolean?        @default(true)
+  isDeleted     Boolean?        @default(false)
   type          UserTypes       @relation(fields: [userTypeID], references: [id], onUpdate: NoAction, map: "FK__users__user_type__17CF3C3F")
   invoices      Invoices[]
   providers     UserProviders[] @relation(fields: [])

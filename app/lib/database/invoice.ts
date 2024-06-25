@@ -15,15 +15,17 @@ export async function getInvoicesByDateRangeDB({
   const session = await auth();
   const isAdmin = session?.user?.type.name.toLowerCase() === 'admin';
   const query = isAdmin ? {} : { user: { id: +(session!.user!.id || 0) } };
-  const companyFilter = companyID ? { id: +(companyID || 0) } : {};
+  const companyFilter = companyID && !isSearch ? { id: +(companyID || 0) } : {};
 
   const currentDate = new Date();
   const date = isSearch
     ? {}
     : {
         gte: new Date(
-          startDate || new Date(currentDate.setDate(currentDate.getDate() - 7))
+          startDate ||
+            (new Date(currentDate.setDate(currentDate.getDate() - 7)) as any)
         ),
+        lte: (endDate as any) || currentDate,
       };
 
   const invoices = await prisma.invoices.findMany({
@@ -33,6 +35,7 @@ export async function getInvoicesByDateRangeDB({
       reference: true,
       pdf: true,
       xml: true,
+      dateLoad: true,
       company: {
         select: {
           name: true,
@@ -98,12 +101,8 @@ export async function validateInvoiceData({
   if (!session) {
     throw new Error('No se pudo obtener la sesión.');
   }
-  if (!session.user?.provider) {
+  if (!session.user?.providers) {
     throw new Error('No se pudo obtener el RFC del proveedor.');
-  }
-
-  if (session.user?.provider?.rfc !== transmitter) {
-    throw new Error('No puedes cargar facturas de otro proveedor.');
   }
 
   const isExistTransmitter = await prisma.providers.findFirst({
@@ -123,6 +122,13 @@ export async function validateInvoiceData({
       `El RFC del emisor (${transmitter}) o receptor (${receiver}) no existe en la base de datos.`
     );
   }
+  const userID = +session!.user!.id!;
+  await prisma.userProviders.findFirst({
+    where: {
+      userID,
+      providerID: isExistTransmitter.id,
+    },
+  });
 
   const isExistInvoice = await prisma.invoices.findFirst({
     where: {
