@@ -2,7 +2,6 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { auth } from '@/auth';
 import {
   createProvider as newProvider,
   updateProvider,
@@ -133,13 +132,6 @@ export async function editProvider(
 }
 
 export async function deleteProvider(id: number) {
-  const session = await auth();
-  if (+(session?.user?.provider?.id || '') === id) {
-    return {
-      errors: {},
-      message: 'No puedes eliminar tu propia cuenta.',
-    };
-  }
   try {
     await delProvider(id);
   } catch (error) {

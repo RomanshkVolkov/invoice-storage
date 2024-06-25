@@ -62,9 +62,9 @@ export async function findUserByUsername(username: string) {
   const user = await prisma.users.findFirst({
     select: {
       id: true,
-      username: true,
       email: true,
-      type: true,
+      name: true,
+      username: true,
     },
     where: {
       username,

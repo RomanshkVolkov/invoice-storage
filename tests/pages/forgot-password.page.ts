@@ -12,8 +12,8 @@ export class ForgotPasswordPage {
     await this.page.waitForURL('/forgot-password');
   }
 
-  async populateEmail(email: string) {
-    await this.page.fill('[data-testid="email-field"]', email);
+  async populateUsername(email: string) {
+    await this.page.fill('[data-testid="username-field"]', email);
   }
 
   async populateOTP(otp: string) {

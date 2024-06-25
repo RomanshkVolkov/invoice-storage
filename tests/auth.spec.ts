@@ -29,35 +29,35 @@ test.describe('Login', () => {
   });
 });
 test.describe('Forgot Password', () => {
-  test('should show an error message when the email is empty', async ({
+  test('should show an error message when the username is empty', async ({
     forgotPasswordPage,
     page,
   }) => {
-    await forgotPasswordPage.populateEmail('');
+    await forgotPasswordPage.populateUsername('');
     await page.click('[data-testid="submit-button"]');
 
     await expect(
-      page.getByText('Por favor, ingresa un correo válido')
+      page.getByText('El usuario debe tener al menos 4 caracteres.')
     ).toBeVisible();
   });
 
-  test('should not pass to next step if email is invalid', async ({
+  test('should not pass to next step if username is invalid', async ({
     forgotPasswordPage,
     page,
   }) => {
-    await forgotPasswordPage.populateEmail('invalid-email');
+    await forgotPasswordPage.populateUsername('inv');
     await page.click('[data-testid="submit-button"]');
 
-    await expect(page.getByText('Correo electrónico')).toBeVisible();
+    await expect(page.getByText('Nombre de usuario')).toBeVisible();
   });
 
-  test('should pass to otp code step if email is valid', async ({
+  test('should pass to otp code step if username is valid', async ({
     forgotPasswordPage,
     page,
   }) => {
-    // We don't need real credentials because we neither need to check if the email exists
-    const email = faker.internet.email();
-    await forgotPasswordPage.populateEmail(email);
+    // We don't need real credentials because we neither need to check if the username exists
+    const username = faker.internet.userName();
+    await forgotPasswordPage.populateUsername(username);
     await page.click('[data-testid="submit-button"]');
 
     await expect(page.getByText('Código de seguridad')).toBeVisible();
@@ -68,11 +68,39 @@ test.describe('Forgot Password', () => {
     page,
   }) => {
     // We don't need real credentials because the otp code is always the same
-    const email = faker.internet.email();
-    await forgotPasswordPage.populateEmail(email);
+    const username = faker.internet.userName();
+    await forgotPasswordPage.populateUsername(username);
     await page.click('[data-testid="submit-button"]');
 
     await forgotPasswordPage.populateOTP('000000');
+    await page.click('[data-testid="submit-button"]');
+
+    await expect(
+      page.getByText('El código de recuperación es incorrecto')
+    ).toBeVisible();
+  });
+
+  test('should show an error message when other user is trying to use the otp code', async ({
+    forgotPasswordPage,
+    providerAccounts,
+    page,
+  }) => {
+    await forgotPasswordPage.populateUsername(providerAccounts[0].username);
+    await page.click('[data-testid="submit-button"]');
+    await page.waitForSelector('[data-testid="otp-code-title"]');
+
+    await forgotPasswordPage.goto();
+    await forgotPasswordPage.populateUsername(providerAccounts[1].username);
+    await page.click('[data-testid="submit-button"]');
+    await page.waitForSelector('[data-testid="otp-code-title"]');
+
+    const user = await prisma.users.findFirst({
+      where: {
+        username: providerAccounts[0].username,
+      },
+    });
+
+    await forgotPasswordPage.populateOTP(String(user?.otp) || '');
     await page.click('[data-testid="submit-button"]');
 
     await expect(
@@ -85,14 +113,14 @@ test.describe('Forgot Password', () => {
     providerAccount,
     page,
   }) => {
-    await forgotPasswordPage.populateEmail(providerAccount.email);
+    await forgotPasswordPage.populateUsername(providerAccount.username);
     await page.click('[data-testid="submit-button"]');
     await page.waitForSelector('[data-testid="otp-code-title"]'); // Wait until the otp code step is visible
 
     // We need to get the otp code from the database and modify expiration date to substract 10 minutes
     const user = await prisma.users.findFirst({
       where: {
-        email: providerAccount.email,
+        username: providerAccount.username,
       },
     });
 
@@ -118,13 +146,13 @@ test.describe('Forgot Password', () => {
     providerAccount,
     page,
   }) => {
-    await forgotPasswordPage.populateEmail(providerAccount.email);
+    await forgotPasswordPage.populateUsername(providerAccount.username);
     await page.click('[data-testid="submit-button"]');
     await page.waitForSelector('[data-testid="otp-code-title"]'); // Wait until the otp code step is visible
 
     const user = await prisma.users.findFirst({
       where: {
-        email: providerAccount.email,
+        username: providerAccount.username,
       },
     });
 
@@ -141,13 +169,13 @@ test.describe('Forgot Password', () => {
     providerAccount,
     page,
   }) => {
-    await forgotPasswordPage.populateEmail(providerAccount.email);
+    await forgotPasswordPage.populateUsername(providerAccount.username);
     await page.click('[data-testid="submit-button"]');
     await page.waitForSelector('[data-testid="otp-code-title"]'); // Wait until the otp code step is visible
 
     const user = await prisma.users.findFirst({
       where: {
-        email: providerAccount.email,
+        username: providerAccount.username,
       },
     });
 
@@ -169,13 +197,13 @@ test.describe('Forgot Password', () => {
     providerAccount,
     page,
   }) => {
-    await forgotPasswordPage.populateEmail(providerAccount.email);
+    await forgotPasswordPage.populateUsername(providerAccount.username);
     await page.click('[data-testid="submit-button"]');
     await page.waitForSelector('[data-testid="otp-code-title"]'); // Wait until the otp code step is visible
 
     const user = await prisma.users.findFirst({
       where: {
-        email: providerAccount.email,
+        username: providerAccount.username,
       },
     });
 
@@ -196,13 +224,13 @@ test.describe('Forgot Password', () => {
     providerAccount,
     page,
   }) => {
-    await forgotPasswordPage.populateEmail(providerAccount.email);
+    await forgotPasswordPage.populateUsername(providerAccount.username);
     await page.click('[data-testid="submit-button"]');
     await page.waitForSelector('[data-testid="otp-code-title"]'); // Wait until the otp code step is visible
 
     const user = await prisma.users.findFirst({
       where: {
-        email: providerAccount.email,
+        username: providerAccount.username,
       },
     });
 
@@ -221,8 +249,8 @@ test.describe('Forgot Password', () => {
     await page.waitForSelector('[data-testid="password-updated-title"]');
     await page.click('[data-testid="login-button-redirect"]');
 
-    await page.waitForSelector('[data-testid="email-field"]');
-    await page.fill('[data-testid="email-field"]', providerAccount.email);
+    await page.waitForSelector('[data-testid="username-field"]');
+    await page.fill('[data-testid="username-field"]', providerAccount.username);
     await page.fill('[data-testid="password-field"]', password);
     await page.click('[data-testid="submit-button"]');
     await page.waitForLoadState('networkidle');

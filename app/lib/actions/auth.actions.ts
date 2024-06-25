@@ -35,8 +35,8 @@ export async function authenticate(
 }
 
 const FormSchema = z.object({
-  username: z.string().min(6, {
-    message: 'El usuario debe tener al menos 6 caracteres.',
+  username: z.string().min(4, {
+    message: 'El usuario debe tener al menos 4 caracteres.',
   }),
 });
 
@@ -49,8 +49,8 @@ export async function sendRecoveryCode(
   message: string;
   userID?: number;
 }> {
-  const email = formData.get('email')?.toString();
-  const validatedData = FormSchema.safeParse({ email });
+  const username = formData.get('username')?.toString();
+  const validatedData = FormSchema.safeParse({ username });
 
   if (!validatedData.success) {
     return {
@@ -84,9 +84,9 @@ export async function sendRecoveryCode(
 
       const mailOptions = {
         from: `"Invoice Storage" <${mailUser}>`,
-        to: formData.get('email')?.toString(),
+        to: user.email,
         subject: 'Código de recuperación',
-        text: `Tu código de recuperación es: ${otp}. Este código expirará en 10 minutos.`,
+        text: `${user.name} ha solicitado un código de recuperación para el usuario ${user.username}. El código de recuperación es: ${otp}. Este código expirará en 10 minutos.`,
       };
 
       await transporter.sendMail(mailOptions);

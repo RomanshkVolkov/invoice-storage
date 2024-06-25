@@ -6,10 +6,10 @@ import {
   ArrowLongLeftIcon,
   ArrowLongRightIcon,
   CheckCircleIcon,
-  EnvelopeIcon,
   ExclamationCircleIcon,
   KeyIcon,
   LockClosedIcon,
+  UserIcon,
 } from '@heroicons/react/24/outline';
 import {
   resetPassword,
@@ -21,41 +21,43 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 export default function Forms() {
-  const [step, setStep] = useState<'email' | 'otp' | 'password'>('email');
-  const [emailState, emailDispatch] = useFormState(sendRecoveryCode, {
+  const [step, setStep] = useState<'username' | 'otp' | 'password'>('username');
+  const [usernameState, usernameDispatch] = useFormState(sendRecoveryCode, {
     errors: {},
     step: '',
     message: '',
   });
 
   useEffect(() => {
-    if (emailState.step) {
-      setStep(emailState.step);
+    if (usernameState.step) {
+      setStep(usernameState.step);
     }
-  }, [emailState]);
+  }, [usernameState]);
 
   return (
     <div>
-      {step === 'email' && (
+      {step === 'username' && (
         <>
           <Link href="/login">
             <ArrowLongLeftIcon width={30} className="mb-4" />
           </Link>
           <div className="mb-2 items-center md:flex">
-            <EnvelopeIcon width={30} className="mr-2 flex text-primary-500" />
-            <h2 className="text-2xl">Correo electrónico</h2>
+            <UserIcon width={30} className="mr-2 flex text-primary-500" />
+            <h2 data-testid="username-title" className="text-2xl">
+              Nombre de usuario
+            </h2>
           </div>
           <p className="mb-6 text-gray-500">
             No te preocupes, te ayudaremos a recuperar tu contraseña, solo
-            necesitamos el correo que usas para iniciar sesión.
+            necesitamos el usuario que usas para iniciar sesión.
           </p>
-          <form action={emailDispatch}>
+          <form action={usernameDispatch}>
             <Input
-              data-testid="email-field"
-              id="email"
-              label="Email"
-              type="email"
-              name="email"
+              data-testid="username-field"
+              id="username"
+              label="Usuario"
+              type="text"
+              name="username"
               className="mb-4"
               errorMessage="Por favor, ingresa un correo válido"
               isClearable
@@ -67,11 +69,11 @@ export default function Forms() {
               aria-live="polite"
               aria-atomic="true"
             >
-              {emailState.errors.email && (
+              {usernameState.errors.username && (
                 <>
                   <ExclamationCircleIcon className="h-5 w-5 text-danger-400" />
                   <p className="text-sm text-danger-400">
-                    {emailState.errors.email}
+                    {usernameState.errors.username}
                   </p>
                 </>
               )}
@@ -80,52 +82,10 @@ export default function Forms() {
         </>
       )}
       {step === 'otp' && (
-        <OTPForm userID={emailState.userID} setStep={setStep} />
+        <OTPForm userID={usernameState.userID} setStep={setStep} />
       )}
-      {step === 'password' && <PasswordForm userID={emailState.userID} />}
+      {step === 'password' && <PasswordForm userID={usernameState.userID} />}
     </div>
-  );
-}
-
-function NextButton({ isDisabled }: { isDisabled?: boolean }) {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      data-testid="submit-button"
-      type="submit"
-      color={isDisabled ? 'default' : 'primary'}
-      className="relative m-auto w-full"
-      size="lg"
-      variant="shadow"
-      aria-disabled={pending}
-      isDisabled={pending || isDisabled}
-      isLoading={pending}
-    >
-      Siguiente
-      <ArrowLongRightIcon className="absolute right-4 ml-auto w-6 " />
-    </Button>
-  );
-}
-
-function AcceptButton({ isDisabled }: { isDisabled?: boolean }) {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      data-testid="submit-button"
-      type="submit"
-      color={isDisabled ? 'default' : 'primary'}
-      className="relative m-auto w-full"
-      size="lg"
-      variant="shadow"
-      aria-disabled={pending}
-      isDisabled={pending || isDisabled}
-      isLoading={pending}
-    >
-      Aceptar
-      <ArrowLongRightIcon className="absolute right-4 ml-auto w-6 " />
-    </Button>
   );
 }
 
@@ -134,7 +94,7 @@ function OTPForm({
   setStep,
 }: {
   userID?: number;
-  setStep: (_step: 'email' | 'otp' | 'password') => void;
+  setStep: (_step: 'username' | 'otp' | 'password') => void;
 }) {
   const [otp, setOtp] = useState<string[]>(['', '', '', '', '', '']);
   const validateOTPWithUser = validateOTP.bind(null, userID || 0);
@@ -149,11 +109,12 @@ function OTPForm({
   return (
     <>
       <ArrowLongLeftIcon
+        data-testid="back-to-username"
         width={30}
         className="mb-4"
         role="button"
         onClick={() => {
-          setStep('email');
+          setStep('username');
         }}
       />
       <div className="mb-2 items-center md:flex">
@@ -163,8 +124,8 @@ function OTPForm({
         </h2>
       </div>
       <p className="mb-6 text-gray-500">
-        Si el correo ingresado está registrado, recibirás un código de 6 dígitos
-        para recuperar tu contraseña.
+        Si el nombre de usuario existe, recibirás al correo electrónico asociado
+        un código de 6 dígitos para recuperar tu contraseña.
       </p>
       <form action={dispatch}>
         <fieldset>
@@ -295,5 +256,47 @@ function PasswordForm({ userID }: { userID?: number }) {
         </>
       )}
     </>
+  );
+}
+
+function NextButton({ isDisabled }: { isDisabled?: boolean }) {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      data-testid="submit-button"
+      type="submit"
+      color={isDisabled ? 'default' : 'primary'}
+      className="relative m-auto w-full"
+      size="lg"
+      variant="shadow"
+      aria-disabled={pending}
+      isDisabled={pending || isDisabled}
+      isLoading={pending}
+    >
+      Siguiente
+      <ArrowLongRightIcon className="absolute right-4 ml-auto w-6 " />
+    </Button>
+  );
+}
+
+function AcceptButton({ isDisabled }: { isDisabled?: boolean }) {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      data-testid="submit-button"
+      type="submit"
+      color={isDisabled ? 'default' : 'primary'}
+      className="relative m-auto w-full"
+      size="lg"
+      variant="shadow"
+      aria-disabled={pending}
+      isDisabled={pending || isDisabled}
+      isLoading={pending}
+    >
+      Aceptar
+      <ArrowLongRightIcon className="absolute right-4 ml-auto w-6 " />
+    </Button>
   );
 }
