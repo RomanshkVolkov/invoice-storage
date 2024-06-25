@@ -19,10 +19,17 @@ export async function getProviderUsers() {
   return users;
 }
 
-export async function getUsers() {
+export async function getUsers(): Promise<
+  (Pick<Users, 'id' | 'name' | 'username' | 'email'> & {
+    type: {
+      id: number;
+      name: string;
+    };
+  })[]
+> {
   const session = await auth();
   if (!session) {
-    return null;
+    return [];
   }
 
   const users = await prisma.users.findMany({
@@ -40,7 +47,7 @@ export async function getUsers() {
       },
     },
   });
-  return users;
+  return users || [];
 }
 
 export async function getUserByID(id: number) {
