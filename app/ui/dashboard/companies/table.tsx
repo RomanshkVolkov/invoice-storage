@@ -1,8 +1,7 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useFormStatus } from 'react-dom';
-import { useSearchParams } from 'next/navigation';
 import { Companies } from '@prisma/client';
 import { toast } from 'sonner';
 import {
@@ -33,19 +32,6 @@ export default function CompaniesTable({
 }: {
   companies: Company[];
 }) {
-  const searchParams = useSearchParams();
-
-  const filteredProviders = useMemo(() => {
-    const query = searchParams.get('query')?.toString();
-    if (!query) return companies;
-
-    return companies.filter((provider) =>
-      Object.values(provider).some((value) =>
-        String(value).toLowerCase().includes(query.toLowerCase())
-      )
-    );
-  }, [companies, searchParams]);
-
   const renderCell = useCallback(
     (company: Company, columnKey: keyof Company | 'actions') => {
       switch (columnKey) {
@@ -80,7 +66,7 @@ export default function CompaniesTable({
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody items={filteredProviders}>
+      <TableBody items={companies}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (

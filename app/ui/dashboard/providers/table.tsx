@@ -1,6 +1,5 @@
 'use client';
-import { deleteProvider } from '@/app/lib/actions/providers.actions';
-import { TrashIcon } from '@heroicons/react/24/outline';
+
 import {
   Table,
   TableHeader,
@@ -8,14 +7,15 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Button,
   Tooltip,
+  Button,
 } from '@nextui-org/react';
-import { useSearchParams } from 'next/navigation';
-import React, { useCallback, useMemo } from 'react';
-import { useFormStatus } from 'react-dom';
-import { toast } from 'sonner';
+import { useCallback } from 'react';
 import EditLinkButton from '../edit-button';
+import { deleteProvider } from '@/app/lib/actions/providers.actions';
+import { toast } from 'sonner';
+import { TrashIcon } from '@heroicons/react/24/outline';
+import { useFormStatus } from 'react-dom';
 import { Providers } from '@prisma/client';
 
 const columns = [
@@ -35,19 +35,6 @@ export default function ProvidersTable({
 }: {
   providers: ProviderItem[];
 }) {
-  const searchParams = useSearchParams();
-
-  const filteredProviders = useMemo(() => {
-    const query = searchParams.get('query')?.toString();
-    if (!query) return providers;
-
-    return providers.filter((provider) =>
-      Object.values(provider).some((value) =>
-        String(value).toLowerCase().includes(query.toLowerCase())
-      )
-    );
-  }, [providers, searchParams]);
-
   const renderCell = useCallback(
     (provider: ProviderItem, columnKey: keyof ProviderItem) => {
       switch (columnKey) {
@@ -82,7 +69,7 @@ export default function ProvidersTable({
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody items={filteredProviders}>
+      <TableBody items={providers}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (
@@ -94,7 +81,6 @@ export default function ProvidersTable({
     </Table>
   );
 }
-
 function DeleteAction({ id }: { id: number }) {
   const handleDelete = async () => {
     const state = await deleteProvider(id);
