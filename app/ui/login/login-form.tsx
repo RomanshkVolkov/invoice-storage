@@ -21,21 +21,21 @@ export default function Form() {
   return (
     <form action={dispatch}>
       <Input
+        data-testid="username-field"
         label="Usuario"
         type="text"
         name="username"
         id="username"
-        data-testid="username-field"
         className="mb-4"
         errorMessage="Por favor, ingresa un correo válido"
         isClearable
         isRequired
       />
       <Input
+        data-testid="password-field"
         name="password"
         label="Contraseña"
         id="password"
-        data-testid="password-field"
         minLength={6}
         className="mb-2"
         type={isVisible ? 'text' : 'password'}

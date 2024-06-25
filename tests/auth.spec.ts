@@ -9,7 +9,7 @@ test.describe('Login', () => {
     page,
   }) => {
     await loginPage.populateForm(
-      providerAccount.email,
+      providerAccount.username,
       providerAccount.password
     );
     await page.click('[data-testid="submit-button"]');
@@ -22,10 +22,7 @@ test.describe('Login', () => {
     loginPage,
     page,
   }) => {
-    await loginPage.populateForm(
-      'invalid-email@invalid.com',
-      'invalid-password'
-    );
+    await loginPage.populateForm('invalidUsername', 'invalid-password');
     await page.click('[data-testid="submit-button"]');
 
     await expect(page.getByText('Credenciales incorrectas')).toBeVisible();

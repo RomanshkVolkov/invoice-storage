@@ -27,6 +27,7 @@ import FieldsWrapper from '../../fields-wrapper';
 import Fields from '../../fields';
 import { Users } from '@prisma/client';
 import { Errors } from '@/app/lib/schemas/providers.schema';
+import Form from '../../form';
 
 type User = Pick<Users, 'id' | 'email' | 'name'>;
 
@@ -60,12 +61,7 @@ export default function CreateProviderForm({ users }: { users: User[] }) {
   const [state, dispatch] = useFormState(createProviderWithUsers, initialState);
 
   return (
-    <form
-      aria-describedby="form-error"
-      className="rounded-xl border bg-white p-6 shadow-xl  dark:border-none dark:bg-black dark:shadow-black md:px-12 md:py-8"
-      action={dispatch}
-      noValidate
-    >
+    <Form action={dispatch}>
       <fieldset className="mb-8">
         <div className="mb-6 items-center md:flex">
           <FormLegend icon={BuildingStorefrontIcon}>
@@ -163,6 +159,6 @@ export default function CreateProviderForm({ users }: { users: User[] }) {
           <SubmitButton />
         </div>
       </FormError>
-    </form>
+    </Form>
   );
 }

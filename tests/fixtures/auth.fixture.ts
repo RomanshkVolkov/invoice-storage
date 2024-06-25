@@ -6,7 +6,9 @@ import { LoginPage } from '../pages/login.page';
 import { ForgotPasswordPage } from '../pages/forgot-password.page';
 
 type UserCredentials = {
+  name: string;
   email: string;
+  username: string;
   password: string;
 };
 
@@ -31,21 +33,27 @@ export const test = base.extend<AuthFixtures>({
   },
   userCredentials: async ({}, use) => {
     const email = faker.internet.email();
+    const name = faker.person.firstName();
+    const username = faker.internet.userName();
     const password = faker.internet.password();
 
     await use({
       email,
+      name,
+      username,
       password,
     });
 
-    await prisma.users.deleteMany({ where: { email } });
+    await prisma.users.deleteMany({ where: { username } });
   },
   providerAccount: async ({ userCredentials }, use) => {
     const hashedPassword = await bcrypt.hash(userCredentials.password, 10);
 
     await prisma.users.create({
       data: {
+        name: userCredentials.name,
         email: userCredentials.email,
+        username: userCredentials.username,
         password: hashedPassword,
         userTypeID: 2,
       },
@@ -58,7 +66,9 @@ export const test = base.extend<AuthFixtures>({
 
     await prisma.users.create({
       data: {
+        name: userCredentials.name,
         email: userCredentials.email,
+        username: userCredentials.username,
         password: hashedPassword,
         userTypeID: 1,
       },

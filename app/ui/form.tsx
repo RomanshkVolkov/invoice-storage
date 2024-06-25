@@ -11,7 +11,7 @@ export default function Form({
   return (
     <form
       aria-describedby="form-error"
-      className="rounded-xl border bg-white px-12 py-8 shadow-xl dark:border-none dark:bg-black dark:shadow-black"
+      className="rounded-xl border bg-white p-6 shadow-xl  dark:border-none dark:bg-black dark:shadow-black md:px-10 md:py-8"
       noValidate
       {...props}
     >

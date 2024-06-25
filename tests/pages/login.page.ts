@@ -12,8 +12,8 @@ export class LoginPage {
     await this.page.waitForURL('/login');
   }
 
-  async populateForm(email: string, password: string) {
-    await this.page.fill('[data-testid="email-field"]', email);
+  async populateForm(username: string, password: string) {
+    await this.page.fill('[data-testid="username-field"]', username);
     await this.page.fill('[data-testid="password-field"]', password);
   }
 }
