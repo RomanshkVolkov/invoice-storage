@@ -11,16 +11,19 @@ import {
   Link as LinkComponent,
 } from '@nextui-org/react';
 import Link from 'next/link';
-import React, { useCallback, useMemo } from 'react';
+import React, { Key, useCallback, useMemo } from 'react';
 import DeleteButton from '../dashboard/delete-button';
 import { useSearchParams } from 'next/navigation';
 import PaginationCustom from '../Pagination';
 import DownloadFiles from './download-files';
+import { normalizeDate } from '@/app/lib/utils';
+import { toast } from 'sonner';
 
 interface Invoice {
   id: string;
   typeID: string;
   provider: string;
+  dateLoad: Date;
   company: string;
   [key: string]: any;
 }
@@ -37,10 +40,26 @@ export default function InvoicesTable({
   const search = searchParams.get('query');
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
 
+  const handleClipboard = async (key: Key) => {
+    if (!key) return;
+    const ignoreColumns = ['type', 'dateLoad'];
+    const [id, column] = key.toString().split('_');
+    if (ignoreColumns.includes(column)) return;
+
+    const value = invoices?.find((item) => item.id === id)?.[column] || '';
+
+    if (window.isSecureContext || true) {
+      await navigator?.clipboard
+        .writeText(value)
+        .then(() => toast.success(`Valor copiado al portapapeles: ${value}`));
+    }
+  };
+
   const filteredInvoices = useMemo(() => {
     if (!search) return invoices;
     const items = invoices.filter((invoice) => {
-      const { pdf, xml, ...item } = invoice;
+      // eslint-disable-next-line no-unused-vars
+      const { _pdf, _xml, ...item } = invoice;
       return Object.values(item).some((value) =>
         Object.values(search.split(' ')).every(
           (search) =>
@@ -70,6 +89,8 @@ export default function InvoicesTable({
             <EyeIcon className="w-5" />
           </LinkComponent>
         );
+      case 'dateLoad':
+        return normalizeDate(invoice.dateLoad);
       case 'actions':
         return <DeleteButton id={invoice.id} />;
       default:
@@ -83,6 +104,7 @@ export default function InvoicesTable({
       aria-labelledby="providers-table"
       selectionMode="multiple"
       selectedKeys={selectedKeys}
+      onCellAction={handleClipboard}
       onSelectionChange={setSelectedKeys as any}
       topContent={
         <DownloadFiles
@@ -95,7 +117,9 @@ export default function InvoicesTable({
           <PaginationCustom limit={10} items={invoices.length} />
         </div>
       }
-      classNames={{ wrapper: 'min-h-[300px]' }}
+      classNames={{
+        wrapper: 'min-h-[300px]',
+      }}
     >
       <TableHeader columns={columns}>
         {(column) => (
@@ -114,7 +138,9 @@ export default function InvoicesTable({
         {(item) => (
           <TableRow key={`${item.id}`}>
             {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey.toString())}</TableCell>
+              <TableCell key={`${item.id}_${columnKey}`}>
+                {renderCell(item, columnKey.toString())}
+              </TableCell>
             )}
           </TableRow>
         )}

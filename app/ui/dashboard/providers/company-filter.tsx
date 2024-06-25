@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 export default function CompanyFilter({
   options,
 }: {
-  options: { label: string; value: string }[];
+  options: { label: string; value: string | null }[];
 }) {
   const searchparams = useSearchParams();
   const { replace } = useRouter();
@@ -26,7 +26,7 @@ export default function CompanyFilter({
       startContent={<BuildingOfficeIcon className="h-6 w-6 text-gray-500" />}
     >
       {options.map((option) => (
-        <SelectItem key={option.value} value={option.value}>
+        <SelectItem key={option.value as string} value={option.value as string}>
           {option.label}
         </SelectItem>
       ))}

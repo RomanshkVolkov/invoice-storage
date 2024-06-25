@@ -1,4 +1,4 @@
-import { getInvoicesByDateRange } from '@/app/lib/actions/invoice.actions';
+import { getInvoicesByDateRange } from '@/app/lib/actions/invoices.actions';
 import DateFilter from '@/app/ui/dashboard/date-filter';
 import InvoicesTable from '@/app/ui/invoices/table';
 import SearchFilter from '@/app/ui/dashboard/search-filter';
@@ -23,13 +23,17 @@ export default async function page({
   const invoices = await getInvoicesByDateRange({
     startDate: isSearch ? null : startDate,
     endDate: isSearch ? null : endDate,
-    company: session?.user?.type.id === 1 ? company : null,
+    company:
+      session?.user?.type.id === 1 && company !== 'null' ? company : null,
     isSearch,
   });
+
   const companies = await getCompanies(); // This is a call to the database
+
   const columns = [
     { key: 'reference', label: 'Folio' },
     { key: 'typeID', label: 'Tipo' },
+    { key: 'dateLoad', label: 'Fecha de carga' },
     { key: 'company', label: 'Empresa' },
     { key: 'provider', label: 'Proveedor' },
     { key: 'id', label: 'UUID' },
@@ -37,6 +41,7 @@ export default async function page({
     { key: 'xml', label: 'XML' },
     { key: 'actions', label: 'Acciones' },
   ];
+
   return (
     <main>
       <div className="mb-6 flex items-center justify-between">
@@ -48,9 +53,15 @@ export default async function page({
           Cargar factura
         </CreateLinkButton>
       </div>
-      <div className="mb-4 flex flex-col justify-between gap-2 rounded-large md:flex-row ">
+      <div className="mb-4 flex flex-col justify-between gap-2 rounded-large md:flex-row">
         <SearchFilter data={{ key: 'query', label: 'Buscar' }} />
-        {session?.user?.type.id === 1 && <CompanyFilter options={companies} />}
+        {session?.user?.type.id === 1 && (
+          <CompanyFilter
+            options={[{ label: 'Ver todos', value: null }].concat(
+              companies as any[]
+            )}
+          />
+        )}
         <DateFilter />
       </div>
       <InvoicesTable invoices={invoices} columns={columns} />

@@ -1,7 +1,6 @@
-import { getProviderByID } from '@/app/lib/database/providers';
-import { getProviderUsers } from '@/app/lib/database/user';
+import { getUserTypes, getUserByID } from '@/app/lib/database/user';
 import Breadcrumbs from '@/app/ui/breadcrumbs';
-import EditProviderForm from '@/app/ui/dashboard/providers/edit-form';
+import EditUserForm from '@/app/ui/dashboard/users/edit-form';
 import { notFound } from 'next/navigation';
 
 export default async function Providers({
@@ -10,14 +9,12 @@ export default async function Providers({
   params: { id: string };
 }) {
   const { id } = params;
-  const provider = await getProviderByID(+id);
-  console.log(provider);
+  const user = await getUserByID(+id);
+  const userTypes = await getUserTypes();
 
-  if (!provider) {
+  if (!user) {
     notFound();
   }
-
-  const users = await getProviderUsers();
 
   return (
     <main>
@@ -25,12 +22,12 @@ export default async function Providers({
         <h1 className="mb-4 text-4xl">Editar proveedor</h1>
         <Breadcrumbs
           items={[
-            { label: 'Proveedores', href: '/dashboard/providers' },
+            { label: 'Usuarios', href: '/dashboard/users' },
             { label: 'Editar', href: '#' },
           ]}
         />
       </div>
-      <EditProviderForm provider={provider} users={users} />
+      <EditUserForm user={user} userTypes={userTypes} />
     </main>
   );
 }

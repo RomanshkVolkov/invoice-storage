@@ -28,10 +28,7 @@ async function getUser(username: string) {
   try {
     const user = await login(username);
     if (!user) return null;
-    return {
-      ...user,
-      providers: user.providers.map((provider) => provider.providers),
-    };
+    return user;
   } catch (error) {
     console.error('Failed to fetch user: ', error);
     throw new Error('Failed to fetch user');
@@ -45,7 +42,7 @@ export const { auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         const parsedCredentials = z
           .object({
-            username: z.string(),
+            username: z.string().min(6),
             password: z.string().min(6),
           })
           .safeParse(credentials);

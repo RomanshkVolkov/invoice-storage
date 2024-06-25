@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteInvoice } from '@/app/lib/actions/invoice.actions';
+import { deleteInvoice } from '@/app/lib/actions/invoices.actions';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { Button, Tooltip } from '@nextui-org/react';
 import { useTransition } from 'react';
