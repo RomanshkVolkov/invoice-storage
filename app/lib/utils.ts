@@ -64,3 +64,15 @@ export function extractInvoiceData(
     certificationTimestamp,
   };
 }
+
+export function handleDatabaseError(error: any, message: string) {
+  if (error instanceof Error) {
+    console.error(error.message);
+  } else {
+    console.error(error);
+  }
+  return {
+    errors: {},
+    message,
+  };
+}

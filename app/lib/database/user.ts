@@ -1,7 +1,7 @@
 import prisma from '@/app/lib/database/prisma';
 import { Users, UserTypes } from '@prisma/client';
 
-export async function getUsersByType() {
+export async function getProviderUsers() {
   const users = await prisma.users.findMany({
     where: {
       isActive: true,
@@ -10,11 +10,25 @@ export async function getUsersByType() {
     select: {
       id: true,
       name: true,
-      username: true,
       email: true,
     },
   });
+  return users;
 }
+
+/*export async function getUsers() {
+  const users = await prisma.users.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+    },
+    where: {
+      isActive: true,
+    },
+  });
+  return users;
+}*/
 
 export async function login(email: string) {
   const user = await prisma.users.findFirst({

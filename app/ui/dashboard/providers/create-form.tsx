@@ -2,12 +2,20 @@
 
 import { createProvider } from '@/app/lib/actions/providers.actions';
 import {
-  EyeIcon,
-  EyeSlashIcon,
-  IdentificationIcon,
-  TruckIcon,
+  BuildingStorefrontIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/outline';
-import { Button, Input, Select, SelectItem } from '@nextui-org/react';
+import {
+  Button,
+  Input,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  getKeyValue,
+} from '@nextui-org/react';
 import Link from 'next/link';
 import { useFormState } from 'react-dom';
 import { hasItems } from '@/app/lib/utils';
@@ -17,34 +25,33 @@ import FormLegend from '../../form-legend';
 import FormError from '../../form-error';
 import FieldsWrapper from '../../fields-wrapper';
 import Fields from '../../fields';
+import { Users } from '@prisma/client';
+import { Errors } from '@/app/lib/schemas/providers.schema';
 
-interface UserType {
-  id: number;
-  name: string;
-}
+type User = Pick<Users, 'id' | 'email' | 'name'>;
 
-interface Errors {
-  rfc?: string[] | undefined;
-  name?: string[] | undefined;
-  zipcode?: string[] | undefined;
-  type?: string[] | undefined;
-  email?: string[] | undefined;
-  password?: string[] | undefined;
-}
+const columns = [
+  {
+    key: 'name',
+    label: 'NOMBRE',
+  },
+  {
+    key: 'email',
+    label: 'CORREO',
+  },
+];
 
-export default function CreateProviderForm({
-  userTypes,
-}: {
-  userTypes: UserType[];
-}) {
+export default function CreateProviderForm({ users }: { users: User[] }) {
   const initialState = {
     message: '',
     errors: {} as Errors,
   };
-  const [state, dispatch] = useFormState(createProvider, initialState);
-  const [isVisible, setIsVisible] = useState(false);
-
-  const toggleVisibility = () => setIsVisible(!isVisible);
+  const [selectedUsers, setSelectedUsers] = useState(new Set(''));
+  const createProviderWithUsers = createProvider.bind(
+    null,
+    Array.from(selectedUsers)
+  );
+  const [state, dispatch] = useFormState(createProviderWithUsers, initialState);
 
   return (
     <form
@@ -55,7 +62,9 @@ export default function CreateProviderForm({
     >
       <fieldset className="mb-8">
         <div className="mb-6 items-center md:flex">
-          <FormLegend icon={TruckIcon}>Información del proveedor</FormLegend>
+          <FormLegend icon={BuildingStorefrontIcon}>
+            Información del proveedor
+          </FormLegend>
         </div>
         <FieldsWrapper>
           <Fields>
@@ -80,115 +89,58 @@ export default function CreateProviderForm({
               />
             </div>
           </Fields>
-          <div className="w-full">
-            <Input
-              id="name"
-              name="name"
-              label="Nombre"
-              isInvalid={hasItems(state.errors.name)}
-              errorMessage={state.errors.name?.join(', ')}
-            />
-          </div>
-        </FieldsWrapper>
-      </fieldset>
-
-      <fieldset className="mb-8">
-        <div className="mb-6 items-center md:flex">
-          <FormLegend icon={IdentificationIcon}>
-            Credenciales de acceso
-          </FormLegend>
-        </div>
-        <FieldsWrapper>
           <Fields>
             <div className="mb-4 md:mb-0 md:w-1/2">
               <Input
                 id="email"
                 name="email"
                 label="Correo electrónico"
-                type="text"
-                isInvalid={hasItems(state.errors.email)}
-                errorMessage={state.errors.email?.join(', ')}
+                isInvalid={hasItems(state.errors.name)}
+                errorMessage={state.errors.name?.join(', ')}
               />
             </div>
-
-            <div className="md:w-1/2">
-              <Select
-                id="type"
-                name="type"
-                label="Rol"
-                isInvalid={hasItems(state.errors.type)}
-                errorMessage={state.errors.type?.join(', ')}
-              >
-                {userTypes.map((type) => (
-                  <SelectItem key={type.id} value={type.id}>
-                    {type.name}
-                  </SelectItem>
-                ))}
-              </Select>
-            </div>
-          </Fields>
-
-          <Fields>
             <div className="mb-4 md:mb-0 md:w-1/2">
               <Input
-                id="password"
-                name="password"
-                label="Contraseña"
-                type={isVisible ? 'text' : 'password'}
-                isInvalid={hasItems(state.errors.password)}
-                errorMessage={state.errors.password?.join(', ')}
-                endContent={
-                  <button
-                    className="focus:outline-none"
-                    type="button"
-                    onClick={toggleVisibility}
-                  >
-                    {isVisible ? (
-                      <EyeSlashIcon
-                        className="pointer-events-none text-2xl text-default-400"
-                        width={20}
-                      />
-                    ) : (
-                      <EyeIcon
-                        className="pointer-events-none text-2xl text-default-400"
-                        width={20}
-                      />
-                    )}
-                  </button>
-                }
-              />
-            </div>
-
-            <div className="md:w-1/2">
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                label="Confirmar contraseña"
-                type={isVisible ? 'text' : 'password'}
-                isInvalid={hasItems(state.errors.password)}
-                endContent={
-                  <button
-                    className="focus:outline-none"
-                    type="button"
-                    onClick={toggleVisibility}
-                  >
-                    {isVisible ? (
-                      <EyeSlashIcon
-                        className="pointer-events-none text-2xl text-default-400"
-                        width={20}
-                      />
-                    ) : (
-                      <EyeIcon
-                        className="pointer-events-none text-2xl text-default-400"
-                        width={20}
-                      />
-                    )}
-                  </button>
-                }
+                id="name"
+                name="name"
+                label="Nombre"
+                isInvalid={hasItems(state.errors.name)}
+                errorMessage={state.errors.name?.join(', ')}
               />
             </div>
           </Fields>
         </FieldsWrapper>
+      </fieldset>
+
+      <fieldset className="mb-8">
+        <div className="mb-6 items-center md:flex">
+          <FormLegend icon={UserGroupIcon}>Lista de usuarios</FormLegend>
+        </div>
+        <Table
+          aria-label="Lista de usuarios asignables al proveedor"
+          selectionMode="multiple"
+          color="primary"
+          checkboxesProps={{
+            name: 'users',
+          }}
+          onSelectionChange={setSelectedUsers as any}
+          removeWrapper
+        >
+          <TableHeader columns={columns}>
+            {(column) => (
+              <TableColumn key={column.key}>{column.label}</TableColumn>
+            )}
+          </TableHeader>
+          <TableBody items={users}>
+            {(item) => (
+              <TableRow key={item.id}>
+                {(columnKey) => (
+                  <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+                )}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </fieldset>
 
       <FormError>

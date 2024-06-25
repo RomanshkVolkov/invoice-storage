@@ -1,9 +1,9 @@
-import { getUserTypes } from '@/app/lib/database/user';
+import { getUserTypes, getProviderUsers } from '@/app/lib/database/user';
 import Breadcrumbs from '@/app/ui/breadcrumbs';
 import CreateProviderForm from '@/app/ui/dashboard/providers/create-form';
 
 export default async function Providers() {
-  const userTypes = await getUserTypes();
+  const users = await getProviderUsers();
 
   return (
     <main>
@@ -16,7 +16,7 @@ export default async function Providers() {
           ]}
         />
       </div>
-      <CreateProviderForm userTypes={userTypes} />
+      <CreateProviderForm users={users} />
     </main>
   );
 }

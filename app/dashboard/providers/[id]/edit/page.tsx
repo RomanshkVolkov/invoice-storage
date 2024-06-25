@@ -1,5 +1,5 @@
 import { getProviderByID } from '@/app/lib/database/providers';
-import { getUserTypes } from '@/app/lib/database/user';
+import { getProviderUsers } from '@/app/lib/database/user';
 import Breadcrumbs from '@/app/ui/breadcrumbs';
 import EditProviderForm from '@/app/ui/dashboard/providers/edit-form';
 import { notFound } from 'next/navigation';
@@ -16,7 +16,7 @@ export default async function Providers({
     notFound();
   }
 
-  const userTypes = await getUserTypes();
+  const users = await getProviderUsers();
 
   return (
     <main>
@@ -29,7 +29,7 @@ export default async function Providers({
           ]}
         />
       </div>
-      <EditProviderForm provider={provider} userTypes={userTypes} />
+      <EditProviderForm provider={provider} users={users} />
     </main>
   );
 }

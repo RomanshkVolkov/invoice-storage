@@ -1,10 +1,10 @@
 'use client';
 
 import {
-  UserGroupIcon,
   HomeIcon,
   DocumentDuplicateIcon,
   BuildingOffice2Icon,
+  BuildingStorefrontIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -22,7 +22,7 @@ const links = [
   {
     name: 'Proveedores',
     href: '/dashboard/providers',
-    icon: UserGroupIcon,
+    icon: BuildingStorefrontIcon,
     isAdminRoute: true,
   },
   {

@@ -1,52 +1,81 @@
 'use client';
 
-import { editProvider } from '@/app/lib/actions/providers.actions';
-import { IdentificationIcon, TruckIcon } from '@heroicons/react/24/outline';
-import { Button, Input, Select, SelectItem } from '@nextui-org/react';
-import Link from 'next/link';
+import { useState } from 'react';
 import { useFormState } from 'react-dom';
+import Link from 'next/link';
+import { Providers, Users } from '@prisma/client';
+import {
+  BuildingStorefrontIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
+import {
+  Button,
+  Input,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  getKeyValue,
+} from '@nextui-org/react';
+import { editProvider } from '@/app/lib/actions/providers.actions';
+import { Errors } from '@/app/lib/schemas/providers.schema';
 import { hasItems } from '@/app/lib/utils';
-import { Provider, User } from '@/app/lib/types';
 import SubmitButton from '../submit-button';
 import FormLegend from '../../form-legend';
 import Form from '../../form';
 import FormError from '../../form-error';
 import FieldsWrapper from '../../fields-wrapper';
 import Fields from '../../fields';
-import { Providers } from '@prisma/client';
 
-interface Errors {
-  rfc?: string[] | undefined;
-  name?: string[] | undefined;
-  zipcode?: string[] | undefined;
-  type?: string[] | undefined;
-  email?: string[] | undefined;
-  password?: string[] | undefined;
-}
+type User = Pick<Users, 'id' | 'email' | 'name'>;
+
+type Provider = Omit<Providers, 'isDeleted'> & {
+  users: User[];
+};
+
+const columns = [
+  {
+    key: 'name',
+    label: 'NOMBRE',
+  },
+  {
+    key: 'email',
+    label: 'CORREO',
+  },
+];
 
 export default function EditProviderForm({
   provider,
-  userTypes,
+  users,
 }: {
-  provider: Omit<Providers, 'isDeleted'>;
-  userTypes: User['type'][];
+  provider: Provider;
+  users: User[];
 }) {
-  const editProviderWithIds = editProvider.bind(
-    null,
-    provider.id,
-    provider.user.id
-  );
   const initialState = {
     message: '',
     errors: {} as Errors,
   };
+
+  const [selectedUsers, setSelectedUsers] = useState(
+    new Set(provider.users.map((user) => user.id + ''))
+  );
+
+  const editProviderWithIds = editProvider.bind(
+    null,
+    provider.id,
+    Array.from(selectedUsers)
+  );
   const [state, dispatch] = useFormState(editProviderWithIds, initialState);
 
   return (
     <Form action={dispatch}>
       <fieldset className="mb-8">
         <div className="mb-6 items-center md:flex">
-          <FormLegend icon={TruckIcon}>Información del proveedor</FormLegend>
+          <FormLegend icon={BuildingStorefrontIcon}>
+            Información del proveedor
+          </FormLegend>
         </div>
         <FieldsWrapper>
           <Fields>
@@ -73,56 +102,61 @@ export default function EditProviderForm({
               />
             </div>
           </Fields>
-          <div className="w-full">
-            <Input
-              id="name"
-              name="name"
-              label="Nombre"
-              isInvalid={hasItems(state.errors.name)}
-              errorMessage={state.errors.name?.join(', ')}
-              defaultValue={provider.name}
-            />
-          </div>
-        </FieldsWrapper>
-      </fieldset>
-
-      <fieldset className="mb-8">
-        <div className="mb-6 items-center md:flex">
-          <FormLegend icon={IdentificationIcon}>Acceso</FormLegend>
-        </div>
-
-        <FieldsWrapper>
           <Fields>
             <div className="mb-4 md:mb-0 md:w-1/2">
               <Input
                 id="email"
                 name="email"
                 label="Correo electrónico"
-                type="text"
-                isInvalid={hasItems(state.errors.email)}
-                errorMessage={state.errors.email?.join(', ')}
-                defaultValue={provider.user.email}
+                isInvalid={hasItems(state.errors.name)}
+                errorMessage={state.errors.name?.join(', ')}
+                defaultValue={provider.email}
               />
             </div>
-
-            <div className="md:w-1/2">
-              <Select
-                id="type"
-                name="type"
-                label="Rol"
-                isInvalid={hasItems(state.errors.type)}
-                errorMessage={state.errors.type?.join(', ')}
-                defaultSelectedKeys={new Set([String(provider.user.type.id)])}
-              >
-                {userTypes.map((type) => (
-                  <SelectItem key={type.id} value={type.id}>
-                    {type.name}
-                  </SelectItem>
-                ))}
-              </Select>
+            <div className="mb-4 md:mb-0 md:w-1/2">
+              <Input
+                id="name"
+                name="name"
+                label="Nombre"
+                isInvalid={hasItems(state.errors.name)}
+                errorMessage={state.errors.name?.join(', ')}
+                defaultValue={provider.name}
+              />
             </div>
           </Fields>
         </FieldsWrapper>
+      </fieldset>
+
+      <fieldset className="mb-8">
+        <div className="mb-6 items-center md:flex">
+          <FormLegend icon={UserGroupIcon}>Lista de usuarios</FormLegend>
+        </div>
+        <Table
+          aria-label="Lista de usuarios asignables al proveedor"
+          selectionMode="multiple"
+          color="primary"
+          checkboxesProps={{
+            name: 'users',
+          }}
+          defaultSelectedKeys={selectedUsers}
+          onSelectionChange={setSelectedUsers as any}
+          removeWrapper
+        >
+          <TableHeader columns={columns}>
+            {(column) => (
+              <TableColumn key={column.key}>{column.label}</TableColumn>
+            )}
+          </TableHeader>
+          <TableBody items={users}>
+            {(item) => (
+              <TableRow key={item.id}>
+                {(columnKey) => (
+                  <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+                )}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </fieldset>
 
       <FormError>

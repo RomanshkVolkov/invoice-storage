@@ -1,6 +1,5 @@
 import prisma from '@/app/lib/database/prisma';
 import { Providers } from '@prisma/client';
-import { Provider, User } from '../types';
 
 const ITEMS_PER_PAGE = 5;
 
@@ -9,16 +8,6 @@ export async function createProvider(
   users: number[]
 ) {
   return await prisma.$transaction(async (ctx) => {
-    const isExistProvider = await ctx.providers.findUnique({
-      where: {
-        rfc: provider.rfc,
-      },
-    });
-
-    if (isExistProvider) {
-      throw new Error('El proveedor ya existe en la base de datos.');
-    }
-
     const newProvider = await ctx.providers.create({
       data: {
         ...provider,
@@ -44,11 +33,12 @@ export async function updateProvider(
   users: number[]
 ) {
   return await prisma.$transaction(async (ctx) => {
+    const { id, ...rest } = provider;
     const updatedProvider = await ctx.providers.update({
       where: {
         id: provider.id,
       },
-      data: provider,
+      data: rest,
     });
 
     const deletedRelatedUsers = await ctx.userProviders.deleteMany({
@@ -118,7 +108,6 @@ export async function getProviderByID(id: number) {
             select: {
               id: true,
               name: true,
-              username: true,
               email: true,
             },
           },
@@ -127,14 +116,16 @@ export async function getProviderByID(id: number) {
     },
   });
 
+  if (!provider) return null;
+
   return {
     ...provider,
-    users: provider?.users.map((user) => user.users),
+    users: provider.users.map((user) => user.users),
   };
 }
 
 export async function checkExistingProvider(rfc: string, id?: number) {
-  const provider = await prisma.providers.findFirst({
+  const provider = await prisma.providers.findUnique({
     where: {
       rfc,
       NOT: {
