@@ -25,6 +25,7 @@ interface Invoice {
   provider: string;
   dateLoad: Date;
   company: string;
+  reference: string;
   [key: string]: any;
 }
 
@@ -49,9 +50,11 @@ export default function InvoicesTable({
     const value = invoices?.find((item) => item.id === id)?.[column] || '';
 
     if (window.isSecureContext || navigator?.clipboard) {
-      await navigator?.clipboard
-        .writeText(value)
-        .then(() => toast.success(`Valor copiado al portapapeles: ${value}`));
+      await navigator?.clipboard.writeText(value).then(() =>
+        toast.success(`Valor copiado al portapapeles: ${value}`, {
+          id: `clipboard-${value}`,
+        })
+      );
     }
   };
 
@@ -92,7 +95,7 @@ export default function InvoicesTable({
       case 'dateLoad':
         return normalizeDate(invoice.dateLoad);
       case 'actions':
-        return <DeleteButton id={invoice.id} />;
+        return <DeleteButton id={invoice.id} folio={invoice.reference} />;
       default:
         return cellValue;
     }

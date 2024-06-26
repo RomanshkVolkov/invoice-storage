@@ -16,6 +16,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useFormStatus } from 'react-dom';
 import EditLinkButton from '../edit-button';
 import { Users } from '@prisma/client';
+import SearchFilter from '../search-filter';
 
 const columns = [
   { key: 'name', label: 'NOMBRE' },
@@ -79,6 +80,7 @@ export default function ProvidersTable({ users }: { users: UserItem[] }) {
       classNames={{
         base: 'max-h-[80vh] overflow-scroll',
       }}
+      topContent={<SearchFilter data={{ key: 'query', label: 'Buscar' }} />}
     >
       <TableHeader columns={columns}>
         {(column) => (

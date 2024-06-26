@@ -1,22 +1,22 @@
 import DeleleteModal from '@/app/ui/dashboard/delete-modal';
-import { deleteUser } from '@/app/lib/actions/users.actions';
+import { deleteInvoice } from '@/app/lib/actions/invoices.actions';
 
 export default function Page({
   params: { id },
   searchParams,
 }: {
   params: { id: string };
-  searchParams?: { name?: string };
+  searchParams?: { folio?: string };
 }) {
   return (
     <DeleleteModal
-      title={`Eliminar a ${searchParams?.name}`}
+      title={`Eliminar factura ${searchParams?.folio}`}
       deleteAction={async () => {
         'use server';
-        return await deleteUser(+id);
+        return await deleteInvoice(id);
       }}
     >
-      <p>¿Estás seguro que deseas eliminar este usuario?</p>
+      <p>¿Estás seguro que deseas eliminar esta factura?</p>
     </DeleleteModal>
   );
 }

@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 import { useFormStatus } from 'react-dom';
 import { toast } from 'sonner';
 
-type DeleteAction = (_id: number) => Promise<
+type DeleteAction = () => Promise<
   | {
       errors: {};
       message: string;
@@ -22,13 +22,11 @@ type DeleteAction = (_id: number) => Promise<
 >;
 
 export default function DeleleteModal({
-  id,
   children,
   title,
   deleteAction,
   showDelete = true,
 }: {
-  id: number;
   children: React.ReactNode;
   title: string;
   deleteAction: DeleteAction;
@@ -54,11 +52,9 @@ export default function DeleleteModal({
                 variant="light"
                 onPress={() => router.back()}
               >
-                Close
+                Cerrar
               </Button>
-              {showDelete && (
-                <DeleteAction id={id} deleteAction={deleteAction} />
-              )}
+              {showDelete && <DeleteAction deleteAction={deleteAction} />}
             </ModalFooter>
           </>
         )}
@@ -67,17 +63,11 @@ export default function DeleleteModal({
   );
 }
 
-function DeleteAction({
-  id,
-  deleteAction,
-}: {
-  id: number;
-  deleteAction: DeleteAction;
-}) {
+function DeleteAction({ deleteAction }: { deleteAction: DeleteAction }) {
   const router = useRouter();
 
   const handleDelete = async () => {
-    const state = await deleteAction(id);
+    const state = await deleteAction();
     if (state?.message) {
       toast.error(state.message);
     } else {

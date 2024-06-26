@@ -1,4 +1,3 @@
-import SearchFilter from '@/app/ui/dashboard/search-filter';
 import CreateLinkButton from '@/app/ui/dashboard/create-button';
 import TableWrapper from '@/app/ui/dashboard/providers/table-wrapper';
 
@@ -17,9 +16,6 @@ export default async function Page({
         <CreateLinkButton href="/dashboard/providers/create">
           Crear proveedor
         </CreateLinkButton>
-      </div>
-      <div className="mb-4">
-        <SearchFilter data={{ key: 'query', label: 'Buscar' }} />
       </div>
       <TableWrapper query={searchParams?.query} />
     </main>

@@ -198,13 +198,14 @@ export async function uploadInvoice(prevState: any, formData: FormData) {
 
 export async function deleteInvoice(id: string) {
   try {
-    setTimeout(() => {}, 5000);
     await deleteInvoiceById(id);
-    revalidatePath('/dashboard/invoices');
   } catch (error) {
-    if (error instanceof Error) {
-      return error.message;
-    }
-    throw error;
+    console.error(error);
+    return {
+      errors: {},
+      message:
+        'Ha ocurrido un error al eliminar el proveedor, por favor, contacta a soporte.',
+    };
   }
+  revalidatePath('/dashboard/invoices');
 }
