@@ -16,6 +16,7 @@ import {
 } from '@nextui-org/react';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import EditLinkButton from '../edit-button';
+import SearchFilter from '../search-filter';
 
 const columns = [
   { key: 'rfc', label: 'RFC' },
@@ -56,7 +57,11 @@ export default function ProvidersTable({
   );
 
   return (
-    <Table isStriped aria-labelledby="providers-table">
+    <Table
+      isStriped
+      aria-labelledby="providers-table"
+      topContent={<SearchFilter data={{ key: 'query', label: 'Buscar' }} />}
+    >
       <TableHeader columns={columns}>
         {(column) => (
           <TableColumn

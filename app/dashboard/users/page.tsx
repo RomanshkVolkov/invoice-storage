@@ -1,6 +1,5 @@
 import { getUsers } from '@/app/lib/database/user';
 import CreateLinkButton from '@/app/ui/dashboard/create-button';
-import SearchFilter from '@/app/ui/dashboard/search-filter';
 import UsersTable from '@/app/ui/dashboard/users/table';
 
 export default async function Page() {
@@ -13,9 +12,6 @@ export default async function Page() {
         <CreateLinkButton href="/dashboard/users/create">
           Crear usuario
         </CreateLinkButton>
-      </div>
-      <div className="mb-4">
-        <SearchFilter data={{ key: 'query', label: 'Buscar' }} />
       </div>
       <UsersTable users={users!} />
     </main>
