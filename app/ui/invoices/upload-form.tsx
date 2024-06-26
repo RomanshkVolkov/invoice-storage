@@ -2,7 +2,6 @@
 
 import { useFormState, useFormStatus } from 'react-dom';
 import { Button, Input } from '@nextui-org/react';
-import { validateInvoice } from '@/app/lib/actions/invoice.actions';
 import {
   CloudArrowUpIcon,
   ExclamationCircleIcon,
@@ -10,11 +9,12 @@ import {
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import React, { useState } from 'react';
+import { uploadInvoice } from '@/app/lib/actions/invoices.actions';
 
 export default function Form() {
   const [inputPDF, setInputPDF] = useState<boolean | null | undefined>(null);
   const [inputXML, setInputXML] = useState<boolean | null | undefined>(null);
-  const [errorMessage, dispatch] = useFormState(validateInvoice, undefined);
+  const [task, dispatch] = useFormState(uploadInvoice, undefined);
 
   const handleClickFileInput = (key: string) => {
     const fileInput = document.getElementById(key) as HTMLInputElement;
@@ -140,10 +140,16 @@ export default function Form() {
       </div>
 
       <div className="mt-2 flex gap-1" aria-live="polite" aria-atomic="true">
-        {errorMessage && (
+        {task && (
           <>
-            <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-            <p className="text-sm text-danger-400">{errorMessage}</p>
+            <ExclamationCircleIcon
+              className={`h-5 w-5 ${task.done === true ? 'text-green-600' : 'text-red-500'}`}
+            />
+            <p
+              className={`text-sm ${task.done === true ? 'text-green-600' : 'text-red-500'}`}
+            >
+              {task.message}
+            </p>
           </>
         )}
       </div>

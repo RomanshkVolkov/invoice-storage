@@ -65,7 +65,11 @@ export async function getInvoiceById(id: string) {
   }
 }
 
-export async function validateInvoice(prevState: any, formData: FormData) {
+export async function uploadInvoice(prevState: any, formData: FormData) {
+  const result = {
+    message: '',
+    done: false,
+  };
   try {
     const session = await auth();
     const inputPdf = formData.getAll('pdf') as File[];
@@ -177,10 +181,16 @@ export async function validateInvoice(prevState: any, formData: FormData) {
       .catch((error) => {
         throw error;
       });
-    return 'Factura subida correctamente.';
+
+    result.done = true;
+    result.message = `La factura con UUID: ${uuid} ha sido subida correctamente.`;
+
+    return result;
   } catch (error) {
     if (error instanceof Error) {
-      return error.message;
+      result.done = false;
+      result.message = error.message;
+      return result;
     }
     throw error;
   }
