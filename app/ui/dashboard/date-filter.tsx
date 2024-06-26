@@ -35,7 +35,10 @@ export default function DateFilter() {
       className="h-full max-w-[350px] md:w-[250px]"
       value={value}
       onChange={handleChange}
+      label="Filtrar por fecha"
       aria-label="Date range picker"
+      labelPlacement="inside"
+      autoCapitalize="off"
     />
   );
 }

@@ -25,7 +25,7 @@ export async function getInvoicesByDateRangeDB({
           startDate ||
             (new Date(currentDate.setDate(currentDate.getDate() - 7)) as any)
         ),
-        lte: (endDate as any) || currentDate,
+        lte: new Date((endDate as any) || currentDate),
       };
 
   const invoices = await prisma.invoices.findMany({

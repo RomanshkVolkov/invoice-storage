@@ -48,7 +48,7 @@ export default function InvoicesTable({
 
     const value = invoices?.find((item) => item.id === id)?.[column] || '';
 
-    if (window.isSecureContext || true) {
+    if (window.isSecureContext || navigator?.clipboard) {
       await navigator?.clipboard
         .writeText(value)
         .then(() => toast.success(`Valor copiado al portapapeles: ${value}`));
