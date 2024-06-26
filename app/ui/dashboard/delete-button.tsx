@@ -14,7 +14,7 @@ export default function DeleteButton({
   const router = useRouter();
 
   const handleDelete = (id: string) => {
-    router.push(`/dashboard/invoices/${id}?folio=${folio}`);
+    router.push(`/dashboard/delete-invoice/${id}?folio=${folio}`);
   };
 
   return (

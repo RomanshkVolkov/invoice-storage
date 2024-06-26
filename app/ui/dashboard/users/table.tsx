@@ -114,7 +114,7 @@ export default function UsersTable({ users }: { users: UserItem[] }) {
 function DeleteAction({ id, username }: { id: number; username: string }) {
   const router = useRouter();
   const handleDelete = () => {
-    router.push(`/dashboard/users/${id}?name=${username}`);
+    router.push(`/dashboard/delete-user/${id}?name=${username}`);
   };
 
   return (

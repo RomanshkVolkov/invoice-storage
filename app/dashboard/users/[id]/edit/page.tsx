@@ -19,7 +19,7 @@ export default async function Providers({
   return (
     <main>
       <div className="mb-6 flex flex-col">
-        <h1 className="mb-4 text-4xl">Editar proveedor</h1>
+        <h1 className="mb-4 text-4xl">Editar usuario</h1>
         <Breadcrumbs
           items={[
             { label: 'Usuarios', href: '/dashboard/users' },

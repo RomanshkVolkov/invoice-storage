@@ -108,7 +108,7 @@ function DeleteAction({
 }) {
   const router = useRouter();
   const handleDelete = () => {
-    router.push(`/dashboard/companies/${id}?name=${companyName}`);
+    router.push(`/dashboard/delete-company/${id}?name=${companyName}`);
   };
 
   return (

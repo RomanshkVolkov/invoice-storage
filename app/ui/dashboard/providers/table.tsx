@@ -102,7 +102,7 @@ function DeleteAction({
 }) {
   const router = useRouter();
   const handleDelete = () => {
-    router.push(`/dashboard/providers/${id}?name=${providerName}`);
+    router.push(`/dashboard/delete-provider/${id}?name=${providerName}`);
   };
 
   return (
