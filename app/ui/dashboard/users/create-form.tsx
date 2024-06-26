@@ -2,7 +2,6 @@
 
 import { useFormState } from 'react-dom';
 import Link from 'next/link';
-import { Users } from '@prisma/client';
 import {
   EyeIcon,
   EyeSlashIcon,
@@ -34,7 +33,6 @@ export default function EditProviderForm({
   const [isActive, setIsActive] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
 
-  const spacer = <div className="mb-4 md:mb-0 md:w-1/2" />;
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   const editEntity = createNewUser;

@@ -35,7 +35,6 @@ export default function EditProviderForm({
   const [isActive, setIsActive] = useState(user.isActive);
 
   const spacer = <div className="mb-4 md:mb-0 md:w-1/2" />;
-  const handleOnChange = (keys: any) => {};
 
   const editEntity = editUserByID.bind(null, user.id);
   const [state, dispatch] = useFormState(editEntity, initialState);
@@ -86,7 +85,6 @@ export default function EditProviderForm({
                 name="userTypeID"
                 label="Tipo de usuario"
                 className="h-full w-full"
-                onSelectionChange={handleOnChange}
                 defaultSelectedKeys={new Set([String(user.type.id)])}
               >
                 {userTypes.map((option) => (
