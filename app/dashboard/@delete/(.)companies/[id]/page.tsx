@@ -10,9 +10,11 @@ export default function Page({
 }) {
   return (
     <DeleleteModal
-      id={+id}
       title={`Eliminar a ${searchParams?.name}`}
-      deleteAction={deleteCompany}
+      deleteAction={async () => {
+        'use server';
+        return await deleteCompany(+id);
+      }}
     >
       <p>¿Estás seguro que deseas eliminar esta empresa?</p>
     </DeleleteModal>

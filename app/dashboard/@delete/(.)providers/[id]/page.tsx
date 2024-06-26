@@ -13,9 +13,11 @@ export default async function Page({
   if (!provider) return null;
   return (
     <DeleleteModal
-      id={+id}
       title={`Eliminar a ${searchParams?.name}`}
-      deleteAction={deleteProvider}
+      deleteAction={async () => {
+        'use server';
+        return await deleteProvider(+id);
+      }}
       showDelete={provider.invoices.length === 0}
     >
       {provider.invoices.length > 0 && (
