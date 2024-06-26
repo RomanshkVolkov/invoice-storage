@@ -108,6 +108,15 @@ export default function Form() {
             factura al mismo tiempo.
           </p>
         </div>
+        <div className="mb-5 text-gray-500 dark:text-gray-400">
+          <div className="flex flex-row justify-start">
+            <InformationCircleIcon className="mr-2 w-6" />
+            <p>
+              Nota: Si arrastras y sueltas los archivos, ingresa primero el
+              UUID.
+            </p>
+          </div>
+        </div>
         <p className="text-gray-500 dark:text-gray-400">o</p>
         <div className="flex flex-col gap-4 md:flex-row">
           <Button
