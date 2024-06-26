@@ -17,6 +17,7 @@ import {
 import { TrashIcon } from '@heroicons/react/24/outline';
 import EditLinkButton from '../edit-button';
 import SearchFilter from '../search-filter';
+import Pagination from '../pagination';
 
 const columns = [
   { key: 'rfc', label: 'RFC' },
@@ -32,8 +33,10 @@ type ProviderItem = Omit<Providers, 'isDeleted'> & {
 
 export default function ProvidersTable({
   providers,
+  totalPages,
 }: {
   providers: ProviderItem[];
+  totalPages: number;
 }) {
   const renderCell = useCallback(
     (provider: ProviderItem, columnKey: keyof ProviderItem) => {
@@ -61,6 +64,11 @@ export default function ProvidersTable({
       isStriped
       aria-labelledby="providers-table"
       topContent={<SearchFilter data={{ key: 'query', label: 'Buscar' }} />}
+      bottomContent={
+        <div className="flex justify-center">
+          <Pagination totalPages={totalPages} />
+        </div>
+      }
     >
       <TableHeader columns={columns}>
         {(column) => (

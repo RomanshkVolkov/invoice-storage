@@ -7,8 +7,10 @@ export default async function Page({
 }: {
   searchParams?: {
     query?: string;
+    page?: string;
   };
 }) {
+  const page = searchParams?.page ? +searchParams.page : 1;
   return (
     <main>
       <div className="mb-6 flex items-center justify-between">
@@ -17,7 +19,7 @@ export default async function Page({
           Crear proveedor
         </CreateLinkButton>
       </div>
-      <TableWrapper query={searchParams?.query} />
+      <TableWrapper query={searchParams?.query} page={page} />
     </main>
   );
 }

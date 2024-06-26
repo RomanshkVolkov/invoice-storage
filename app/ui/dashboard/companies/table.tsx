@@ -16,6 +16,8 @@ import {
 import { TrashIcon } from '@heroicons/react/24/outline';
 import EditLinkButton from '../edit-button';
 import { useRouter } from 'next/navigation';
+import SearchFilter from '../search-filter';
+import Pagination from '../pagination';
 
 const columns = [
   { key: 'name', label: 'NOMBRE' },
@@ -28,8 +30,10 @@ type Company = Omit<Companies, 'isDeleted' | 'emails'>;
 
 export default function CompaniesTable({
   companies,
+  totalPages,
 }: {
   companies: Company[];
+  totalPages: number;
 }) {
   const renderCell = useCallback(
     (company: Company, columnKey: keyof Company | 'actions') => {
@@ -57,7 +61,16 @@ export default function CompaniesTable({
   );
 
   return (
-    <Table isStriped aria-labelledby="providers-table">
+    <Table
+      isStriped
+      aria-labelledby="providers-table"
+      topContent={<SearchFilter data={{ key: 'query', label: 'Buscar' }} />}
+      bottomContent={
+        <div className="flex justify-center">
+          <Pagination totalPages={totalPages} />
+        </div>
+      }
+    >
       <TableHeader columns={columns}>
         {(column) => (
           <TableColumn

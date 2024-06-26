@@ -85,3 +85,15 @@ export function handleDatabaseError(error: any, message: string) {
     message,
   };
 }
+
+export function createPagination<T>(data: T[], page: number) {
+  const ROWS_PER_PAGE = 8;
+  const totalPages = Math.ceil(data.length / ROWS_PER_PAGE);
+  const start = (page - 1) * ROWS_PER_PAGE;
+  const end = start + ROWS_PER_PAGE;
+  const paginatedData = [...data].slice(start, end);
+  return {
+    totalPages,
+    paginatedData,
+  };
+}

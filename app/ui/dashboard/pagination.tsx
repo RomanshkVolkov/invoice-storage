@@ -20,7 +20,6 @@ export default function Pagination({ totalPages = 1 }: { totalPages: number }) {
       total={totalPages}
       initialPage={1}
       page={+page}
-      variant="bordered"
       showControls={totalPages > 1}
       onChange={handleChange}
     />

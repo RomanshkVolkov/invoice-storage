@@ -13,10 +13,12 @@ import {
 } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useMemo } from 'react';
+import { createPagination } from '@/app/lib/utils';
 import { useFormStatus } from 'react-dom';
 import EditLinkButton from '../edit-button';
 import { Users } from '@prisma/client';
 import SearchFilter from '../search-filter';
+import Pagination from '../pagination';
 
 const columns = [
   { key: 'name', label: 'NOMBRE' },
@@ -33,13 +35,13 @@ type UserItem = Omit<
   [key: string]: any;
 };
 
-export default function ProvidersTable({ users }: { users: UserItem[] }) {
+export default function UsersTable({ users }: { users: UserItem[] }) {
   const searchParams = useSearchParams();
+  const page = searchParams.get('page')?.toString() || 1;
+  const query = searchParams.get('query')?.toString();
 
-  const filteredProviders = useMemo(() => {
-    const query = searchParams.get('query')?.toString();
+  const filteredUsers = useMemo(() => {
     if (!query) return users;
-
     return users.filter((user) =>
       Object.values(user).some((value) =>
         Object.values(query.split(' ')).every(
@@ -49,7 +51,9 @@ export default function ProvidersTable({ users }: { users: UserItem[] }) {
         )
       )
     );
-  }, [users, searchParams]);
+  }, [users, query]);
+
+  const { totalPages, paginatedData } = createPagination(filteredUsers, +page);
 
   const renderCell = useCallback(
     (user: UserItem, columnKey: keyof UserItem) => {
@@ -76,11 +80,12 @@ export default function ProvidersTable({ users }: { users: UserItem[] }) {
     <Table
       isStriped
       aria-labelledby="users-table"
-      isHeaderSticky
-      classNames={{
-        base: 'max-h-[80vh] overflow-scroll',
-      }}
       topContent={<SearchFilter data={{ key: 'query', label: 'Buscar' }} />}
+      bottomContent={
+        <div className="flex justify-center">
+          <Pagination totalPages={totalPages} />
+        </div>
+      }
     >
       <TableHeader columns={columns}>
         {(column) => (
@@ -93,7 +98,7 @@ export default function ProvidersTable({ users }: { users: UserItem[] }) {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody items={filteredProviders}>
+      <TableBody items={paginatedData}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (
