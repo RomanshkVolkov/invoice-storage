@@ -79,5 +79,15 @@ export async function editUserByID(
 }
 
 export async function deleteUser(id: number) {
-  return await deleteUserByID(id);
+  try {
+    await deleteUserByID(id);
+  } catch (error) {
+    console.error(error);
+    return {
+      errors: {},
+      message:
+        'Ha ocurrido un error al eliminar el proveedor, por favor, contacta a soporte.',
+    };
+  }
+  revalidatePath('/dashboard/users');
 }

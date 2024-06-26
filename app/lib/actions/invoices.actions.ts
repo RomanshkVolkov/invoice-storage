@@ -35,6 +35,7 @@ export async function getInvoicesByDateRange({
       companyID: company || null,
       isSearch,
     });
+    console.log(invoices);
 
     return invoices.map((invoice) => ({
       ...invoice,

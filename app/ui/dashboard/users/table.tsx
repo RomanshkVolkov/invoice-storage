@@ -1,5 +1,5 @@
 'use client';
-import { deleteUser } from '@/app/lib/actions/users.actions';
+
 import { TrashIcon } from '@heroicons/react/24/outline';
 import {
   Table,
@@ -11,10 +11,9 @@ import {
   Button,
   Tooltip,
 } from '@nextui-org/react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useMemo } from 'react';
 import { useFormStatus } from 'react-dom';
-import { toast } from 'sonner';
 import EditLinkButton from '../edit-button';
 import { Users } from '@prisma/client';
 
@@ -62,7 +61,7 @@ export default function ProvidersTable({ users }: { users: UserItem[] }) {
               <Tooltip content="Editar">
                 <EditLinkButton href={`/dashboard/users/${user.id}/edit`} />
               </Tooltip>
-              <DeleteAction id={user.id} />
+              <DeleteAction id={user.id} username={user.username} />
             </div>
           );
         default:
@@ -105,12 +104,10 @@ export default function ProvidersTable({ users }: { users: UserItem[] }) {
   );
 }
 
-function DeleteAction({ id }: { id: number }) {
-  const handleDelete = async () => {
-    const state = await deleteUser(id);
-    if (state?.message) {
-      toast.error(state.message);
-    }
+function DeleteAction({ id, username }: { id: number; username: string }) {
+  const router = useRouter();
+  const handleDelete = () => {
+    router.push(`/dashboard/users/${id}?name=${username}`);
   };
 
   return (

@@ -3,7 +3,6 @@
 import { useCallback } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Companies } from '@prisma/client';
-import { toast } from 'sonner';
 import {
   Table,
   TableHeader,
@@ -15,8 +14,8 @@ import {
   Tooltip,
 } from '@nextui-org/react';
 import { TrashIcon } from '@heroicons/react/24/outline';
-import { deleteCompany } from '@/app/lib/actions/companies.actions';
 import EditLinkButton from '../edit-button';
+import { useRouter } from 'next/navigation';
 
 const columns = [
   { key: 'name', label: 'NOMBRE' },
@@ -43,7 +42,11 @@ export default function CompaniesTable({
                   href={`/dashboard/companies/${company.id}/edit`}
                 />
               </Tooltip>
-              <DeleteAction id={company.id} isDeletable={company.isDeletable} />
+              <DeleteAction
+                id={company.id}
+                companyName={company.name}
+                isDeletable={company.isDeletable}
+              />
             </div>
           );
         default:
@@ -83,17 +86,16 @@ export default function CompaniesTable({
 
 function DeleteAction({
   id,
+  companyName,
   isDeletable,
 }: {
   id: number;
+  companyName: string;
   isDeletable: boolean;
 }) {
-  const handleDelete = async () => {
-    if (!isDeletable) return;
-    const state = await deleteCompany(id);
-    if (state?.message) {
-      toast.error(state.message);
-    }
+  const router = useRouter();
+  const handleDelete = () => {
+    router.push(`/dashboard/companies/${id}?name=${companyName}`);
   };
 
   return (

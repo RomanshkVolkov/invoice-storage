@@ -11,7 +11,7 @@ export default async function Page() {
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-4xl">Usuarios</h1>
         <CreateLinkButton href="/dashboard/users/create">
-          Crear usuarios
+          Crear usuario
         </CreateLinkButton>
       </div>
       <div className="mb-4">

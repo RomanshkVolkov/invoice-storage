@@ -1,7 +1,6 @@
 import prisma from '@/app/lib/database/prisma';
 import { auth } from '@/auth';
 import { Users } from '@prisma/client';
-import { revalidatePath } from 'next/cache';
 
 export async function getProviderUsers() {
   const users = await prisma.users.findMany({
@@ -174,10 +173,7 @@ export async function updateUserOTP(user: Partial<Users>) {
 }
 
 export async function deleteUserByID(id: number) {
-  const result = {
-    message: '',
-  };
-  const deletedUser = await prisma.users.update({
+  return await prisma.users.update({
     where: {
       id,
     },
@@ -186,12 +182,4 @@ export async function deleteUserByID(id: number) {
       isDeleted: true,
     },
   });
-  if (deletedUser.isActive) {
-    result.message = `No se pudo eliminar el usuario ${deletedUser.name}.`;
-    return result;
-  }
-
-  result.message = `Se elimino el usuario ${deletedUser.name} correntamente.`;
-  revalidatePath('/dashboard/users');
-  return result;
 }
