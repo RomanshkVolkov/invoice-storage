@@ -114,6 +114,16 @@ export async function getProviderByID(id: number) {
           },
         },
       },
+      invoices: {
+        select: {
+          id: true,
+        },
+        where: {
+          NOT: {
+            isDeleted: true,
+          },
+        },
+      },
     },
   });
 

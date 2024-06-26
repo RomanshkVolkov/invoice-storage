@@ -1,5 +1,9 @@
 'use client';
 
+import { useCallback } from 'react';
+import { useFormStatus } from 'react-dom';
+import { useRouter } from 'next/navigation';
+import { Providers } from '@prisma/client';
 import {
   Table,
   TableHeader,
@@ -10,13 +14,8 @@ import {
   Tooltip,
   Button,
 } from '@nextui-org/react';
-import { useCallback } from 'react';
-import EditLinkButton from '../edit-button';
-import { deleteProvider } from '@/app/lib/actions/providers.actions';
-import { toast } from 'sonner';
 import { TrashIcon } from '@heroicons/react/24/outline';
-import { useFormStatus } from 'react-dom';
-import { Providers } from '@prisma/client';
+import EditLinkButton from '../edit-button';
 
 const columns = [
   { key: 'rfc', label: 'RFC' },
@@ -46,7 +45,7 @@ export default function ProvidersTable({
                   href={`/dashboard/providers/${provider.id}/edit`}
                 />
               </Tooltip>
-              <DeleteAction id={provider.id} />
+              <DeleteAction id={provider.id} providerName={provider.name} />
             </div>
           );
         default:
@@ -81,12 +80,16 @@ export default function ProvidersTable({
     </Table>
   );
 }
-function DeleteAction({ id }: { id: number }) {
-  const handleDelete = async () => {
-    const state = await deleteProvider(id);
-    if (state?.message) {
-      toast.error(state.message);
-    }
+function DeleteAction({
+  id,
+  providerName,
+}: {
+  id: number;
+  providerName: string;
+}) {
+  const router = useRouter();
+  const handleDelete = () => {
+    router.push(`/dashboard/providers/${id}?name=${providerName}`);
   };
 
   return (
@@ -98,6 +101,7 @@ function DeleteAction({ id }: { id: number }) {
 
 function DeleteButton() {
   const { pending } = useFormStatus();
+
   return (
     <Tooltip content="Eliminar" color="danger">
       <Button color="danger" type="submit" isLoading={pending} isIconOnly>

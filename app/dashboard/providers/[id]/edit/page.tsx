@@ -5,13 +5,11 @@ import EditProviderForm from '@/app/ui/dashboard/providers/edit-form';
 import { notFound } from 'next/navigation';
 
 export default async function Providers({
-  params,
+  params: { id },
 }: {
   params: { id: string };
 }) {
-  const { id } = params;
   const provider = await getProviderByID(+id);
-  console.log(provider);
 
   if (!provider) {
     notFound();
