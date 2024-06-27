@@ -30,7 +30,6 @@ export default function EditProviderForm({
     errors: {} as Errors,
   };
 
-  const [isActive, setIsActive] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
@@ -135,13 +134,7 @@ export default function EditProviderForm({
           <div className="mt-4 flex w-full justify-end">
             <label htmlFor="isActive">
               <span className="mr-2">Usuario activo</span>
-              <Checkbox
-                id="isActive"
-                name="isActive"
-                defaultSelected={isActive}
-                value={String(isActive)}
-                onValueChange={(value) => setIsActive(value)}
-              />
+              <Checkbox id="isActive" name="isActive" />
             </label>
           </div>
         </Fields>

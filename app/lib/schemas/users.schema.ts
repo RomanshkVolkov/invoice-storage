@@ -17,9 +17,7 @@ export const FormSchema = z.object({
   userTypeID: z.string().refine((value) => !isNaN(Number(value)), {
     message: 'Por favor, selecciona un tipo de usuario.',
   }),
-  isActive: z.string().refine((value) => ['true', 'false'].includes(value), {
-    message: 'Por favor, selecciona un estado valido.',
-  }),
+  isActive: z.string().optional(),
   password: z.string().min(6, {
     message: 'Por favor, ingresa una contraseña de al menos 6 caracteres.',
   }),

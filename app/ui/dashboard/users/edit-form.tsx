@@ -14,7 +14,6 @@ import Form from '../../form';
 import FormError from '../../form-error';
 import FieldsWrapper from '../../fields-wrapper';
 import Fields from '../../fields';
-import { useState } from 'react';
 
 type User = Pick<Users, 'id' | 'email' | 'name' | 'username' | 'isActive'> & {
   type: { id: number; name: string };
@@ -31,8 +30,6 @@ export default function EditProviderForm({
     message: '',
     errors: {} as Errors,
   };
-
-  const [isActive, setIsActive] = useState(user.isActive);
 
   const spacer = <div className="mb-4 md:mb-0 md:w-1/2" />;
 
@@ -103,10 +100,7 @@ export default function EditProviderForm({
                 <Checkbox
                   id="isActive"
                   name="isActive"
-                  defaultValue={user.isActive ? 1 : 0}
                   defaultSelected={user.isActive || false}
-                  value={String(isActive)}
-                  onValueChange={(value) => setIsActive(value)}
                 />
               </label>
             </div>
@@ -119,7 +113,7 @@ export default function EditProviderForm({
         <div className="flex w-full justify-between sm:justify-end">
           <Button
             className="mr-2"
-            href="/dashboard/providers"
+            href="/dashboard/users"
             variant="flat"
             as={Link}
           >
