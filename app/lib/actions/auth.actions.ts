@@ -4,12 +4,10 @@ import prisma from '@/app/lib/database/prisma';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import { AuthError } from 'next-auth';
-import nodemailer from 'nodemailer';
 import { signIn } from '@/auth';
 import { findUserByUsername, updateUserOTP } from '../database/user';
 import { z } from 'zod';
-
-const mailUser = process.env.MAIL_USER;
+import { transporter } from '../transporter';
 
 export async function authenticate(
   prevState: string | undefined,
@@ -74,16 +72,8 @@ export async function sendRecoveryCode(
         otpExpireDate,
       });
 
-      const transporter = nodemailer.createTransport({
-        service: 'Outlook365',
-        auth: {
-          user: mailUser,
-          pass: process.env.MAIL_PASS,
-        },
-      });
-
       const mailOptions = {
-        from: `"Invoice Storage" <${mailUser}>`,
+        from: `"Invoice Storage" <${process.env.MAIL_USER}>`,
         to: user.email,
         subject: 'Código de recuperación',
         text: `${user.name} ha solicitado un código de recuperación para el usuario ${user.username}. El código de recuperación es: ${otp}. Este código expirará en 10 minutos.`,

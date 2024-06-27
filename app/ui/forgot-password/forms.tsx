@@ -19,6 +19,7 @@ import {
 import OTPInput from './otp-input';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { hasItems } from '@/app/lib/utils';
 
 export default function Forms() {
   const [step, setStep] = useState<'username' | 'otp' | 'password'>('username');
@@ -59,21 +60,22 @@ export default function Forms() {
               type="text"
               name="username"
               className="mb-4"
-              errorMessage="Por favor, ingresa un correo válido"
+              isInvalid={hasItems(usernameState.errors.username)}
+              errorMessage={usernameState.errors.username?.join(', ')}
               isClearable
               isRequired
             />
             <NextButton />
             <div
-              className="mt-2 flex gap-1"
+              className="mt-4 flex gap-1"
               aria-live="polite"
               aria-atomic="true"
             >
-              {usernameState.errors.username && (
+              {usernameState.message && (
                 <>
                   <ExclamationCircleIcon className="h-5 w-5 text-danger-400" />
                   <p className="text-sm text-danger-400">
-                    {usernameState.errors.username}
+                    {usernameState.message}
                   </p>
                 </>
               )}
