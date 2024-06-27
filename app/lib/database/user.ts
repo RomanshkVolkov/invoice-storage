@@ -156,6 +156,7 @@ export async function updateUserByID(
       name: user.name,
       username: user.username,
       email: user.email,
+      isActive: user.isActive,
     },
   });
 }

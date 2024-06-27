@@ -26,7 +26,7 @@ export async function createNewUser(
     email: validatedData.data.email,
     password,
     userTypeID: Number(validatedData.data.userTypeID),
-    isActive: Boolean(validatedData.data.isActive),
+    isActive: validatedData.data.isActive === '' ? true : false,
   };
 
   try {
@@ -42,13 +42,14 @@ export async function createNewUser(
   redirect(path);
 }
 
+const EditUserSchema = FormSchema.omit({ password: true });
 export async function editUserByID(
   id: number,
   prevState: any,
   formData: FormData
 ): Promise<{ errors: Errors; message: string }> {
   const data = Object.fromEntries(formData);
-  const validatedData = FormSchema.safeParse(data);
+  const validatedData = EditUserSchema.safeParse(data);
   if (!validatedData.success) {
     return {
       errors: validatedData.error.flatten().fieldErrors,
@@ -62,9 +63,8 @@ export async function editUserByID(
     email: validatedData.data.email,
     username: validatedData.data.username,
     userTypeID: Number(validatedData.data.userTypeID),
-    isActive: Boolean(validatedData.data.isActive),
+    isActive: validatedData.data.isActive === '' ? true : false,
   };
-
   try {
     await updateUserByID(user);
   } catch (error) {
