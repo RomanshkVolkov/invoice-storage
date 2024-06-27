@@ -1,27 +1,37 @@
 #!/bin/bash
+set -e
 
-AUTH_SECRET=$(op read op://dwit/invoice-storage/auth_secret)
-DATABASE_URL=$(op read op://dwit/invoice-storage/db)
-AZURE_STORAGE_CONNECTION_STRING=$(op read op://dwit/invoice-storage/azure_storage_connection_string)
-AZURE_STORAGE_ACCOUNT=$(op read op://dwit/invoice-storage/azure_storage_account)
-AZURE_STORAGE_CONTAINER=$(op read op://dwit/invoice-storage/azure_storage_container)
-AZURE_BLOB_PATH=$(op read op://dwit/invoice-storage/azure_blob_path)
+onError() {
+  if [ $? -ne 0 ]; then
+    echo "Error: $1"
+    exit 1
+  fi
+}
 
-MAIL_USER=$(op read op://dwit/ocean-leader/mail/user)
-MAIL_PASS=$(op read op://dwit/ocean-leader/mail/password)
+echo "Build docker image"
+op run --env-file='./.env' -- docker build -t web-invoice-storage .
+onError "Failed to build docker image"
 
-docker build -e AUTH_SECRET=$AUTH_SECRET -e DATABASE_URL=$DATABASE_URL -e AZURE_STORAGE_CONNECTION_STRING=$AZURE_STORAGE_CONNECTION_STRING -e AZURE_STORAGE_ACCOUNT=$AZURE_STORAGE_ACCOUNT -e AZURE_STORAGE_CONTAINER=$AZURE_STORAGE_CONTAINER -e AZURE_BLOB_PATH=$AZURE_BLOB_PATH -e MAIL_USER=$MAIL_USER -e MAIL_PASS=$MAIL_PASS -t web-invoice-storage .
+echo "Tagging image"
+docker tag web-invoice-storage dwitmexico/invoice-storage:latest.
+onError "Failed to tag image"
 
-docker tag web-invoice-storage dwitmexico/invoice-storage:latest
+echo "Pushing image to Docker Hub"
 docker push dwitmexico/invoice-storage:latest
+onError "Failed to push image to Docker Hub"
 
 echo "Deployed to Docker Hub"
-echo "Restarting app service on Azure"
+echo "Needed restarting app service on Azure"
 echo ""
+
 echo "App service name: web-invoice-storage"
 echo "Resource group: RG_OceanWEB"
+echo ""
+
 echo "Link azure service: https://portal.azure.com/#@OCEANLEADER1.onmicrosoft.com/resource/subscriptions/9b289da6-0369-411e-bf2b-df2e08671bb9/resourceGroups/RG_OceanWEB/providers/Microsoft.Web/sites/web-invoice-storage/appServices"
-echo "Link web: https://web-invoice-storage.azurewebsites.net
+
+echo ""
+echo "Link web: https://web-invoice-storage.azurewebsites.net"
 
 
 # env example
