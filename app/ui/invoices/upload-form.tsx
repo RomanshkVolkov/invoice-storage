@@ -60,7 +60,6 @@ export default function Form() {
     const input = e.target as HTMLInputElement;
     input.classList.toggle('border-blue-500');
   };
-  console.log(!''.trim());
 
   return (
     <form id="upload-file" action={dispatch}>
@@ -160,7 +159,7 @@ export default function Form() {
               </p>
             </div>
           )}
-          <div className="mt-4 flex w-full justify-between sm:justify-end md:mt-0">
+          <div className="col-span-2 mt-4 flex w-full justify-between sm:justify-end md:mt-0">
             <Button
               className="mr-2"
               href="/dashboard/invoices"
