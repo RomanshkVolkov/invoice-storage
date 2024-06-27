@@ -10,7 +10,8 @@
     "build:prod": "op run --env-file='./.env' -- pnpm build",
     "start": "next start",
     "lint": "next lint",
-    "test": "npx prisma generate && pnpm playwright test --ui"
+    "test": "npx prisma generate && pnpm playwright test --ui",
+    "deploy": "./deploy.sh"
   },
   "dependencies": {
     "@azure/storage-blob": "^12.18.0",
