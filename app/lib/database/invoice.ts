@@ -123,12 +123,18 @@ export async function validateInvoiceData({
     );
   }
   const userID = +session!.user!.id!;
-  await prisma.userProviders.findFirst({
+  const isPermitUploadProvider = await prisma.userProviders.findFirst({
     where: {
       userID,
       providerID: isExistTransmitter.id,
     },
   });
+
+  if (!isPermitUploadProvider) {
+    throw new Error(
+      `El usuario no tiene permisos para subir facturas de este proveedor. (${isExistTransmitter.name})`
+    );
+  }
 
   const isExistInvoice = await prisma.invoices.findFirst({
     where: {
