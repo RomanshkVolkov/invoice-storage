@@ -1,15 +1,17 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 import { Button, Input } from '@nextui-org/react';
 import {
   CloudArrowUpIcon,
   ExclamationCircleIcon,
   InformationCircleIcon,
 } from '@heroicons/react/24/outline';
-import clsx from 'clsx';
 import React, { useState } from 'react';
 import { uploadInvoice } from '@/app/lib/actions/invoices.actions';
+import FormError from '../form-error';
+import Link from 'next/link';
+import SubmitButton from '../dashboard/submit-button';
 
 export default function Form() {
   const [inputPDF, setInputPDF] = useState<boolean | null | undefined>(null);
@@ -58,6 +60,7 @@ export default function Form() {
     const input = e.target as HTMLInputElement;
     input.classList.toggle('border-blue-500');
   };
+  console.log(!''.trim());
 
   return (
     <form id="upload-file" action={dispatch}>
@@ -125,9 +128,7 @@ export default function Form() {
             variant="bordered"
             onClick={() => handleClickFileInput('pdf')}
             aria-label="Cargar pdf"
-            className={clsx({
-              'dark:bg-primary-dark bg-primary': inputPDF,
-            })}
+            color={inputPDF ? 'primary' : 'default'}
           >
             Cargar pdf
           </Button>
@@ -137,57 +138,41 @@ export default function Form() {
             variant="bordered"
             onClick={() => handleClickFileInput('xml')}
             aria-label="Cargar xml"
-            className={clsx({
-              'dark:bg-primary-dark bg-primary': inputXML,
-            })}
+            color={inputXML ? 'primary' : 'default'}
           >
             Cargar xml
           </Button>
         </div>
         <Input id="uuid" name="uuid" type="text" label="UUID" />
-        <UploadStatus />
       </div>
-
-      <div className="mt-2 flex gap-1" aria-live="polite" aria-atomic="true">
-        {task && (
-          <>
-            <ExclamationCircleIcon
-              className={`h-5 w-5 ${task.done === true ? 'text-green-600' : 'text-red-500'}`}
-            />
-            <p
-              className={`text-sm ${task.done === true ? 'text-green-600' : 'text-red-500'}`}
+      <div className="mt-4 w-full" />
+      <FormError>
+        <div className="grid w-full grid-cols-1 md:grid-cols-2 ">
+          {task && (
+            <div className="flex w-full justify-between">
+              <ExclamationCircleIcon
+                className={`mr-2 h-5 ${task.done === true ? 'text-green-600' : 'text-red-500'}`}
+              />
+              <p
+                className={`w-full text-sm ${task.done === true ? 'text-green-600' : 'text-red-500'}`}
+              >
+                {task.message}
+              </p>
+            </div>
+          )}
+          <div className="mt-4 flex w-full justify-between sm:justify-end md:mt-0">
+            <Button
+              className="mr-2"
+              href="/dashboard/invoices"
+              variant="flat"
+              as={Link}
             >
-              {task.message}
-            </p>
-          </>
-        )}
-      </div>
-    </form>
-  );
-}
-
-function UploadStatus() {
-  const { pending } = useFormStatus();
-
-  return (
-    <>
-      <Button
-        id="upload-files"
-        type="submit"
-        aria-label="Guardar"
-        isLoading={pending}
-      >
-        Guardar
-      </Button>
-      <div className="w-full">
-        <div className="h-2 overflow-hidden rounded">
-          <div
-            className={clsx('h-full w-0 bg-blue-500', {
-              'progress-bar': pending,
-            })}
-          />
+              Cancelar
+            </Button>
+            <SubmitButton />
+          </div>
         </div>
-      </div>
-    </>
+      </FormError>
+    </form>
   );
 }

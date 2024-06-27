@@ -68,11 +68,11 @@ export const { auth, signIn, signOut } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.name = user.name;
         token.email = user.email;
         token.type = user.type;
         token.providers = user.providers;
         token.picture = user.type.name;
-        token.name = user.name;
       }
       return token;
     },
@@ -80,6 +80,7 @@ export const { auth, signIn, signOut } = NextAuth({
       session.user = {
         ...session.user,
         id: token.id as unknown as string,
+        name: token.name ?? '',
         email: token.email ?? '',
         type: token.type as unknown as { id: number; name: string },
         providers: token.providers as unknown as
