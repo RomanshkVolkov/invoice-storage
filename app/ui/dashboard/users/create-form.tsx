@@ -40,7 +40,7 @@ export default function EditProviderForm({
   return (
     <Form action={dispatch}>
       <fieldset className="mb-8">
-        <div className="mb-6 items-center md:flex">
+        <div className="mb-6">
           <FormLegend icon={UserGroupIcon}>Información del usuario</FormLegend>
         </div>
         <FieldsWrapper>
@@ -86,7 +86,7 @@ export default function EditProviderForm({
       </fieldset>
 
       <fieldset className="mb-8">
-        <div className="mb-6 items-center md:flex">
+        <div className="mb-6">
           <FormLegend icon={LockClosedIcon}>Credenciales de acceso</FormLegend>
         </div>
         <Fields>

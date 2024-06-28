@@ -74,7 +74,7 @@ export default function EditProviderForm({
   return (
     <Form action={dispatch}>
       <fieldset className="mb-8">
-        <div className="mb-6 items-center md:flex">
+        <div className="mb-6">
           <FormLegend icon={BuildingStorefrontIcon}>
             Información del proveedor
           </FormLegend>
@@ -130,8 +130,13 @@ export default function EditProviderForm({
       </fieldset>
 
       <fieldset className="mb-8">
-        <div className="mb-6 items-center md:flex">
-          <FormLegend icon={UserGroupIcon}>Lista de usuarios</FormLegend>
+        <div className="mb-6">
+          <FormLegend
+            icon={UserGroupIcon}
+            description="Estos son todos los usuarios disponibles para asignar, únicamente los usuarios seleccionados se asignarán a este proveedor."
+          >
+            Lista de usuarios
+          </FormLegend>
         </div>
         <Table
           aria-label="Lista de usuarios asignables al proveedor"

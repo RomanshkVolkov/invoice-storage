@@ -5,6 +5,7 @@
 export default function FormLegend({
   children,
   icon,
+  description,
 }: {
   children: React.ReactNode;
   icon: React.ForwardRefExoticComponent<
@@ -13,12 +14,18 @@ export default function FormLegend({
       titleId?: string | undefined;
     } & React.RefAttributes<SVGSVGElement>
   >;
+  description?: string;
 }) {
   const Icon = icon;
   return (
-    <>
+    <div className="flex-wrap items-center md:flex">
       <Icon className="mr-2 w-8 text-primary-500" />
       <legend className="text-lg text-primary-500">{children}</legend>
-    </>
+      {description && (
+        <p className="mt-1 w-full text-sm font-medium text-gray-700 dark:text-gray-300">
+          {description}
+        </p>
+      )}
+    </div>
   );
 }
