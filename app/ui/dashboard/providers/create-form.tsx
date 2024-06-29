@@ -8,6 +8,8 @@ import {
 import {
   Button,
   Input,
+  Radio,
+  RadioGroup,
   Table,
   TableBody,
   TableCell,
@@ -18,7 +20,7 @@ import {
 } from '@nextui-org/react';
 import Link from 'next/link';
 import { useFormState } from 'react-dom';
-import { hasItems } from '@/app/lib/utils';
+import { createPagination, hasItems } from '@/app/lib/utils';
 import { useState } from 'react';
 import SubmitButton from '../submit-button';
 import FormLegend from '../../form-legend';
@@ -28,6 +30,8 @@ import Fields from '../../fields';
 import { Users } from '@prisma/client';
 import { Errors } from '@/app/lib/schemas/providers.schema';
 import Form from '../../form';
+import SearchFilter from '../search-filter';
+import Pagination from '../pagination';
 
 type User = Pick<Users, 'id' | 'email' | 'name'>;
 
@@ -42,7 +46,15 @@ const columns = [
   },
 ];
 
-export default function CreateProviderForm({ users }: { users: User[] }) {
+export default function CreateProviderForm({
+  users,
+  page,
+  query,
+}: {
+  users: User[];
+  page: number;
+  query?: string;
+}) {
   const initialState = {
     message: '',
     errors: {} as Errors,
@@ -50,6 +62,9 @@ export default function CreateProviderForm({ users }: { users: User[] }) {
 
   const [selectedUsers, setSelectedUsers] = useState<Set<string> | 'all'>(
     new Set('')
+  );
+  const [filter, setFilter] = useState<'all' | 'selected' | 'unselected'>(
+    'selected'
   );
 
   const createProviderWithUsers = createProvider.bind(
@@ -59,6 +74,34 @@ export default function CreateProviderForm({ users }: { users: User[] }) {
       : Array.from(selectedUsers)
   );
   const [state, dispatch] = useFormState(createProviderWithUsers, initialState);
+
+  const filteredUsers = (
+    query
+      ? users.filter((user) =>
+          Object.values(user).some((value) =>
+            String(value).toLowerCase().includes(query.toLowerCase())
+          )
+        )
+      : users
+  ).filter((user) => {
+    // If user wants to see all users.
+    if (filter === 'all') return true;
+    // If all users are selected, we don't need to check if the user is selected or not (all users are selected).
+    if (selectedUsers === 'all') {
+      if (filter === 'selected') return true;
+      if (filter === 'unselected') return false;
+    }
+    // If not all users are selected, we need to check if the user is selected or not.
+    if (selectedUsers !== 'all') {
+      if (filter === 'selected') return selectedUsers.has(`${user.id}`);
+      if (filter === 'unselected') {
+        return !selectedUsers.has(`${user.id}`);
+      }
+    }
+    return true;
+  });
+
+  const { totalPages, paginatedData } = createPagination(filteredUsers, page);
 
   return (
     <Form action={dispatch}>
@@ -131,6 +174,36 @@ export default function CreateProviderForm({ users }: { users: User[] }) {
             name: 'users',
           }}
           onSelectionChange={setSelectedUsers as any}
+          topContent={
+            <div className="justify-between md:flex">
+              <SearchFilter
+                data={{
+                  key: 'query',
+                  label: 'Buscar',
+                }}
+              />
+              <RadioGroup label="Filtrar" orientation="horizontal">
+                <Radio name="filter" value="1" onClick={() => setFilter('all')}>
+                  Todos
+                </Radio>
+                <Radio
+                  name="filter"
+                  value="2"
+                  onClick={() => setFilter('selected')}
+                >
+                  Seleccionados
+                </Radio>
+                <Radio
+                  name="filter"
+                  value="3"
+                  onClick={() => setFilter('unselected')}
+                >
+                  No seleccionados
+                </Radio>
+              </RadioGroup>
+            </div>
+          }
+          bottomContent={<Pagination totalPages={totalPages} />}
           removeWrapper
         >
           <TableHeader columns={columns}>
@@ -138,7 +211,7 @@ export default function CreateProviderForm({ users }: { users: User[] }) {
               <TableColumn key={column.key}>{column.label}</TableColumn>
             )}
           </TableHeader>
-          <TableBody items={users}>
+          <TableBody items={paginatedData}>
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
