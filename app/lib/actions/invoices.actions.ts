@@ -147,17 +147,20 @@ export async function uploadInvoice(prevState: any, formData: FormData) {
         pass: process.env.MAIL_PASS,
       },
     });
+    const sender = process.env.MAIL_USER;
 
     const companyMailOptions = {
-      from: `"Invoice Storage" <${process.env.MAIL_USER}>`,
+      from: `"Invoice Storage" <${sender}>`,
       to: relatedData?.receiver?.emails?.split(';'),
       subject: `${relatedData.receiver.name} - ${now}`,
       text: `El proveedor ${relatedData.transmitter.name} con RFC ${relatedData.transmitter.rfc} ha subido una factura de esta empresa con el UUID: ${uuid}`,
     };
 
+    const userDestination = `${relatedData.transmitter.email};${session?.user?.email || ''}`;
+
     const providerMailOptions = {
-      from: `"Invoice Storage" <${process.env.MAIL_USER}>`,
-      to: `${session?.user?.email || ''}`,
+      from: `"Invoice Storage" <${sender}>`,
+      to: `${userDestination}`,
       subject: `${relatedData.transmitter.name} - ${now}`,
       text: `El proveedor ${relatedData.transmitter.name} ha subido una factura con el UUID: ${uuid}`,
     };
