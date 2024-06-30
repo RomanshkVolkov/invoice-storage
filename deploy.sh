@@ -33,15 +33,3 @@ echo "Link azure service: https://portal.azure.com/#@OCEANLEADER1.onmicrosoft.co
 echo ""
 echo "Link web: https://web-invoice-storage.azurewebsites.net"
 
-
-# env example
-# AUTH_SECRET="op://dwit/invoice-storage/auth_secret"
-# DATABASE_URL="op://dwit/invoice-storage/db"
-# AZURE_STORAGE_CONNECTION_STRING="op://dwit/invoice-storage/azure_storage_connection_string"
-# AZURE_STORAGE_ACCOUNT="op://dwit/invoice-storage/azure_storage_account"
-# AZURE_STORAGE_CONTAINER="op://dwit/invoice-storage/azure_storage_container"
-# AZURE_BLOB_PATH="op://dwit/invoice-storage/azure_blob_path"
-
-# # Mail credentials
-# MAIL_USER="op://dwit/ocean-leader/mail/user"
-# MAIL_PASS="op://dwit/ocean-leader/mail/password"
