@@ -8,12 +8,14 @@ onError() {
   fi
 }
 
+docker rmi -f $(docker images -q dwitmexico/invoice-storage:latest) || true
+
 echo "Build docker image"
-op run --env-file='./.env' -- docker build -t web-invoice-storage .
+op run --env-file='./.env' -- docker build --no-cache -t web-invoice-storage:$(git rev-parse --short HEAD) .
 onError "Failed to build docker image"
 
 echo "Tagging image"
-docker tag web-invoice-storage dwitmexico/invoice-storage:latest.
+docker tag web-invoice-storage:$(git rev-parse --short HEAD) dwitmexico/invoice-storage:latest
 onError "Failed to tag image"
 
 echo "Pushing image to Docker Hub"
