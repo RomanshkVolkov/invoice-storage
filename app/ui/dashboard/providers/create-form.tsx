@@ -64,7 +64,7 @@ export default function CreateProviderForm({
     new Set('')
   );
   const [filter, setFilter] = useState<'all' | 'selected' | 'unselected'>(
-    'selected'
+    'all'
   );
 
   const createProviderWithUsers = createProvider.bind(
@@ -182,22 +182,19 @@ export default function CreateProviderForm({
                   label: 'Buscar',
                 }}
               />
-              <RadioGroup label="Filtrar" orientation="horizontal">
-                <Radio name="filter" value="1" onClick={() => setFilter('all')}>
+              <RadioGroup
+                label="Filtrar"
+                orientation="horizontal"
+                onValueChange={setFilter as any}
+                value={filter}
+              >
+                <Radio name="filter" value="all">
                   Todos
                 </Radio>
-                <Radio
-                  name="filter"
-                  value="2"
-                  onClick={() => setFilter('selected')}
-                >
+                <Radio name="filter" value="selected">
                   Seleccionados
                 </Radio>
-                <Radio
-                  name="filter"
-                  value="3"
-                  onClick={() => setFilter('unselected')}
-                >
+                <Radio name="filter" value="unselected">
                   No seleccionados
                 </Radio>
               </RadioGroup>
