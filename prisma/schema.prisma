@@ -14,8 +14,8 @@ model Companies {
   name        String     @db.NVarChar(500)
   prefix      String?    @db.NVarChar(5)
   emails      String?    @db.NVarChar(MAX)
-  isDeletable Boolean    @default(true)
-  isDeleted   Boolean    @default(false)
+  isDeletable Boolean    @default(true) @map("is_deletable")
+  isDeleted   Boolean    @default(false) @map("is_deleted")
   invoices    Invoices[]
 
   @@map("companies")
@@ -27,7 +27,7 @@ model Invoices {
   companyID              Int           @map("company_id")
   xml                    String        @map("xml_path") @db.NVarChar(200)
   pdf                    String        @map("pdf_path") @db.NVarChar(200)
-  isDeleted              Boolean       @default(false)
+  isDeleted              Boolean       @default(false) @map("is_deleted")
   date                   DateTime      @map("invoice_date")
   certificationTimestamp DateTime      @map("certification_timestamp")
   reference              String        @map("reference") @db.NVarChar(255)
@@ -56,7 +56,7 @@ model Providers {
   name      String          @db.NVarChar(500)
   email     String          @db.NVarChar(500)
   zipcode   Int?
-  isDeleted Boolean         @default(false)
+  isDeleted Boolean         @default(false) @map("is_deleted")
   invoices  Invoices[]
   users     UserProviders[]
 
@@ -72,8 +72,8 @@ model Users {
   userTypeID    Int             @map("user_type_id")
   otp           Int?
   otpExpireDate DateTime?       @map("otp_expire_date")
-  isActive      Boolean?        @default(true)
-  isDeleted     Boolean?        @default(false)
+  isActive      Boolean?        @default(true) @map("is_active")
+  isDeleted     Boolean?        @default(false) @map("is_deleted")
   type          UserTypes       @relation(fields: [userTypeID], references: [id], onUpdate: NoAction, map: "FK__users__user_type__17CF3C3F")
   invoices      Invoices[]
   providers     UserProviders[] @relation(fields: [])

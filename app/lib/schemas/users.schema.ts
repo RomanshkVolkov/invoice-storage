@@ -11,7 +11,7 @@ export const FormSchema = z.object({
   email: z.string().email({
     message: 'Por favor, ingresa un correo válido.',
   }),
-  username: z.string().min(3, {
+  username: z.string().min(4, {
     message: 'Por favor, ingresa un nombre de usuario.',
   }),
   userTypeID: z.string().refine((value) => !isNaN(Number(value)), {

@@ -25,6 +25,7 @@ export async function authenticate(
         case 'CredentialsSignin':
           return 'Credenciales incorrectas.';
         default:
+          console.error(error);
           return 'Ha ocurrido un error. Por favor, intenta de nuevo.';
       }
     }

@@ -8,9 +8,11 @@
     "dev": "op run --env-file='./.env' -- pnpm generate",
     "build": "npx prisma generate && next build",
     "build:prod": "op run --env-file='./.env' -- pnpm build",
-    "start": "next start",
+    "start": "npx prisma generate && next start",
     "lint": "next lint",
-    "test": "npx prisma generate && pnpm playwright test --ui"
+    "test": "npx prisma generate && pnpm playwright test --ui",
+    "start:container": "./cmd/start.sh",
+    "deploy": "./cmd/deploy.sh"
   },
   "dependencies": {
     "@azure/storage-blob": "^12.18.0",
