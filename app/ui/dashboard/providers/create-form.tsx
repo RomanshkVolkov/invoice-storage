@@ -1,10 +1,10 @@
 'use client';
 
+import { useState } from 'react';
+import { useFormState } from 'react-dom';
+import Link from 'next/link';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { createProvider } from '@/app/lib/actions/providers.actions';
-import {
-  BuildingStorefrontIcon,
-  UserGroupIcon,
-} from '@heroicons/react/24/outline';
 import {
   Button,
   Input,
@@ -18,17 +18,18 @@ import {
   TableRow,
   getKeyValue,
 } from '@nextui-org/react';
-import Link from 'next/link';
-import { useFormState } from 'react-dom';
+import {
+  BuildingStorefrontIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
+import { Users } from '@prisma/client';
+import { Errors } from '@/app/lib/schemas/providers.schema';
 import { createPagination, hasItems } from '@/app/lib/utils';
-import { useState } from 'react';
 import SubmitButton from '../submit-button';
 import FormLegend from '../../form-legend';
 import FormError from '../../form-error';
 import FieldsWrapper from '../../fields-wrapper';
 import Fields from '../../fields';
-import { Users } from '@prisma/client';
-import { Errors } from '@/app/lib/schemas/providers.schema';
 import Form from '../../form';
 import SearchFilter from '../search-filter';
 import Pagination from '../pagination';
@@ -59,6 +60,9 @@ export default function CreateProviderForm({
     message: '',
     errors: {} as Errors,
   };
+  const { push } = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const [selectedUsers, setSelectedUsers] = useState<Set<string> | 'all'>(
     new Set('')
@@ -74,6 +78,12 @@ export default function CreateProviderForm({
       : Array.from(selectedUsers)
   );
   const [state, dispatch] = useFormState(createProviderWithUsers, initialState);
+
+  const resetPage = () => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', '1');
+    push(`${pathname}?${params.toString()}`);
+  };
 
   const filteredUsers = (
     query
@@ -186,6 +196,7 @@ export default function CreateProviderForm({
                 label="Filtrar"
                 orientation="horizontal"
                 onValueChange={setFilter as any}
+                onChange={resetPage}
                 value={filter}
               >
                 <Radio name="filter" value="all">

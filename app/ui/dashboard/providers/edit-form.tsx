@@ -32,6 +32,7 @@ import FieldsWrapper from '../../fields-wrapper';
 import Fields from '../../fields';
 import SearchFilter from '../search-filter';
 import Pagination from '../pagination';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 
 type User = Pick<Users, 'id' | 'email' | 'name'>;
 
@@ -65,6 +66,9 @@ export default function EditProviderForm({
     message: '',
     errors: {} as Errors,
   };
+  const { push } = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const [selectedUsers, setSelectedUsers] = useState<Set<string> | 'all'>(
     new Set(provider.users.map((user) => `${user.id}`))
@@ -81,6 +85,12 @@ export default function EditProviderForm({
       : Array.from(selectedUsers)
   );
   const [state, dispatch] = useFormState(editProviderWithIds, initialState);
+
+  const resetPage = () => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', '1');
+    push(`${pathname}?${params.toString()}`);
+  };
 
   const filteredUsers = (
     query
@@ -198,6 +208,7 @@ export default function EditProviderForm({
                 label="Filtrar"
                 orientation="horizontal"
                 onValueChange={setFilter as any}
+                onChange={resetPage}
                 value={filter}
               >
                 <Radio name="filter" value="all">
