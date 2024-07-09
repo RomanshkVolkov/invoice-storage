@@ -11,6 +11,8 @@ import {
 import {
   Button,
   Input,
+  Radio,
+  RadioGroup,
   Table,
   TableBody,
   TableCell,
@@ -21,13 +23,16 @@ import {
 } from '@nextui-org/react';
 import { editProvider } from '@/app/lib/actions/providers.actions';
 import { Errors } from '@/app/lib/schemas/providers.schema';
-import { hasItems } from '@/app/lib/utils';
+import { createPagination, hasItems } from '@/app/lib/utils';
 import SubmitButton from '../submit-button';
 import FormLegend from '../../form-legend';
 import Form from '../../form';
 import FormError from '../../form-error';
 import FieldsWrapper from '../../fields-wrapper';
 import Fields from '../../fields';
+import SearchFilter from '../search-filter';
+import Pagination from '../pagination';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 
 type User = Pick<Users, 'id' | 'email' | 'name'>;
 
@@ -49,17 +54,27 @@ const columns = [
 export default function EditProviderForm({
   provider,
   users,
+  page,
+  query,
 }: {
   provider: Provider;
   users: User[];
+  page: number;
+  query?: string;
 }) {
   const initialState = {
     message: '',
     errors: {} as Errors,
   };
+  const { push } = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const [selectedUsers, setSelectedUsers] = useState<Set<string> | 'all'>(
     new Set(provider.users.map((user) => `${user.id}`))
+  );
+  const [filter, setFilter] = useState<'all' | 'selected' | 'unselected'>(
+    'all'
   );
 
   const editProviderWithIds = editProvider.bind(
@@ -71,10 +86,44 @@ export default function EditProviderForm({
   );
   const [state, dispatch] = useFormState(editProviderWithIds, initialState);
 
+  const resetPage = () => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', '1');
+    push(`${pathname}?${params.toString()}`);
+  };
+
+  const filteredUsers = (
+    query
+      ? users.filter((user) =>
+          Object.values(user).some((value) =>
+            String(value).toLowerCase().includes(query.toLowerCase())
+          )
+        )
+      : users
+  ).filter((user) => {
+    // If user wants to see all users.
+    if (filter === 'all') return true;
+    // If all users are selected, we don't need to check if the user is selected or not (all users are selected).
+    if (selectedUsers === 'all') {
+      if (filter === 'selected') return true;
+      if (filter === 'unselected') return false;
+    }
+    // If not all users are selected, we need to check if the user is selected or not.
+    if (selectedUsers !== 'all') {
+      if (filter === 'selected') return selectedUsers.has(`${user.id}`);
+      if (filter === 'unselected') {
+        return !selectedUsers.has(`${user.id}`);
+      }
+    }
+    return true;
+  });
+
+  const { totalPages, paginatedData } = createPagination(filteredUsers, page);
+
   return (
     <Form action={dispatch}>
       <fieldset className="mb-8">
-        <div className="mb-6 items-center md:flex">
+        <div className="mb-6">
           <FormLegend icon={BuildingStorefrontIcon}>
             Información del proveedor
           </FormLegend>
@@ -130,8 +179,13 @@ export default function EditProviderForm({
       </fieldset>
 
       <fieldset className="mb-8">
-        <div className="mb-6 items-center md:flex">
-          <FormLegend icon={UserGroupIcon}>Lista de usuarios</FormLegend>
+        <div className="mb-6">
+          <FormLegend
+            icon={UserGroupIcon}
+            description="Estos son todos los usuarios disponibles para asignar, únicamente los usuarios seleccionados se asignarán a este proveedor."
+          >
+            Lista de usuarios
+          </FormLegend>
         </div>
         <Table
           aria-label="Lista de usuarios asignables al proveedor"
@@ -142,6 +196,34 @@ export default function EditProviderForm({
           }}
           defaultSelectedKeys={selectedUsers}
           onSelectionChange={setSelectedUsers as any}
+          topContent={
+            <div className="justify-between md:flex">
+              <SearchFilter
+                data={{
+                  key: 'query',
+                  label: 'Buscar',
+                }}
+              />
+              <RadioGroup
+                label="Filtrar"
+                orientation="horizontal"
+                onValueChange={setFilter as any}
+                onChange={resetPage}
+                value={filter}
+              >
+                <Radio name="filter" value="all">
+                  Todos
+                </Radio>
+                <Radio name="filter" value="selected">
+                  Seleccionados
+                </Radio>
+                <Radio name="filter" value="unselected">
+                  No seleccionados
+                </Radio>
+              </RadioGroup>
+            </div>
+          }
+          bottomContent={<Pagination totalPages={totalPages} />}
           removeWrapper
         >
           <TableHeader columns={columns}>
@@ -149,7 +231,7 @@ export default function EditProviderForm({
               <TableColumn key={column.key}>{column.label}</TableColumn>
             )}
           </TableHeader>
-          <TableBody items={users}>
+          <TableBody items={paginatedData}>
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (

@@ -16,12 +16,16 @@ export default function Pagination({ totalPages = 1 }: { totalPages: number }) {
   };
 
   return (
-    <NextPagination
-      total={totalPages}
-      initialPage={1}
-      page={+page}
-      showControls={totalPages > 1}
-      onChange={handleChange}
-    />
+    <>
+      {totalPages > 0 && (
+        <NextPagination
+          total={totalPages}
+          initialPage={1}
+          page={+page}
+          showControls={totalPages > 1}
+          onChange={handleChange}
+        />
+      )}
+    </>
   );
 }

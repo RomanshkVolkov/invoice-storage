@@ -1,7 +1,6 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import nodemailer from 'nodemailer';
 import { blob } from '../blob/autentication';
 import {
   createInvoice,
@@ -12,6 +11,7 @@ import {
 } from '../database/invoice';
 import { auth } from '@/auth';
 import { extractInvoiceData } from '../utils';
+import { transporter } from '../transporter';
 
 export async function getInvoicesByDateRange({
   startDate,
@@ -140,13 +140,6 @@ export async function uploadInvoice(prevState: any, formData: FormData) {
       }
     );
 
-    const transporter = nodemailer.createTransport({
-      service: 'Outlook365',
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-    });
     const sender = process.env.MAIL_USER;
 
     const companyMailOptions = {

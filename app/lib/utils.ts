@@ -1,3 +1,5 @@
+import { faker } from '@faker-js/faker';
+
 export function hasItems(array: any[] | undefined): boolean {
   return array && array.length > 0 ? true : false;
 }
@@ -96,4 +98,17 @@ export function createPagination<T>(data: T[], page: number) {
     totalPages,
     paginatedData,
   };
+}
+
+export function randomRFC() {
+  let rfc = faker.string.alpha({ length: 4, casing: 'upper' });
+  // Los siguientes 6 caracteres son dígitos que representan una fecha (YYMMDD)
+  rfc += faker.date
+    .past({ years: 30, refDate: new Date('2000-01-01') })
+    .toISOString()
+    .slice(2, 10)
+    .replace(/-/g, '');
+  // Los últimos 2 o 3 caracteres son alfanuméricos
+  rfc += faker.string.alphanumeric({ length: 3, casing: 'upper' });
+  return rfc;
 }

@@ -50,11 +50,12 @@ export default function EditCompanyForm({ company }: { company: Company }) {
   return (
     <Form action={dispatch}>
       <fieldset className="mb-8">
-        <div className="mb-6 items-center md:flex">
+        <div className="mb-6">
           <FormLegend icon={BuildingOfficeIcon}>
             Información de la empresa
           </FormLegend>
         </div>
+
         <FieldsWrapper>
           <Fields>
             <div className="mb-4 md:mb-0 md:w-1/3">
@@ -94,8 +95,13 @@ export default function EditCompanyForm({ company }: { company: Company }) {
       </fieldset>
 
       <fieldset className="mb-8">
-        <div className="mb-6 items-center md:flex">
-          <FormLegend icon={EnvelopeIcon}>Lista de correos</FormLegend>
+        <div className="mb-6 md:flex">
+          <FormLegend
+            icon={EnvelopeIcon}
+            description="Se enviará una notificación a los correos registrados cuando se suba una nueva factura."
+          >
+            Lista de correos
+          </FormLegend>
           <Button
             color="primary"
             variant="shadow"

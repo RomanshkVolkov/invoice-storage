@@ -6,8 +6,10 @@ import { notFound } from 'next/navigation';
 
 export default async function Providers({
   params: { id },
+  searchParams,
 }: {
   params: { id: string };
+  searchParams?: { query?: string; page?: string };
 }) {
   const provider = await getProviderByID(+id);
 
@@ -16,6 +18,8 @@ export default async function Providers({
   }
 
   const users = await getProviderUsers();
+  const page = searchParams?.page ? +searchParams.page : 1;
+  const query = searchParams?.query || '';
 
   return (
     <main>
@@ -28,7 +32,12 @@ export default async function Providers({
           ]}
         />
       </div>
-      <EditProviderForm provider={provider} users={users} />
+      <EditProviderForm
+        provider={provider}
+        users={users}
+        page={page}
+        query={query}
+      />
     </main>
   );
 }
