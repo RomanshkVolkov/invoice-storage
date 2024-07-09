@@ -10,18 +10,21 @@ onError() {
 
 docker rmi -f $(docker images -q dwitmexico/invoice-storage:latest) || true
 
+GIT_HEAD=$(git rev-parse --short HEAD)
+
 echo "Build docker image"
-op run --env-file='./.env' -- docker build --no-cache -t web-invoice-storage:$(git rev-parse --short HEAD) .
+op run --env-file='./.env' -- docker build --no-cache -t web-invoice-storage:$GIT_HEAD .
 onError "Failed to build docker image"
 
 echo "Tagging image"
-docker tag web-invoice-storage:$(git rev-parse --short HEAD) dwitmexico/invoice-storage:latest
+docker tag web-invoice-storage:$GIT_HEAD dwitmexico/invoice-storage:latest
 onError "Failed to tag image"
 
 echo "Pushing image to Docker Hub"
 docker push dwitmexico/invoice-storage:latest
 onError "Failed to push image to Docker Hub"
 
+echo ""
 echo "Deployed to Docker Hub"
 echo "Needed restarting app service on Azure"
 echo ""
