@@ -146,7 +146,7 @@ export async function uploadInvoice(prevState: any, formData: FormData) {
       from: `"Invoice Storage" <${sender}>`,
       to: relatedData?.receiver?.emails?.split(';'),
       subject: `${relatedData.receiver.name} - ${now}`,
-      text: `El proveedor ${relatedData.transmitter.name} con RFC ${relatedData.transmitter.rfc} ha subido una factura de esta empresa con el UUID: ${uuid}`,
+      text: `${relatedData.transmitter.name} con RFC ${relatedData.transmitter.rfc} ha subido un CFDI de esta empresa con el UUID: ${uuid}`,
     };
 
     const userDestination = `${relatedData.transmitter.email};${session?.user?.email || ''}`;
@@ -155,7 +155,7 @@ export async function uploadInvoice(prevState: any, formData: FormData) {
       from: `"Invoice Storage" <${sender}>`,
       to: `${userDestination}`,
       subject: `${relatedData.transmitter.name} - ${now}`,
-      text: `El proveedor ${relatedData.transmitter.name} ha subido una factura con el UUID: ${uuid}`,
+      text: `${relatedData.transmitter.name} ha subido un CFDI con el UUID: ${uuid}`,
     };
 
     await createInvoice({
